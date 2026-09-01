@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Questões</title>
+<link rel="stylesheet" href="../_shared/theme.css">
+<style>
+  /* Específico deste template: cabeçalho, contêiner, botão flutuante de
+     configurações e variantes extras de botão (progresso/qualidade). O
+     restante do tema e dos componentes de quiz vem de ../_shared/theme.css —
+     não duplique regras já definidas lá. */
+  header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff;
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 0.4rem; font-size: 1.6rem; }
+  header p { margin: 0 auto; opacity: 0.9; font-size: 0.95rem; max-width: 700px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  button.export-progress { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+  button.export-progress:hover { background: color-mix(in srgb, var(--accent) 84%, #000); color: var(--accent-contrast); }
+  button.export-quality { border-color: #a66b00; color: #8a5900; }
+  button.export-quality:hover { background: #fff7e6; color: #6f4800; }
+  .save-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .save-guidance { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem; margin: -0.6rem 0 1rem; }
+  .save-guidance p { margin: 0; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); color: var(--text-muted); font-size: 0.76rem; }
+  .save-guidance strong { color: var(--text); }
+  .settings-trigger {
+    position: fixed; top: 1rem; right: 1rem; z-index: 50; display: inline-flex; align-items: center; gap: 0.45rem;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: 9px; padding: 0.52rem 0.72rem;
+    background: rgba(15,23,42,0.78); color: #fff; font: inherit; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 5px 18px rgba(0,0,0,0.22); backdrop-filter: blur(8px);
+  }
+  .settings-trigger:hover { background: var(--accent); color: var(--accent-contrast); }
+
+  body[data-view="focus"] .editorial-notice,
+  body[data-view="focus"] .footnote { display: none; }
+
+  .footnote {
+    text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 2rem;
+  }
+  .editorial-notice {
+    margin: 1rem 0; padding: 0.75rem 0.9rem; border-left: 4px solid #a66b00;
+    background: #fff7e6; color: #5f4300; border-radius: 6px; font-size: 0.86rem;
+  }
+  .editorial-notice a { color: inherit; font-weight: 700; }
+
+  :root[data-theme="dark"] button.export-quality { color: #f0b96a; border-color: #b8791f; }
+  :root[data-theme="dark"] button.export-quality:hover { background: #2e2013; color: #ffd28a; }
+  :root[data-palette="presleep"] .editorial-notice { background: #fdf1de; color: #6b3f14; border-left-color: #a66b00; }
+  :root[data-theme="dark"][data-palette="presleep"] .editorial-notice { background: #2e2013; color: #f0b96a; border-left-color: #b8791f; }
+
+  @media (max-width: 560px) {
+    .settings-trigger .settings-label { display: none; }
+    .setting-row { align-items: stretch; flex-direction: column; }
+    .setting-row .segmented-control { align-self: stretch; }
+    .setting-row .segmented-control button { flex: 1; }
+    .save-guidance { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<button type="button" class="settings-trigger" aria-haspopup="dialog" aria-label="Abrir configurações">
+  <span aria-hidden="true">⚙</span><span class="settings-label">Configurações</span>
+</button>
+
+<header>
+  <h1 id="quiz-title"></h1>
+  <p id="quiz-desc"></p>
+</header>
+
+<div class="container">
+  <div class="editorial-notice" role="note">
+    Banco educacional em auditoria editorial progressiva. Estrutura validada não equivale
+    a aprovação clínica de cada item. Consulte a
+    <a href="../_banco/POLITICA-EDITORIAL.md">política editorial</a>.
+  </div>
+  <div class="toolbar">
+    <div class="score">Acertos: <span id="score-correct">0</span> · Parciais: <span id="score-partial">0</span> · <span id="score-total">0</span>/<span id="score-max">0</span> respondidas</div>
+    <div class="toolbar-right">
+      <a class="dash-link" href="../_dados/dashboard.html" target="_blank">Ver desempenho</a>
+      <div class="save-actions" aria-label="Opções de salvamento">
+        <button class="export export-progress" id="save-progress" onclick="saveRegistro()" title="Salva respostas e desempenho em _dados/registros">💾 Salvar progresso</button>
+        <button class="export export-quality" id="save-quality" onclick="saveQualityReviews()" title="Salva avaliações editoriais em _dados/melhorias de questões">✎ Enviar sugestões (<span id="quality-pending">0</span>)</button>
+      </div>
+      <button class="reset" onclick="resetQuiz()">Reiniciar</button>
+    </div>
+  </div>
+  <div class="save-guidance" aria-label="Destino dos arquivos salvos">
+    <p><strong>Progresso:</strong> escolha <code>_dados/registros/</code>. Contém respostas, acertos e confiança.</p>
+    <p><strong>Sugestões:</strong> escolha <code>_dados/melhorias de questões/</code>. Contém somente revisão editorial.</p>
+  </div>
+  <p class="export-hint" id="export-hint">Arquivo baixado. Mova-o para <code>Questões/_dados/registros/</code> para que apareça no painel de desempenho.</p>
+
+  <nav class="focus-navigation" aria-label="Navegação entre questões">
+    <button type="button" id="focus-prev">&larr; Anterior</button>
+    <span class="focus-position" id="focus-position" aria-live="polite"></span>
+    <button type="button" id="focus-next">Próxima &rarr;</button>
+  </nav>
+
+  <div id="quiz"></div>
+
+  <div class="refs">
+    <h2>Referências</h2>
+    <ol id="ref-list"></ol>
+  </div>
+
+  <p class="footnote" id="quiz-footnote"></p>
+</div>
+
+<div class="settings-overlay" id="settings-overlay" aria-hidden="true">
+  <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-describedby="settings-description">
+    <div class="settings-header">
+      <div><h2 id="settings-title">Configurações</h2><p id="settings-description">Personalize a aparência e a forma de navegar pelas questões.</p></div>
+      <button type="button" class="settings-close" aria-label="Fechar configurações">&times;</button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Tema</strong><span>Escolha a claridade da interface.</span></div>
+        <div class="segmented-control" aria-label="Tema da interface">
+          <button type="button" data-theme-choice="light" aria-pressed="false">Claro</button><button type="button" data-theme-choice="dark" aria-pressed="false">Escuro</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Paleta de cores</strong><span>Normal ou tons que afetam menos o sono.</span></div>
+        <div class="segmented-control" aria-label="Paleta de cores">
+          <button type="button" data-palette-choice="normal" aria-pressed="false">Normal</button><button type="button" data-palette-choice="presleep" aria-pressed="false">Pré-sono</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Exibição das questões</strong><span>Veja todas ou concentre-se em uma por tela.</span></div>
+        <div class="segmented-control" aria-label="Formato das questões">
+          <button type="button" data-view-choice="list" aria-pressed="false">Lista</button><button type="button" data-view-choice="focus" aria-pressed="false">Uma por vez</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-footer"><button type="button" class="settings-done">Concluído</button></div>
+  </section>
+</div>
+
+<script type="application/json" id="quiz-data">
+{
+  "quizId": "endocardite-tratamento",
+  "title": "Endocardite — Tratamento e Cirurgia",
+  "description": "Recorte do banco só com a parte terapêutica: princípios empíricos, esquemas dirigidos por agente, transição para via oral (POET) e indicações/timing cirúrgico.",
+  "footnote": "Recorte gerado a partir do banco central (Questões/_banco/banco-questoes.json) — mesmas fontes do banco completo de Endocardite Infecciosa.",
+  "questions": [
+    {
+      "id": "endocardite-19",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Quais agentes e fatores clínicos devem orientar a terapia antimicrobiana empírica da endocardite infecciosa?",
+      "options": [
+        "Manter o esquema antimicrobiano empírico inalterado até o final de todo o tratamento reduziria as recaídas, mesmo quando o agente identificado e sua sensibilidade in vitro permitem claro estreitamento do espectro utilizado",
+        "Na prótese valvar precoce, a cobertura antimicrobiana inicial poderia se concentrar apenas em estafilococos e enterococos, deixando totalmente os Gram-negativos para um eventual ajuste posterior conforme resultado das culturas",
+        "No paciente clinicamente estável, colher apenas dois conjuntos de hemocultura logo após a primeira dose de antibiótico reduziria o risco de atraso terapêutico sem qualquer perda relevante de sensibilidade diagnóstica global",
+        "A escolha deve cobrir estafilococos, estreptococos e enterococos, considerando valva nativa vs. protética, tempo desde o implante, aquisição comunitária vs. associada à assistência, antibióticos prévios, alergias e resistência local",
+        "A via oral poderia iniciar toda a fase empírica do tratamento em pacientes estáveis, antes mesmo da identificação laboratorial do agente causador, sempre que houver alta biodisponibilidade do fármaco inicialmente escolhido"
+      ],
+      "correct": 3,
+      "exp": "A terapia empírica deve cobrir estafilococos, estreptococos e enterococos, considerando o cenário clínico; deve-se redirecionar o esquema assim que houver identificação e antibiograma. Colher culturas antes do antimicrobiano sempre que possível (exceto em choque séptico, quando não se atrasa o tratamento após coleta rápida).",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-20",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é o tratamento dirigido da endocardite por estreptococos orais ou Streptococcus gallolyticus sensíveis em valva nativa e protética?",
+      "options": [
+        "Vancomicina isolada por 4 semanas em valva nativa e 6 semanas em prótese valvar, mesmo quando há sensibilidade plena e bem documentada do microrganismo à penicilina no antibiograma laboratorial realizado",
+        "Oxacilina isolada por 4 semanas em valva nativa e 6 semanas em prótese valvar, com ceftriaxona reservada exclusivamente aos casos de alergia imediata bem comprovada à penicilina",
+        "Daptomicina isolada por 4 semanas em valva nativa e 6 semanas em prótese valvar cirurgicamente implantada, associando gentamicina de rotina inclusive nos casos considerados não complicados clinicamente",
+        "Penicilina ou ceftriaxona por apenas 2 semanas mesmo em valva nativa não complicada e sem endocardite prévia, sem qualquer necessidade de sinergismo com aminoglicosídeo em nenhum cenário clínico possível",
+        "Penicilina G, amoxicilina ou ceftriaxona por 4 semanas em valva nativa e 6 semanas em prótese; regime de 2 semanas associado a gentamicina restrito a EI nativa não complicada, com função renal normal e critérios estritos"
+      ],
+      "correct": 4,
+      "exp": "Penicilina G (12–18 milhões UI/dia), amoxicilina (12 g/dia) ou ceftriaxona (2 g/dia) IV: 4 semanas em valva nativa, 6 semanas em prótese. O regime curto de 2 semanas + gentamicina é reservado a EI nativa não complicada, função renal normal e critérios estritos.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-21",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Como é tratada a endocardite estafilocócica de valva nativa por MSSA e por MRSA, e qual é o papel dos aminoglicosídeos?",
+      "options": [
+        "Em MSSA, usa-se oxacilina ou cefazolina por 4-6 semanas, sem adição rotineira de aminoglicosídeo; em MRSA, vancomicina com monitorização farmacocinética ou daptomicina em alta dose são as opções centrais",
+        "Vancomicina seria sempre preferida tanto para MSSA quanto para MRSA em valva nativa e protética; oxacilina ficaria reservada a MSSA apenas em caso de intolerância comprovada à vancomicina",
+        "Gentamicina deveria ser associada de rotina ao betalactâmico durante as duas primeiras semanas de toda EI estafilocócica por MSSA em valva nativa não complicada previamente",
+        "MSSA em valva nativa receberia apenas 2 semanas de oxacilina quando não há foco metastático identificado na avaliação, estendendo-se a 4 semanas somente se houver embolização documentada",
+        "Daptomicina em dose de 6 mg/kg/dia seria sempre preferida à vancomicina para MRSA em qualquer cenário clínico, reservando doses maiores apenas aos casos com prótese valvar"
+      ],
+      "correct": 0,
+      "exp": "MSSA valva nativa: oxacilina (12 g/dia) ou cefazolina (6 g/dia) por 4–6 semanas, sem aminoglicosídeo de rotina. MRSA/estafilococo resistente: vancomicina com monitorização farmacocinética ou daptomicina em alta dose, usualmente 4–6 semanas.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-22",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é o esquema típico para endocardite por Enterococcus faecalis sensível e quando a gentamicina pode ser considerada?",
+      "options": [
+        "Ceftriaxona em monoterapia por 6 semanas completas de tratamento, aproveitando sua suposta atividade intrínseca bactericida contra enterococos plenamente sensíveis à ampicilina",
+        "Ampicilina associada a ceftriaxona (dose dividida) por 6 semanas, com alternativa de ampicilina/amoxicilina + gentamicina por período limitado em pacientes selecionados com função renal adequada",
+        "Vancomicina em monoterapia por 6 semanas completas, mesmo em cepas plenamente sensíveis à ampicilina, apenas para assegurar maior ação bactericida no esquema escolhido",
+        "Ampicilina em monoterapia por 6 semanas completas de tratamento, adicionando ceftriaxona somente se houver resistência de alto nível a aminoglicosídeo já claramente documentada",
+        "Ampicilina associada a gentamicina por apenas 2 semanas completas, duração equivalente à usada nos estreptococos orais plenamente sensíveis à penicilina isolada"
+      ],
+      "correct": 1,
+      "exp": "Ampicilina 12 g/dia IV + ceftriaxona 4 g/dia IV (dividida em 2 doses) por 6 semanas; alternativa: ampicilina/amoxicilina + gentamicina por período limitado se suscetível e função renal adequada.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-23",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é o tratamento recomendado e sua duração para endocardite por microrganismos do grupo HACEK em valva nativa e protética?",
+      "options": [
+        "Penicilina G isolada por 4 semanas em valva nativa e 6 semanas em prótese, presumindo sensibilidade uniforme do grupo",
+        "Vancomicina isolada por 4 semanas, dada suposta resistência intrínseca do grupo HACEK a betalactâmicos",
+        "Ceftriaxona, geralmente por 4 semanas em valva nativa e 6 semanas em prótese",
+        "Daptomicina em alta dose por 2 semanas, esquema padrão recomendado para esse grupo",
+        "Metronidazol associado a aminoglicosídeo, refletindo natureza predominantemente anaeróbia desse grupo"
+      ],
+      "correct": 2,
+      "exp": "HACEK: ceftriaxona 2 g/dia IV — em geral 4 semanas na valva nativa e 6 semanas na prótese. O grupo HACEK é composto por bacilos Gram-negativos fastidiosos, não anaeróbios.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-24",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Quais critérios permitiram a transição da terapia intravenosa para a oral no ensaio POET?",
+      "options": [
+        "Pacientes estáveis com EI esquerda por qualquer agente, incluindo fungos e organismos multirresistentes, poderiam iniciar terapia oral após apenas 72 horas de tratamento intravenoso efetivo, independentemente de complicações estruturais associadas ou necessidade de intervenção cirúrgica",
+        "A estratégia foi estudada principalmente em pacientes com EI direita associada ao uso de drogas injetáveis, exigindo apenas 7 dias de tratamento intravenoso inicial, sem necessidade de estabilidade clínica prévia nem confirmação da identidade do agente causador",
+        "A estabilidade hemodinâmica isolada e a sensibilidade in vitro do agente já bastariam para autorizar a transição para via oral, mesmo diante de abscesso identificado sem indicação cirúrgica imediata claramente estabelecida pela equipe",
+        "Pacientes com EI esquerda por estreptococos, E. faecalis, S. aureus ou estafilococos coagulase-negativos, clinicamente estáveis, após pelo menos 10 dias de terapia intravenosa efetiva (ou ao menos 7 dias após cirurgia), sem abscesso ou outra complicação com indicação cirúrgica ao ETE",
+        "A identificação do agente causador somada à simples queda da proteína C-reativa sérica já permitiriam a transição para via oral, sem exigência de reavaliação ecocardiográfica prévia nem cumprimento de tempo mínimo intravenoso estabelecido"
+      ],
+      "correct": 3,
+      "exp": "POET incluiu 400 adultos com EI esquerda (estreptococos, E. faecalis, S. aureus ou estafilococos coagulase-negativos), estáveis, após ≥10 dias de terapia IV efetiva (≥7 dias pós-cirurgia), com ETE sem abscesso/indicação cirúrgica antes da randomização — não inferioridade da via oral protocolizada para o desfecho composto em 6 meses.",
+      "ref": [
+        "iversen2019-poet"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-25",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Cirurgia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Cirurgia",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Cirurgia"
+        ]
+      },
+      "q": "Quais são as três indicações centrais para cirurgia na endocardite infecciosa?",
+      "options": [
+        "Insuficiência renal aguda, febre persistente isolada e leucocitose",
+        "Hipertensão pulmonar, arritmia ventricular e disfunção hepática",
+        "Idade avançada, comorbidade cardiovascular prévia e tempo prolongado de bacteremia, independentemente de outros achados",
+        "Falha do ecocardiograma em demonstrar vegetação, isoladamente, já configura indicação cirúrgica",
+        "Insuficiência cardíaca, infecção não controlada e prevenção de embolização"
+      ],
+      "correct": 4,
+      "exp": "As três indicações-mãe: insuficiência cardíaca (regurgitação/obstrução/fístula aguda grave), infecção não controlada (abscesso, vegetação crescente, bacteremia persistente, fungo/multirresistente) e prevenção de embolia (vegetação ≥10 mm com evento prévio ou outra indicação).",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-26",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Cirurgia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Cirurgia",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Cirurgia"
+        ]
+      },
+      "q": "Como um AIT, um AVC isquêmico ou uma hemorragia intracraniana influenciam o momento da cirurgia na endocardite infecciosa?",
+      "options": [
+        "Após AIT ou AVC isquêmico sem hemorragia intracraniana, coma ou dano neurológico devastador, a cirurgia indicada por insuficiência cardíaca, infecção não controlada ou alto risco embólico geralmente não deve ser adiada; na hemorragia intracraniana, o momento é individualizado, sem atraso rígido universal",
+        "Após AVC isquêmico, a cirurgia costuma ser adiada por 2 semanas; após hemorragia intracraniana, por 4 semanas, mesmo diante de insuficiência cardíaca refratária, infecção não controlada ou alto risco embólico recorrente",
+        "A trombectomia mecânica e a trombólise intravenosa teriam papel equivalente no AVC isquêmico por êmbolo séptico, já que o risco hemorrágico da vegetação infectada não distingue as duas abordagens de reperfusão",
+        "Anticoagulação plena reduziria a recorrência de fenômenos embólicos e é geralmente iniciada assim que se exclui hemorragia intracraniana, ainda que sem evidência robusta de benefício líquido nesse contexto",
+        "Na presença de coma estabelecido após o evento neurológico, a decisão cirúrgica dependeria principalmente da estabilidade hemodinâmica atual do paciente, com pouco peso da extensão do dano neurológico ou do prognóstico funcional esperado"
+      ],
+      "correct": 0,
+      "exp": "Após AIT/AVC isquêmico sem hemorragia, coma ou dano devastador, cirurgia indicada não deve ser adiada. Na hemorragia intracraniana, decisão individualizada (recomendações atuais abandonam atraso rígido universal). Trombólise IV não é recomendada (risco hemorrágico); anticoagulação não é iniciada para prevenir embolia da EI.",
+      "ref": [
+        "delgado2023-esc-endocardite",
+        "siquierpadilla2022-timing-cirurgico"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-37",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é o esquema sinérgico clássico para endocardite por Enterococcus faecalis sensível à ampicilina e qual alternativa reduz a nefrotoxicidade?",
+      "options": [
+        "Vancomicina isolada em monoterapia constituiria o esquema clássico de escolha nesse cenário; daptomicina isolada seria a alternativa poupadora de nefrotoxicidade renal",
+        "Ampicilina + gentamicina como esquema clássico; ampicilina + ceftriaxona como alternativa eficaz mesmo em cepas com resistência de alto nível a aminoglicosídeo (HLAR)",
+        "Penicilina G isolada em altas doses constituiria o esquema clássico de escolha nesse cenário; linezolida isolada seria a alternativa poupadora de nefrotoxicidade renal",
+        "Ampicilina isolada em monoterapia constituiria o esquema clássico de escolha nesse cenário, sem alternativa validada disponível para poupar nefrotoxicidade em cepas HLAR",
+        "Ceftriaxona isolada em monoterapia constituiria o esquema clássico de escolha nesse cenário; vancomicina associada a gentamicina seria a alternativa poupadora de nefrotoxicidade"
+      ],
+      "correct": 1,
+      "exp": "O esquema sinérgico clássico para E. faecalis sensível é ampicilina + gentamicina. Quando há resistência de alto nível a aminoglicosídeo (HLAR) ou se busca evitar nefrotoxicidade, ampicilina + ceftriaxona (sinergismo por dupla inibição de PBPs) é alternativa validada e eficaz, inclusive em HLAR.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-39",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é a duração do betalactâmico na endocardite não complicada de valva nativa por estreptococos viridans ou Streptococcus gallolyticus plenamente sensíveis, e quando ela pode ser reduzida?",
+      "options": [
+        "6 semanas de betalactâmico isolado, reduzidas a apenas 4 semanas quando gentamicina é associada logo no início do tratamento",
+        "4 semanas de betalactâmico associado a gentamicina durante todo o período completo de tratamento, sem qualquer possibilidade de esquema encurtado",
+        "2 semanas de betalactâmico isolado, estendidas a 4 semanas apenas se houver embolização documentada durante a evolução",
+        "4 semanas de betalactâmico isolado, podendo ser reduzida a 2 semanas se associado a gentamicina sinérgica nos primeiros dias do tratamento",
+        "6 semanas de betalactâmico associado a gentamicina apenas nas duas primeiras semanas de tratamento, sem redução possível do tempo total"
+      ],
+      "correct": 3,
+      "exp": "Em cepas plenamente sensíveis à penicilina, valva nativa não complicada: 4 semanas de betalactâmico isolado (penicilina/ceftriaxona), ou esquema encurtado de 2 semanas se associado a gentamicina sinérgica nos primeiros dias. Cepas com sensibilidade reduzida ou prótese valvar exigem esquemas mais longos.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-40",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Cirurgia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Cirurgia",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Cirurgia"
+        ]
+      },
+      "q": "Quais são as três categorias de indicação cirúrgica na endocardite infecciosa e quais exemplos caracterizam cada uma?",
+      "options": [
+        "Febre persistente isolada, uma única hemocultura periférica positiva isolada e a presença de qualquer vegetação ao ecocardiograma transtorácico, independentemente do tamanho ou da repercussão hemodinâmica associada ao achado encontrado",
+        "Idade avançada isolada do paciente, comorbidade cardiovascular prévia já estabelecida antes do quadro atual e isolamento de agente etiológico resistente ao antibiótico de primeira linha inicialmente escolhido pela equipe assistente",
+        "Insuficiência renal aguda associada ao quadro, elevação isolada de proteína C-reativa sérica e leucocitose persistente ao longo dos dias, sem qualquer outro achado clínico ou ecocardiográfico associado ao quadro descrito",
+        "Tempo de antibioticoterapia superior a apenas 2 semanas sem qualquer melhora clínica isolada percebida, independentemente de disfunção valvar estrutural ou fenômeno embólico documentado ao ecocardiograma já realizado",
+        "Insuficiência cardíaca refratária por disfunção valvar, infecção não controlada (abscesso, fístula, vegetação em crescimento apesar de antibiótico adequado) e prevenção de embolização (vegetação grande com evento embólico prévio ou fator de risco associado)"
+      ],
+      "correct": 4,
+      "exp": "As três indicações-mãe para cirurgia na EI são: insuficiência cardíaca por disfunção valvar, infecção não controlada localmente (abscesso, fístula, deiscência protética, vegetação persistente apesar de antibiótico adequado) e prevenção de embolização em vegetações grandes/de alto risco, especialmente após evento embólico prévio.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-41",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [
+          "microbiologia"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento",
+          "Microbiologia"
+        ]
+      },
+      "q": "Qual é o tratamento de escolha para endocardite pelo grupo HACEK e por que a produção de betalactamase interfere nessa escolha?",
+      "options": [
+        "Ceftriaxona (cefalosporina de 3ª geração), pela prevalência relevante de cepas produtoras de betalactamase, que compromete a eficácia da ampicilina isolada",
+        "Ampicilina isolada em monoterapia, pois a produção de betalactamase seria infrequente e o teste de sensibilidade permitiria ajuste posterior",
+        "Vancomicina isolada, pela suposta resistência intrínseca dos microrganismos do grupo HACEK às cefalosporinas de terceira geração disponíveis",
+        "Penicilina G associada a gentamicina, esquema clássico que supostamente superaria a produção de betalactamase pelas cepas do grupo HACEK",
+        "Ciprofloxacino associado a aminoglicosídeo, reservando a ceftriaxona apenas às cepas comprovadamente sem qualquer produção de betalactamase"
+      ],
+      "correct": 0,
+      "exp": "Como parte relevante das cepas do grupo HACEK produz betalactamase, comprometendo a ampicilina, o tratamento de escolha é ceftriaxona (ou outra cefalosporina de 3ª geração), geralmente por 4 semanas em valva nativa.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    }
+  ],
+  "fontes": {
+    "delgado2023-esc-endocardite": "Delgado V, Ajmone Marsan N, de Waha S, et al. 2023 ESC Guidelines for the management of endocarditis. \u003cem>European Heart Journal\u003c/em>. 2023;44:3948–4042. doi:10.1093/eurheartj/ehad193.",
+    "iversen2019-poet": "Iversen K, Ihlemann N, Gill SU, et al. Partial Oral versus Intravenous Antibiotic Treatment of Endocarditis (POET). \u003cem>New England Journal of Medicine\u003c/em>. 2019;380:415–424. doi:10.1056/NEJMoa1808312.",
+    "siquierpadilla2022-timing-cirurgico": "Siquier-Padilla J, et al. Optimal Timing for Cardiac Surgery in Infective Endocarditis with Neurological Complications: A Narrative Review. \u003cem>Journal of Clinical Medicine\u003c/em>. 2022;11(18):5275. doi:10.3390/jcm11185275.",
+    "fowler2023-duke-iscvid": "Fowler VG Jr, Durack DT, Selton-Suty C, et al. The 2023 Duke–International Society for Cardiovascular Infectious Diseases Criteria for Infective Endocarditis. \u003cem>Clinical Infectious Diseases\u003c/em>. 2023;77:518–526. doi:10.1093/cid/ciad271."
+  }
+}
+</script>
+
+<script src="../_shared/app.js"></script>
+<script>
+// Dados específicos desta lista — o motor de quiz (renderização, resposta,
+// salvamento) e as preferências de tema/palete/visão vêm de ../_shared/app.js.
+// Não hardcode conteúdo de questão aqui; edite o banco central em vez disso.
+
+const quizData = JSON.parse(document.getElementById("quiz-data").textContent);
+const QUIZ_ID = quizData.quizId;
+const QUIZ_TITLE = quizData.title;
+const questions = quizData.questions; // { id, tema, cat, q, img, imgAlt, options, correct, exp, ref: [slug,...] }
+const fontes = quizData.fontes;       // { slug: citationHtml }
+
+document.getElementById("page-title").textContent = "Questões — " + QUIZ_TITLE;
+document.getElementById("quiz-title").textContent = QUIZ_TITLE;
+document.getElementById("quiz-desc").textContent = quizData.description || "";
+document.getElementById("quiz-footnote").textContent = quizData.footnote || "";
+
+// Reference numbering is assigned once, by first appearance in the ORIGINAL
+// question order (not the shuffled display order), so numbers stay stable
+// across reshuffles/resets within the same file.
+const refOrder = [];
+questions.forEach(item => {
+  (item.ref || []).forEach(slug => {
+    if (!refOrder.includes(slug)) refOrder.push(slug);
+  });
+});
+const refNumberMap = {};
+refOrder.forEach((slug, i) => { refNumberMap[slug] = i + 1; });
+
+document.getElementById("focus-prev").addEventListener("click", () => { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.getElementById("focus-next").addEventListener("click", () => { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.addEventListener("keydown", event => {
+  if (viewMode !== "focus" || settingsOverlay.classList.contains("open")) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if (event.key === "ArrowLeft" && focusPosition > 0) { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  if (event.key === "ArrowRight" && focusPosition < questionOrder.length - 1) { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+});
+setTheme(themeMode);
+setPalette(paletteMode);
+setView(viewMode, true);
+
+renderQuiz();
+renderRefs();
+</script>
+</body>
+</html>

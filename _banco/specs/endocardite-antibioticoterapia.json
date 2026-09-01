@@ -1,0 +1,9 @@
+{
+  "quizId": "endocardite-antibioticoterapia",
+  "title": "Endocardite — Antibioticoterapia",
+  "description": "Questões focadas em coleta pré-tratamento, terapia empírica e dirigida, esquemas por agente, sinergismo, toxicidade, prótese valvar, duração e transição oral.",
+  "footnote": "Material educacional baseado principalmente na diretriz ESC 2023; decisões clínicas reais exigem infectologia, microbiologia, protocolos locais, função renal, alergias e antibiograma.",
+  "ordem": 5,
+  "resumo": "culturas, terapia empírica e dirigida, MSSA/MRSA, enterococos, prótese, duração e transição oral",
+  "filtro": { "temas": ["Endocardite Infecciosa"], "categorias": ["Antibioticoterapia"] }
+}

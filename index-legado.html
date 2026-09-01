@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questões</title>
+<style>
+  :root {
+    --bg: #f4f6f8; --card-bg: #ffffff; --text: #1f2937; --text-muted: #6b7280;
+    --border: #e2e6ea; --accent: #2563eb; --shadow: 0 1px 3px rgba(16,24,40,0.08), 0 1px 2px rgba(16,24,40,0.04);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); }
+  header { background: #172554; color: #fff; padding: 1.55rem 1.5rem; }
+  .header-inner { max-width: 920px; margin: 0 auto; }
+  header h1 { margin: 0 0 0.2rem; font-size: 1.45rem; }
+  header p { margin: 0; opacity: 0.9; font-size: 0.9rem; }
+  .container { max-width: 920px; margin: 0 auto; padding: 1.35rem 1rem 3rem; }
+  h2 { font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; margin: 1.6rem 0 0.7rem; }
+  .card {
+    display: block; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 1rem 1.1rem; margin-bottom: 0.7rem; text-decoration: none; color: var(--text); box-shadow: var(--shadow);
+  }
+  .card:hover { border-color: var(--accent); }
+  .card .title { font-weight: 600; font-size: 0.98rem; margin-bottom: 0.2rem; }
+  .card .desc { font-size: 0.85rem; color: var(--text-muted); }
+  .section-note { margin: -0.25rem 0 0.9rem; color: var(--text-muted); font-size: 0.84rem; line-height: 1.45; }
+  .progress-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem; margin: 0 0 0.85rem; }
+  .progress-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem; text-align: center; }
+  .progress-box strong { display: block; font-size: 1.25rem; }
+  .progress-box span { color: var(--text-muted); font-size: 0.76rem; }
+  .card.status-done { border-left: 5px solid #22c55e; }
+  .card.status-new { border-left: 5px solid #f59e0b; }
+  .badge { display: inline-block; margin-bottom: 0.45rem; padding: 0.18rem 0.48rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; }
+  .badge.done { color: #166534; background: #dcfce7; }
+  .badge.new { color: #92400e; background: #fef3c7; }
+  .card .action { margin-top: 0.55rem; font-size: 0.8rem; font-weight: 600; color: var(--accent); }
+  .study-guide { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.75rem; box-shadow: var(--shadow); overflow: hidden; transition: border-color 180ms ease, box-shadow 180ms ease; }
+  .study-guide:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+  .study-guide[open] { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); box-shadow: 0 8px 24px rgba(16,24,40,0.10); }
+  .study-guide summary { display: flex; align-items: center; gap: 0.7rem; cursor: pointer; padding: 1rem 1.1rem; font-weight: 650; list-style: none; user-select: none; transition: background-color 180ms ease, color 180ms ease; }
+  .study-guide summary::-webkit-details-marker { display: none; }
+  .study-guide summary::before { content: ""; flex: 0 0 auto; width: 0.48rem; height: 0.48rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transform-origin: center; opacity: 0.75; transition: transform 260ms cubic-bezier(.2,.8,.2,1), opacity 180ms ease; }
+  .study-guide summary:hover { color: var(--accent); background: color-mix(in srgb, var(--accent) 5%, transparent); }
+  .study-guide summary:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: -3px; border-radius: 9px; }
+  .study-guide[open] summary { color: var(--accent); border-bottom: 1px solid var(--border); }
+  .study-guide[open] summary::before { transform: rotate(45deg); opacity: 1; }
+  .study-content { padding: 0.25rem 1.1rem 1.05rem; font-size: 0.86rem; line-height: 1.55; }
+  .study-content h3 { margin: 0.9rem 0 0.25rem; font-size: 0.83rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.025em; }
+  .study-content ol, .study-content ul { margin: 0.25rem 0 0.5rem; padding-left: 1.25rem; }
+  .study-content li { margin: 0.28rem 0; }
+  .study-content a { color: var(--accent); text-underline-offset: 2px; }
+  .study-content .method { border-left: 3px solid var(--accent); padding: 0.55rem 0.7rem; margin-top: 0.8rem; background: color-mix(in srgb, var(--accent) 7%, var(--card-bg)); border-radius: 0 6px 6px 0; }
+  .priority { display: inline-block; padding: 0.14rem 0.42rem; margin-right: 0.25rem; border-radius: 999px; font-size: 0.68rem; font-weight: 700; background: #dbeafe; color: #1e40af; }
+  .session-dashboard { --blue:#2563eb; --cyan:#0891b2; --amber:#d97706; --green:#16a34a; --violet:#7c3aed; margin: 0.2rem 0 1.15rem; }
+  .session-hero { position: relative; overflow: hidden; display: grid; grid-template-columns: 1.35fr .65fr; gap: 1rem; padding: 1.25rem; border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border)); border-radius: 16px; color: var(--text); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--card-bg)), var(--card-bg) 62%); box-shadow: 0 14px 36px rgba(15,23,42,.08); }
+  .session-hero::after { content:""; position:absolute; width:190px; height:190px; right:-72px; top:-104px; border-radius:50%; border:35px solid color-mix(in srgb, var(--accent) 11%, transparent); }
+  .session-kicker { margin:0 0 .35rem; color:var(--accent); font-size:.7rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+  .session-hero h2 { margin:0; font-size:clamp(1.15rem,3vw,1.55rem); letter-spacing:-.025em; }
+  .session-hero p { margin:.45rem 0 0; max-width:56ch; color:var(--text-muted); font-size:.84rem; }
+  .session-score { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:.8rem; }
+  .session-ring { --value:62; width:82px; aspect-ratio:1; display:grid; place-items:center; border-radius:50%; background:conic-gradient(var(--accent) calc(var(--value)*1%), color-mix(in srgb,var(--border) 72%,transparent) 0); }
+  .session-ring::before { content:""; width:62px; aspect-ratio:1; border-radius:50%; background:var(--card-bg); }
+  .session-ring strong { position:absolute; font-size:1.05rem; }
+  .session-score-copy strong,.session-score-copy span { display:block; }
+  .session-score-copy strong { font-size:.86rem; }
+  .session-score-copy span { color:var(--text-muted); font-size:.72rem; }
+  .session-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:.65rem; margin:.7rem 0; }
+  .session-metric { padding:.75rem .85rem; border:1px solid var(--border); border-radius:12px; background:var(--card-bg); }
+  .session-metric strong { display:block; font-size:1.12rem; letter-spacing:-.02em; }
+  .session-metric span { display:block; margin-top:.12rem; color:var(--text-muted); font-size:.72rem; }
+  .session-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:.7rem; }
+  .session-card { padding:1rem; border:1px solid var(--border); border-radius:14px; background:var(--card-bg); }
+  .session-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:.75rem; margin-bottom:.8rem; }
+  .session-card h3 { margin:0; font-size:.86rem; }
+  .session-card-head span { color:var(--text-muted); font-size:.7rem; }
+  .topic-row { display:grid; grid-template-columns:minmax(116px,1fr) 1.45fr 38px; align-items:center; gap:.65rem; margin:.65rem 0; }
+  .topic-label strong,.topic-label small { display:block; }
+  .topic-label strong { font-size:.77rem; }
+  .topic-label small { color:var(--text-muted); font-size:.65rem; }
+  .topic-track { height:8px; overflow:hidden; border-radius:99px; background:color-mix(in srgb,var(--border) 70%,transparent); }
+  .topic-fill { height:100%; width:var(--progress); border-radius:inherit; background:var(--bar,var(--accent)); }
+  .topic-value { text-align:right; color:var(--text-muted); font-size:.7rem; font-variant-numeric:tabular-nums; }
+  .session-legend { display:flex; flex-wrap:wrap; gap:.65rem; margin-top:.75rem; color:var(--text-muted); font-size:.66rem; }
+  .session-legend span::before { content:""; display:inline-block; width:.48rem; height:.48rem; margin-right:.3rem; border-radius:50%; background:var(--dot); }
+  .today-plan { counter-reset:session-step; list-style:none; margin:0; padding:0; }
+  .today-plan li { counter-increment:session-step; position:relative; padding:0 0 .82rem 2.2rem; }
+  .today-plan li:not(:last-child)::after { content:""; position:absolute; left:.78rem; top:1.35rem; bottom:.05rem; width:1px; background:var(--border); }
+  .today-plan li::before { content:counter(session-step); position:absolute; left:0; top:.05rem; width:1.55rem; height:1.55rem; display:grid; place-items:center; border-radius:50%; color:#fff; background:var(--step,var(--accent)); font-size:.7rem; font-weight:800; }
+  .today-plan strong,.today-plan small { display:block; }
+  .today-plan strong { font-size:.78rem; }
+  .today-plan small { margin-top:.12rem; color:var(--text-muted); font-size:.68rem; line-height:1.4; }
+  .data-caveat { display:flex; gap:.55rem; align-items:flex-start; margin-top:.7rem; padding:.65rem .75rem; border-radius:10px; color:#805400; background:#fff7e6; font-size:.7rem; line-height:1.4; }
+  .analysis-title { display:flex; align-items:end; justify-content:space-between; gap:1rem; margin:1.35rem 0 .65rem; }
+  .analysis-title h2,.analysis-title p { margin:0; }
+  .analysis-title p { color:var(--text-muted); font-size:.75rem; }
+  .priority-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.65rem; margin-bottom:1.2rem; }
+  .priority-card { position:relative; overflow:hidden; min-height:128px; padding:1rem 1rem .9rem; border:1px solid var(--border); border-radius:14px; background:var(--card-bg); }
+  .priority-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:var(--tone); }
+  .priority-rank { display:inline-flex; align-items:center; gap:.35rem; color:var(--tone); font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; }
+  .priority-card h3 { margin:.45rem 0 .3rem; font-size:.9rem; }
+  .priority-card p { margin:0; color:var(--text-muted); font-size:.73rem; line-height:1.45; }
+  .priority-card a { display:inline-block; margin-top:.6rem; color:var(--tone); font-size:.72rem; font-weight:750; text-decoration:none; }
+  .priority-card a:hover { text-decoration:underline; }
+  .quick-actions { display: grid; grid-template-columns: 1.6fr 1fr; gap: 0.7rem; margin-bottom: 1.35rem; }
+  .quick-action { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 76px; padding: 0.95rem 1rem; border: 1px solid var(--border); border-radius: 12px; color: var(--text); background: var(--card-bg); text-decoration: none; }
+  .quick-action.primary { color: #fff; border-color: #2563eb; background: #2563eb; }
+  .quick-action strong, .quick-action small { display: block; }
+  .quick-action small { margin-top: 0.2rem; color: inherit; opacity: 0.76; }
+  .quick-action .arrow { font-size: 1.2rem; }
+  .progress-panel { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 1.35rem; }
+  .progress-panel > h2 { margin: 0; padding: 0.9rem 1rem 0.35rem; color: var(--text); text-transform: none; letter-spacing: 0; font-size: 1rem; }
+  .progress-item { display: grid; grid-template-columns: minmax(180px, 1fr) 2fr auto; align-items: center; gap: 1rem; padding: 0.85rem 1rem; border-top: 1px solid var(--border); }
+  .progress-item:first-of-type { border-top: 0; }
+  .progress-meta strong, .progress-meta span { display: block; }
+  .progress-meta span { margin-top: 0.15rem; color: var(--text-muted); font-size: 0.78rem; }
+  .progress-track { height: 7px; overflow: hidden; border-radius: 999px; background: var(--border); }
+  .progress-track span { display: block; width: var(--progress); height: 100%; border-radius: inherit; background: #22c55e; }
+  .progress-count { color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; }
+  .progress-actions { display: flex; gap: 0.45rem; grid-column: 2 / 4; }
+  .compact-link { color: var(--accent); font-size: 0.8rem; font-weight: 650; text-decoration: none; }
+  .catalog-head { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin: 1.5rem 0 0.7rem; }
+  .catalog-head h2 { margin: 0; }
+  .catalog-head p { margin: 0.2rem 0 0; }
+  .search { width: min(290px, 42vw); padding: 0.65rem 0.75rem; border: 1px solid var(--border); border-radius: 9px; color: var(--text); background: var(--card-bg); font: inherit; }
+  .list-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+  .list-grid .card { margin: 0; box-shadow: none; }
+  .empty-state { display: none; padding: 1rem; color: var(--text-muted); text-align: center; }
+  .resource-panel { margin-top: 1.4rem; border-top: 1px solid var(--border); }
+  .resource-panel > summary { cursor: pointer; list-style: none; padding: 1rem 0; font-weight: 650; }
+  .resource-panel > summary::-webkit-details-marker { display: none; }
+  .resource-panel > summary::after { content: "+"; float: right; color: var(--text-muted); font-size: 1.2rem; }
+  .resource-panel[open] > summary::after { content: "−"; }
+  .resource-panel-body { padding-bottom: 0.5rem; }
+  .settings-trigger { position: fixed; top: 1rem; right: 1rem; z-index: 50; display: inline-flex; align-items: center; gap: 0.45rem; border: 1px solid rgba(255,255,255,0.35); border-radius: 9px; padding: 0.52rem 0.72rem; background: rgba(15,23,42,0.78); color: #fff; font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer; box-shadow: 0 5px 18px rgba(0,0,0,0.22); backdrop-filter: blur(8px); }
+  .settings-trigger:hover { background: var(--accent); }
+  .settings-overlay { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; background: rgba(15,23,42,0.58); backdrop-filter: blur(4px); }
+  .settings-overlay.open { display: flex; }
+  .settings-dialog { width: min(28rem,100%); background: var(--card-bg); color: var(--text); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 24px 70px rgba(0,0,0,.3); }
+  .settings-header { display: flex; justify-content: space-between; gap: 1rem; padding: 1.2rem 1.25rem 1rem; border-bottom: 1px solid var(--border); }
+  .settings-header h2 { margin: 0; color: var(--text); text-transform: none; letter-spacing: 0; font-size: 1.15rem; }
+  .settings-header p { margin: .18rem 0 0; color: var(--text-muted); font-size: .82rem; }
+  .settings-close { width: 2rem; height: 2rem; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); font-size: 1.35rem; cursor: pointer; }
+  .settings-body { padding: 1.1rem 1.25rem; }
+  .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .9rem; border: 1px solid var(--border); border-radius: 11px; background: var(--bg); }
+  .setting-copy strong,.setting-copy span { display:block; } .setting-copy span { margin-top:.15rem; color:var(--text-muted); font-size:.76rem; }
+  .segmented-control { display:inline-flex; padding:.2rem; gap:.15rem; border:1px solid var(--border); border-radius:9px; background:var(--card-bg); box-shadow:var(--shadow); }
+  .segmented-control button { border:0; border-radius:6px; padding:.38rem .58rem; background:transparent; color:var(--text-muted); font:inherit; font-size:.78rem; font-weight:650; cursor:pointer; }
+  .segmented-control button.active { color:#fff; background:var(--accent); }
+  .settings-footer { display:flex; justify-content:flex-end; padding:0 1.25rem 1.2rem; }
+  .settings-done { border:0; border-radius:8px; padding:.58rem 1rem; background:var(--accent); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+  body.settings-open { overflow:hidden; }
+  @media (max-width: 680px) { .quick-actions, .list-grid, .session-grid { grid-template-columns: 1fr; } .session-hero { grid-template-columns:1fr; } .session-score { justify-content:flex-start; } .progress-item { grid-template-columns: 1fr auto; gap: 0.55rem; } .progress-track { grid-column: 1 / 3; } .progress-actions { grid-column: 1 / 3; } .catalog-head { align-items: stretch; flex-direction: column; } .search { width: 100%; } }
+  @media (max-width: 520px) { .progress-summary,.session-metrics,.priority-grid { grid-template-columns: 1fr; } .topic-row { grid-template-columns:minmax(105px,1fr) 1.2fr 34px; gap:.45rem; } }
+  @media (prefers-reduced-motion: reduce) {
+    .study-guide, .study-guide summary, .study-guide summary::before { transition: none; }
+  }
+  :root[data-theme="dark"] { --bg: #0f1115; --card-bg: #181b21; --text: #e5e7eb; --text-muted: #9aa2b1; --border: #2a2e37; --accent: #60a5fa; --shadow: 0 1px 3px rgba(0,0,0,0.4); }
+  :root[data-theme="dark"] header { background: linear-gradient(135deg, #1e3a8a, #312e81); }
+  :root[data-theme="dark"] .badge.done { color: #86efac; background: #14532d; }
+  :root[data-theme="dark"] .badge.new { color: #fde68a; background: #713f12; }
+  :root[data-theme="dark"] .priority { color: #bfdbfe; background: #1e3a8a; }
+  :root[data-theme="dark"] .data-caveat { color:#f5d58a; background:#2e2013; }
+  :root[data-palette="presleep"] { --accent: #d9822b; }
+  :root[data-palette="presleep"] header { background: linear-gradient(135deg, #6b3f14, #a15c1a); }
+  :root[data-palette="presleep"] .priority { color: #6b3f14; background: #fbe9d3; }
+  :root[data-theme="dark"][data-palette="presleep"] { --bg: #15100c; --card-bg: #201810; --text: #ece0cf; --text-muted: #ab9a83; --border: #362a1c; --accent: #e0993d; --shadow: 0 1px 3px rgba(0,0,0,0.5); }
+  :root[data-theme="dark"][data-palette="presleep"] header { background: linear-gradient(135deg, #2c1d0f, #5a3a16); }
+  :root[data-theme="dark"][data-palette="presleep"] .badge.done { color: #d5e8b0; background: #263314; }
+  :root[data-theme="dark"][data-palette="presleep"] .badge.new { color: #f5d58a; background: #4a3312; }
+  :root[data-theme="dark"][data-palette="presleep"] .priority { color: #f0b96a; background: #3a2711; }
+  @media (max-width:520px) { .settings-trigger .settings-label { display:none; } .setting-row { align-items:stretch; flex-direction:column; } .segmented-control button { flex:1; } }
+
+  /* ---- Busca global (Ctrl+K) ---- */
+  .global-search-hint { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.6rem; color: var(--text-muted); font-size: 0.78rem; }
+  .global-search-hint kbd { padding: 0.1rem 0.4rem; border: 1px solid var(--border); border-radius: 5px; background: var(--card-bg); font: inherit; font-size: 0.72rem; color: var(--text); }
+  .search-overlay { position: fixed; inset: 0; z-index: 200; display: none; align-items: flex-start; justify-content: center; padding: 10vh 1rem 1rem; background: rgba(15,23,42,0.58); backdrop-filter: blur(4px); }
+  .search-overlay.open { display: flex; }
+  .search-dialog { width: min(38rem, 100%); max-height: min(70vh, 640px); display: flex; flex-direction: column; background: var(--card-bg); color: var(--text); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 24px 70px rgba(0,0,0,.35); overflow: hidden; }
+  .search-input-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); }
+  .search-input-row .icon { color: var(--text-muted); font-size: 1rem; }
+  #global-search-input { flex: 1; border: 0; background: transparent; color: var(--text); font: inherit; font-size: 0.98rem; outline: none; }
+  .search-input-row .search-esc { color: var(--text-muted); font-size: 0.72rem; border: 1px solid var(--border); border-radius: 5px; padding: 0.1rem 0.4rem; }
+  .search-results { overflow-y: auto; padding: 0.4rem; }
+  .search-result { display: block; width: 100%; text-align: left; padding: 0.65rem 0.75rem; border: 0; border-radius: 9px; background: transparent; color: var(--text); cursor: pointer; font: inherit; }
+  .search-result:hover, .search-result.active { background: var(--accent-soft); }
+  .search-result .sr-path { font-size: 0.72rem; color: var(--accent); font-weight: 650; margin-bottom: 0.2rem; }
+  .search-result .sr-text { font-size: 0.87rem; line-height: 1.4; margin-bottom: 0.25rem; }
+  .search-result .sr-meta { display: flex; gap: 0.4rem; flex-wrap: wrap; font-size: 0.68rem; color: var(--text-muted); }
+  .search-result .sr-meta .sr-tag { padding: 0.08rem 0.4rem; border-radius: 999px; background: var(--border); }
+  .search-state { padding: 1.5rem 1.25rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+  .search-state.hidden { display: none; }
+  .search-footer { padding: 0.55rem 1rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.72rem; text-align: right; }
+  :root[data-theme="dark"] .search-result .sr-meta .sr-tag { background: #262b35; }
+  body.search-open { overflow: hidden; }
+</style>
+</head>
+<body>
+<button type="button" class="settings-trigger" aria-haspopup="dialog" aria-label="Abrir configurações"><span aria-hidden="true">⚙</span><span class="settings-label">Configurações</span></button>
+<header>
+  <div class="header-inner">
+    <h1>Banco de Questões</h1>
+    <p>Monte sessões personalizadas e acompanhe seu desempenho por questão.</p>
+  </div>
+</header>
+<div class="container">
+  <nav class="quick-actions" aria-label="Ações principais">
+    <a class="quick-action primary" href="medicina/seletor.html">
+      <span><strong>Montar uma sessão</strong><small>Navegue pela hierarquia e escolha o nível de conteúdo</small></span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="quick-action" href="_dados/dashboard.html">
+      <span><strong>Desempenho e plano de estudo</strong><small>Análise, prioridades e próxima sessão em um só lugar</small></span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+  </nav>
+
+  <p class="section-note home-note">As sessões são montadas sob demanda. O histórico é agregado por questão, independentemente do recorte usado.</p>
+
+  <section aria-labelledby="topic-sessions-title">
+    <div class="catalog-head">
+      <div>
+        <h2 id="topic-sessions-title">Sessões por tema</h2>
+        <p class="section-note">Abra diretamente todas as questões de um tema.</p>
+      </div>
+    </div>
+    <div class="list-grid" id="list-grid">
+      <!-- TOPIC_SESSIONS_START -->
+      <a class="card" href="medicina/seletor.html?hierarquia=%5B%22Medicina%22%2C%22Farmacologia%22%2C%22Antimicrobianos%22%5D"><div class="title">Antimicrobianos - fundamentos</div><div class="desc">76 questões</div></a>
+      <a class="card" href="medicina/seletor.html?hierarquia=%5B%22Medicina%22%2C%22Fisiologia%20e%20fisiopatologia%22%2C%22Dist%C3%BArbios%20de%20S%C3%B3dio%20e%20%C3%81gua%22%5D"><div class="title">Distúrbios de Sódio e Água</div><div class="desc">24 questões</div></a>
+      <a class="card" href="medicina/seletor.html?hierarquia=%5B%22Medicina%22%2C%22Infectologia%22%2C%22Endocardite%20Infecciosa%22%5D"><div class="title">Endocardite Infecciosa</div><div class="desc">52 questões</div></a>
+      <a class="card" href="medicina/seletor.html?hierarquia=%5B%22Medicina%22%2C%22Farmacologia%22%2C%22Hipertens%C3%A3o%20Arterial%20e%20SRAA%22%5D"><div class="title">Hipertensão Arterial e SRAA</div><div class="desc">38 questões</div></a>
+      <a class="card" href="medicina/seletor.html?hierarquia=%5B%22Medicina%22%2C%22Cardiologia%22%2C%22Insufici%C3%AAncia%20Card%C3%ADaca%20%E2%80%94%20Caso%204%22%5D"><div class="title">Insuficiência Cardíaca — Caso 4</div><div class="desc">40 questões</div></a>
+      <a class="card" href="medicina/seletor.html?hierarquia=%5B%22Medicina%22%2C%22Radiologia%22%2C%22Radiografia%20de%20T%C3%B3rax%20B%C3%A1sica%22%5D"><div class="title">Radiografia de Tórax Básica</div><div class="desc">18 questões</div></a>
+      <a class="card" href="medicina/seletor.html?hierarquia=%5B%22Medicina%22%2C%22Pneumologia%22%2C%22Tosse%20Cr%C3%B4nica%20e%20Hemoptise%22%5D"><div class="title">Tosse Crônica e Hemoptise</div><div class="desc">24 questões</div></a>
+      <a class="card" href="medicina/seletor.html?hierarquia=%5B%22Medicina%22%2C%22Neurocirurgia%22%2C%22Tumores%20do%20Sistema%20Nervoso%20Central%22%5D"><div class="title">Tumores do Sistema Nervoso Central</div><div class="desc">70 questões</div></a>
+      <!-- TOPIC_SESSIONS_END -->
+    </div>
+  </section>
+
+  <p class="global-search-hint">Buscar questão por texto, tema ou tag: <kbd>Ctrl</kbd>+<kbd>K</kbd></p>
+
+</div>
+<div class="search-overlay" id="search-overlay" aria-hidden="true">
+  <section class="search-dialog" role="dialog" aria-modal="true" aria-label="Busca de questões">
+    <div class="search-input-row">
+      <span class="icon" aria-hidden="true">🔎</span>
+      <input type="text" id="global-search-input" placeholder="Buscar por texto, tema, categoria ou tag..." autocomplete="off" spellcheck="false">
+      <span class="search-esc">Esc</span>
+    </div>
+    <div class="search-results" id="search-results" role="listbox" aria-label="Resultados da busca"></div>
+    <p class="search-state" id="search-state">Digite ao menos 2 caracteres para buscar entre as questões do banco.</p>
+    <div class="search-footer" id="search-footer" hidden></div>
+  </section>
+</div>
+<div class="settings-overlay" id="settings-overlay" aria-hidden="true"><section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title"><div class="settings-header"><div><h2 id="settings-title">Configurações</h2><p>Personalize a aparência do banco de questões.</p></div><button type="button" class="settings-close" aria-label="Fechar configurações">&times;</button></div><div class="settings-body"><div class="setting-row"><div class="setting-copy"><strong>Tema</strong><span>Escolha a claridade da interface.</span></div><div class="segmented-control" aria-label="Tema da interface"><button type="button" data-theme-choice="light" aria-pressed="false">Claro</button><button type="button" data-theme-choice="dark" aria-pressed="false">Escuro</button></div></div><div class="setting-row"><div class="setting-copy"><strong>Paleta de cores</strong><span>Normal ou tons que afetam menos o sono.</span></div><div class="segmented-control" aria-label="Paleta de cores"><button type="button" data-palette-choice="normal" aria-pressed="false">Normal</button><button type="button" data-palette-choice="presleep" aria-pressed="false">Pré-sono</button></div></div></div><div class="settings-footer"><button type="button" class="settings-done">Concluído</button></div></section></div>
+<script>
+const settingsOverlay = document.getElementById("settings-overlay");
+const settingsTrigger = document.querySelector(".settings-trigger");
+function setTheme(mode) { const theme = mode === "dark" ? "dark" : "light"; document.documentElement.dataset.theme = theme; document.querySelectorAll("[data-theme-choice]").forEach(button => { const active = button.dataset.themeChoice === theme; button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active)); }); try { localStorage.setItem("questoes-theme", theme); } catch (_) {} }
+function setPalette(mode) { const palette = mode === "presleep" ? "presleep" : "normal"; document.documentElement.dataset.palette = palette; document.querySelectorAll("[data-palette-choice]").forEach(button => { const active = button.dataset.paletteChoice === palette; button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active)); }); try { localStorage.setItem("questoes-palette", palette); } catch (_) {} }
+function openSettings() { settingsOverlay.classList.add("open"); settingsOverlay.setAttribute("aria-hidden","false"); document.body.classList.add("settings-open"); settingsOverlay.querySelector(".settings-close").focus(); }
+function closeSettings() { settingsOverlay.classList.remove("open"); settingsOverlay.setAttribute("aria-hidden","true"); document.body.classList.remove("settings-open"); settingsTrigger.focus(); }
+settingsTrigger.addEventListener("click", openSettings); settingsOverlay.querySelector(".settings-close").addEventListener("click", closeSettings); settingsOverlay.querySelector(".settings-done").addEventListener("click", closeSettings); settingsOverlay.addEventListener("click", event => { if (event.target === settingsOverlay) closeSettings(); }); document.addEventListener("keydown", event => { if (event.key === "Escape" && settingsOverlay.classList.contains("open")) closeSettings(); }); document.querySelectorAll("[data-theme-choice]").forEach(button => button.addEventListener("click", () => setTheme(button.dataset.themeChoice))); document.querySelectorAll("[data-palette-choice]").forEach(button => button.addEventListener("click", () => setPalette(button.dataset.paletteChoice))); let savedTheme = "light", savedPalette = "normal"; try { savedTheme = localStorage.getItem("questoes-theme") || "light"; savedPalette = localStorage.getItem("questoes-palette") || "normal"; } catch (_) {} setTheme(savedTheme); setPalette(savedPalette);
+  (() => {
+    const guides = [...document.querySelectorAll('.study-guide')];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const animateGuide = (guide, opening) => {
+      const summary = guide.querySelector('summary');
+      const startHeight = `${guide.offsetHeight}px`;
+
+      guide.open = true;
+      const borderHeight = guide.offsetHeight - guide.clientHeight;
+      const endHeight = opening
+        ? `${guide.scrollHeight + borderHeight}px`
+        : `${summary.offsetHeight + borderHeight}px`;
+
+      if (reduceMotion.matches) {
+        guide.open = opening;
+        return;
+      }
+
+      guide.getAnimations().forEach(animation => animation.cancel());
+      guide.style.overflow = 'hidden';
+      const animation = guide.animate(
+        { height: [startHeight, endHeight] },
+        { duration: opening ? 320 : 240, easing: 'cubic-bezier(.2,.8,.2,1)' }
+      );
+
+      animation.onfinish = () => {
+        guide.open = opening;
+        guide.style.overflow = '';
+      };
+    };
+
+    guides.forEach(guide => {
+      guide.querySelector('summary').addEventListener('click', event => {
+        event.preventDefault();
+        const opening = !guide.open;
+
+        if (opening) {
+          guides
+            .filter(other => other !== guide && other.open)
+            .forEach(other => animateGuide(other, false));
+        }
+
+        animateGuide(guide, opening);
+      });
+    });
+
+    const search = document.querySelector('#list-search');
+    const cards = [...document.querySelectorAll('#list-grid .card')];
+    const emptyState = document.querySelector('#empty-state');
+    const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+    search?.addEventListener('input', () => {
+      const query = normalize(search.value.trim());
+      let visible = 0;
+      cards.forEach(card => {
+        const match = !query || normalize(card.textContent).includes(query);
+        card.hidden = !match;
+        if (match) visible += 1;
+      });
+      emptyState.style.display = visible ? 'none' : 'block';
+    });
+  })();
+
+  // ---------- Busca global (Ctrl+K) ----------
+  // Lê _banco/banco-questoes.json diretamente no navegador (somente leitura,
+  // não altera o banco). Em navegadores abertos via arquivo local (file://),
+  // fetch() de outro arquivo local é bloqueado por política de origem — a
+  // busca detecta isso e mostra uma mensagem em vez de falhar silenciosamente.
+  // Basta um servidor estático simples (ex.: "npx serve .") para habilitá-la.
+  (() => {
+    const overlay = document.getElementById('search-overlay');
+    const input = document.getElementById('global-search-input');
+    const resultsEl = document.getElementById('search-results');
+    const stateEl = document.getElementById('search-state');
+    const footerEl = document.getElementById('search-footer');
+
+    let bancoPromise = null;
+    let activeIndex = -1;
+    let currentResults = [];
+    let debounceTimer = null;
+
+    const normalize = value => String(value || '').normalize('NFD').replace(new RegExp('[\\u0300-\\u036f]', 'g'), '').toLowerCase();
+
+    function loadBanco() {
+      if (!bancoPromise) {
+        bancoPromise = fetch('_banco/banco-questoes.json')
+          .then(response => { if (!response.ok) throw new Error('HTTP ' + response.status); return response.json(); })
+          .then(data => {
+            const questoes = Array.isArray(data) ? data : (data.questoes || []);
+            return questoes.map(q => {
+              const classificacao = q.classificacao || {};
+              const hierarquia = classificacao.hierarquia || [q.tema, q.categoria].filter(Boolean);
+              const haystack = normalize([
+                q.pergunta, q.tema, q.categoria, q.estadoEditorial,
+                ...(q.tags || []), ...hierarquia
+              ].join(' '));
+              return { id: q.id, pergunta: q.pergunta, tema: q.tema, categoria: q.categoria,
+                tags: q.tags || [], estadoEditorial: q.estadoEditorial || null, hierarquia, haystack };
+            });
+          });
+      }
+      return bancoPromise;
+    }
+
+    function renderState(message) {
+      resultsEl.innerHTML = '';
+      stateEl.textContent = message;
+      stateEl.classList.remove('hidden');
+      footerEl.hidden = true;
+    }
+
+    function renderResults(items, total) {
+      currentResults = items;
+      activeIndex = items.length ? 0 : -1;
+      if (!items.length) {
+        renderState('Nenhuma questão encontrada para esse termo.');
+        return;
+      }
+      stateEl.classList.add('hidden');
+      resultsEl.innerHTML = items.map((item, index) => {
+        const path = item.hierarquia.join(' › ');
+        const snippet = item.pergunta.length > 160 ? item.pergunta.slice(0, 160) + '…' : item.pergunta;
+        const tagsHtml = (item.tags || []).slice(0, 4).map(t => `<span class="sr-tag">${t}</span>`).join('');
+        const estadoHtml = item.estadoEditorial ? `<span class="sr-tag">${item.estadoEditorial}</span>` : '';
+        return `<button type="button" class="search-result${index === 0 ? ' active' : ''}" data-index="${index}" role="option">
+          <div class="sr-path">${path}</div>
+          <div class="sr-text">${snippet}</div>
+          <div class="sr-meta">${estadoHtml}${tagsHtml}</div>
+        </button>`;
+      }).join('');
+      footerEl.hidden = false;
+      footerEl.textContent = items.length < total
+        ? `Mostrando ${items.length} de ${total} resultados — refine o termo para ver outras questões.`
+        : `${items.length} resultado(s).`;
+      resultsEl.querySelectorAll('.search-result').forEach(btn => {
+        btn.addEventListener('click', () => goToResult(currentResults[Number(btn.dataset.index)]));
+      });
+    }
+
+    function goToResult(item) {
+      if (!item) return;
+      const hierarquiaParam = encodeURIComponent(JSON.stringify(item.hierarquia));
+      const highlightParam = encodeURIComponent(item.id || '');
+      window.location.href = `medicina/seletor.html?hierarquia=${hierarquiaParam}&highlight=${highlightParam}`;
+    }
+
+    function runSearch(rawQuery) {
+      const query = normalize(rawQuery.trim());
+      if (query.length < 2) {
+        renderState('Digite ao menos 2 caracteres para buscar entre as questões do banco.');
+        return;
+      }
+      loadBanco().then(all => {
+        const terms = query.split(/\s+/).filter(Boolean);
+        const matches = all.filter(item => terms.every(term => item.haystack.includes(term)));
+        renderResults(matches.slice(0, 40), matches.length);
+      }).catch(error => {
+        console.error(error);
+        if (window.location.protocol === 'file:') {
+          renderState('Não foi possível carregar o banco de questões para busca (bloqueado ao abrir o arquivo diretamente). Abra este índice a partir de um servidor estático local — por exemplo "npx serve ." nesta pasta — para habilitar a busca.');
+        } else {
+          renderState('Não foi possível carregar o banco de questões para busca: ' + (error && error.message ? error.message : error) + '. Veja o console do navegador (F12) para mais detalhes.');
+        }
+      });
+    }
+
+    function openSearch() {
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('search-open');
+      input.value = '';
+      renderState('Digite ao menos 2 caracteres para buscar entre as questões do banco.');
+      loadBanco().catch(() => {}); // pré-carrega para a primeira tecla não esperar
+      setTimeout(() => input.focus(), 0);
+    }
+
+    function closeSearch() {
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('search-open');
+    }
+
+    function moveActive(delta) {
+      if (!currentResults.length) return;
+      activeIndex = (activeIndex + delta + currentResults.length) % currentResults.length;
+      resultsEl.querySelectorAll('.search-result').forEach((btn, index) => {
+        btn.classList.toggle('active', index === activeIndex);
+      });
+      const activeEl = resultsEl.children[activeIndex];
+      if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+    }
+
+    document.addEventListener('keydown', event => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        if (overlay.classList.contains('open')) closeSearch(); else openSearch();
+      }
+    });
+    overlay.addEventListener('click', event => { if (event.target === overlay) closeSearch(); });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && overlay.classList.contains('open')) closeSearch();
+    });
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const value = input.value;
+      debounceTimer = setTimeout(() => runSearch(value), 150);
+    });
+    input.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown') { event.preventDefault(); moveActive(1); }
+      else if (event.key === 'ArrowUp') { event.preventDefault(); moveActive(-1); }
+      else if (event.key === 'Enter') { event.preventDefault(); if (activeIndex >= 0) goToResult(currentResults[activeIndex]); }
+    });
+  })();
+</script>
+</body>
+</html>

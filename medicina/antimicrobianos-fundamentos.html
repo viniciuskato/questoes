@@ -1,0 +1,3738 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Questões</title>
+<link rel="stylesheet" href="../_shared/theme.css">
+<style>
+  /* Específico deste template: cabeçalho, contêiner, botão flutuante de
+     configurações e variantes extras de botão (progresso/qualidade). O
+     restante do tema e dos componentes de quiz vem de ../_shared/theme.css —
+     não duplique regras já definidas lá. */
+  header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff;
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 0.4rem; font-size: 1.6rem; }
+  header p { margin: 0 auto; opacity: 0.9; font-size: 0.95rem; max-width: 700px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  button.export-progress { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+  button.export-progress:hover { background: color-mix(in srgb, var(--accent) 84%, #000); color: var(--accent-contrast); }
+  button.export-quality { border-color: #a66b00; color: #8a5900; }
+  button.export-quality:hover { background: #fff7e6; color: #6f4800; }
+  .save-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .save-guidance { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem; margin: -0.6rem 0 1rem; }
+  .save-guidance p { margin: 0; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); color: var(--text-muted); font-size: 0.76rem; }
+  .save-guidance strong { color: var(--text); }
+  .settings-trigger {
+    position: fixed; top: 1rem; right: 1rem; z-index: 50; display: inline-flex; align-items: center; gap: 0.45rem;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: 9px; padding: 0.52rem 0.72rem;
+    background: rgba(15,23,42,0.78); color: #fff; font: inherit; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 5px 18px rgba(0,0,0,0.22); backdrop-filter: blur(8px);
+  }
+  .settings-trigger:hover { background: var(--accent); color: var(--accent-contrast); }
+
+  body[data-view="focus"] .editorial-notice,
+  body[data-view="focus"] .footnote { display: none; }
+
+  .footnote {
+    text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 2rem;
+  }
+  .editorial-notice {
+    margin: 1rem 0; padding: 0.75rem 0.9rem; border-left: 4px solid #a66b00;
+    background: #fff7e6; color: #5f4300; border-radius: 6px; font-size: 0.86rem;
+  }
+  .editorial-notice a { color: inherit; font-weight: 700; }
+
+  :root[data-theme="dark"] button.export-quality { color: #f0b96a; border-color: #b8791f; }
+  :root[data-theme="dark"] button.export-quality:hover { background: #2e2013; color: #ffd28a; }
+  :root[data-palette="presleep"] .editorial-notice { background: #fdf1de; color: #6b3f14; border-left-color: #a66b00; }
+  :root[data-theme="dark"][data-palette="presleep"] .editorial-notice { background: #2e2013; color: #f0b96a; border-left-color: #b8791f; }
+
+  @media (max-width: 560px) {
+    .settings-trigger .settings-label { display: none; }
+    .setting-row { align-items: stretch; flex-direction: column; }
+    .setting-row .segmented-control { align-self: stretch; }
+    .setting-row .segmented-control button { flex: 1; }
+    .save-guidance { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<button type="button" class="settings-trigger" aria-haspopup="dialog" aria-label="Abrir configurações">
+  <span aria-hidden="true">⚙</span><span class="settings-label">Configurações</span>
+</button>
+
+<header>
+  <h1 id="quiz-title"></h1>
+  <p id="quiz-desc"></p>
+</header>
+
+<div class="container">
+  <div class="editorial-notice" role="note">
+    Banco educacional em auditoria editorial progressiva. Estrutura validada não equivale
+    a aprovação clínica de cada item. Consulte a
+    <a href="../_banco/POLITICA-EDITORIAL.md">política editorial</a>.
+  </div>
+  <div class="toolbar">
+    <div class="score">Acertos: <span id="score-correct">0</span> · Parciais: <span id="score-partial">0</span> · <span id="score-total">0</span>/<span id="score-max">0</span> respondidas</div>
+    <div class="toolbar-right">
+      <a class="dash-link" href="../_dados/dashboard.html" target="_blank">Ver desempenho</a>
+      <div class="save-actions" aria-label="Opções de salvamento">
+        <button class="export export-progress" id="save-progress" onclick="saveRegistro()" title="Salva respostas e desempenho em _dados/registros">💾 Salvar progresso</button>
+        <button class="export export-quality" id="save-quality" onclick="saveQualityReviews()" title="Salva avaliações editoriais em _dados/melhorias de questões">✎ Enviar sugestões (<span id="quality-pending">0</span>)</button>
+      </div>
+      <button class="reset" onclick="resetQuiz()">Reiniciar</button>
+    </div>
+  </div>
+  <div class="save-guidance" aria-label="Destino dos arquivos salvos">
+    <p><strong>Progresso:</strong> escolha <code>_dados/registros/</code>. Contém respostas, acertos e confiança.</p>
+    <p><strong>Sugestões:</strong> escolha <code>_dados/melhorias de questões/</code>. Contém somente revisão editorial.</p>
+  </div>
+  <p class="export-hint" id="export-hint">Arquivo baixado. Mova-o para <code>Questões/_dados/registros/</code> para que apareça no painel de desempenho.</p>
+
+  <nav class="focus-navigation" aria-label="Navegação entre questões">
+    <button type="button" id="focus-prev">&larr; Anterior</button>
+    <span class="focus-position" id="focus-position" aria-live="polite"></span>
+    <button type="button" id="focus-next">Próxima &rarr;</button>
+  </nav>
+
+  <div id="quiz"></div>
+
+  <div class="refs">
+    <h2>Referências</h2>
+    <ol id="ref-list"></ol>
+  </div>
+
+  <p class="footnote" id="quiz-footnote"></p>
+</div>
+
+<div class="settings-overlay" id="settings-overlay" aria-hidden="true">
+  <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-describedby="settings-description">
+    <div class="settings-header">
+      <div><h2 id="settings-title">Configurações</h2><p id="settings-description">Personalize a aparência e a forma de navegar pelas questões.</p></div>
+      <button type="button" class="settings-close" aria-label="Fechar configurações">&times;</button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Tema</strong><span>Escolha a claridade da interface.</span></div>
+        <div class="segmented-control" aria-label="Tema da interface">
+          <button type="button" data-theme-choice="light" aria-pressed="false">Claro</button><button type="button" data-theme-choice="dark" aria-pressed="false">Escuro</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Paleta de cores</strong><span>Normal ou tons que afetam menos o sono.</span></div>
+        <div class="segmented-control" aria-label="Paleta de cores">
+          <button type="button" data-palette-choice="normal" aria-pressed="false">Normal</button><button type="button" data-palette-choice="presleep" aria-pressed="false">Pré-sono</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Exibição das questões</strong><span>Veja todas ou concentre-se em uma por tela.</span></div>
+        <div class="segmented-control" aria-label="Formato das questões">
+          <button type="button" data-view-choice="list" aria-pressed="false">Lista</button><button type="button" data-view-choice="focus" aria-pressed="false">Uma por vez</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-footer"><button type="button" class="settings-done">Concluído</button></div>
+  </section>
+</div>
+
+<script type="application/json" id="quiz-data">
+{
+  "quizId": "antimicrobianos-fundamentos",
+  "title": "Antimicrobianos - fundamentos e classes antibacterianas",
+  "description": "76 questões de base sobre PK/PD, mecanismos, espectro, resistência, toxicidade e uso racional das classes estudadas em Antimicrobianos I-III.",
+  "footnote": "Material educacional. Doses, indicações e escolhas terapêuticas reais dependem do foco, hospedeiro, epidemiologia, cultura, antibiograma e protocolo local.",
+  "questions": [
+    {
+      "id": "antimicrobianos-001",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Fundamentos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Fundamentos",
+        "focos": [
+          "pk-pd"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Princípios gerais"
+        ]
+      },
+      "q": "Qual descrição distingue corretamente farmacocinética de farmacodinâmica?",
+      "options": [
+        "Farmacocinética descreve o que o organismo faz com o fármaco; farmacodinâmica relaciona exposição, alvo e efeito antimicrobiano",
+        "Farmacocinética descreve a relação entre concentração e efeito; farmacodinâmica descreve absorção e eliminação",
+        "Farmacocinética se limita à via oral; farmacodinâmica se limita à via intravenosa",
+        "Farmacocinética define o espectro de ação e a via de eliminação; farmacodinâmica define apenas os parâmetros de toxicidade do fármaco",
+        "Farmacocinética e farmacodinâmica são termos sinônimos e intercambiáveis sempre que se estudam antibióticos e antifúngicos"
+      ],
+      "correct": 0,
+      "exp": "Farmacocinética abrange absorção, distribuição, metabolismo e excreção. Farmacodinâmica descreve o efeito do fármaco sobre o microrganismo e liga exposição a atividade. As outras alternativas trocam ou restringem indevidamente os conceitos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-002",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Fundamentos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Fundamentos",
+        "focos": [
+          "pk-pd",
+          "betalactamicos"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Princípios de PK/PD"
+        ]
+      },
+      "q": "Para um betalactâmico, qual modificação de administração mais diretamente aumenta o índice PK/PD associado à eficácia?",
+      "options": [
+        "Concentrar toda a dose diária em um único pico de concentração plasmática máxima",
+        "Prolongar a infusão ou encurtar o intervalo para manter a fração livre acima da CIM",
+        "Associar um agente quelante ao esquema para aumentar a absorção intestinal do fármaco",
+        "Reduzir artificialmente a meia-vida plasmática para ampliar a depuração renal do fármaco",
+        "Administrar somente depois da fase estacionária bacteriana"
+      ],
+      "correct": 1,
+      "exp": "Betalactâmicos são tempo-dependentes: importa fT>CIM. Infusão prolongada e intervalos adequados aumentam esse tempo; um pico isolado é mais pertinente a fármacos concentração-dependentes.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-003",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Fundamentos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Fundamentos",
+        "focos": [
+          "pk-pd",
+          "vancomicina"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Princípios gerais",
+          "Vancomicina"
+        ]
+      },
+      "q": "Qual par associa corretamente a classe ao principal índice PK/PD?",
+      "options": [
+        "Aminoglicosídeos - fT>CIM",
+        "Betalactâmicos - pico/CIM",
+        "Vancomicina - AUC24/CIM",
+        "Macrolídeos - tempo abaixo da CIM",
+        "Polimixinas - apenas meia-vida, sem relação com exposição"
+      ],
+      "correct": 2,
+      "exp": "A exposição da vancomicina é melhor expressa por AUC24/CIM. Aminoglicosídeos se relacionam a pico/CIM; betalactâmicos, a fT>CIM. As demais associações não representam os índices centrais ensinados.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-004",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Fundamentos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Fundamentos",
+        "focos": [
+          "pk-pd"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Princípios gerais"
+        ]
+      },
+      "q": "O que significa dizer que um antimicrobiano apresenta efeito pós-antibiótico?",
+      "options": [
+        "A toxicidade do fármaco desaparece completamente assim que termina a infusão intravenosa",
+        "A bactéria se torna permanentemente sensível após a primeira dose",
+        "O fármaco passa a exercer seu efeito somente depois de ser totalmente eliminado do organismo",
+        "A atividade persiste temporariamente depois que a concentração cai abaixo da CIM",
+        "A atividade antimicrobiana depende apenas do tempo total de tratamento, independente da concentração"
+      ],
+      "correct": 3,
+      "exp": "Efeito pós-antibiótico é a supressão persistente do crescimento após a exposição e queda abaixo da CIM, fenômeno importante para aminoglicosídeos. Não descreve toxicidade nem sensibilização permanente.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-005",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Fundamentos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Fundamentos",
+        "focos": [
+          "farmacodinamica"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Princípios gerais"
+        ]
+      },
+      "q": "Qual afirmação sobre bactericida e bacteriostático é mais precisa?",
+      "options": [
+        "A classificação é absoluta e independe de espécie, concentração e sítio",
+        "Bacteriostáticos nunca podem ser usados no tratamento de infecções humanas graves ou leves",
+        "Bacteriostáticos destroem a parede; bactericidas bloqueiam apenas crescimento",
+        "Todo inibidor de síntese proteica ribossomal é necessariamente classificado como bacteriostático, independente do microrganismo alvo",
+        "Bactericidas reduzem diretamente a população viável, mas a classificação pode variar com microrganismo e condições"
+      ],
+      "correct": 4,
+      "exp": "A distinção descreve o efeito em condições definidas, não uma propriedade universal. Espécie, concentração, inóculo e sítio podem alterar o comportamento; aminoglicosídeos mostram que inibir síntese proteica não implica ser estático.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-006",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Fundamentos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Fundamentos",
+        "focos": [
+          "stewardship"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Uso racional e resistência antimicrobiana",
+          "Princípios gerais"
+        ]
+      },
+      "q": "Em uma infecção grave, qual sequência expressa melhor o ciclo de uso racional do antimicrobiano?",
+      "options": [
+        "Colher amostras pertinentes sem atrasar terapia urgente, iniciar esquema empírico e reavaliar em 48-72 h para estreitar ou suspender",
+        "Escolher o maior espectro, dispensar culturas e manter até desaparecer a febre",
+        "Aguardar sempre o resultado do antibiograma completo antes de iniciar qualquer tratamento, mesmo em choque séptico com instabilidade hemodinâmica",
+        "Trocar de classe antimicrobiana a cada 24 horas até a normalização completa dos marcadores inflamatórios",
+        "Manter cobertura dupla indefinidamente apesar da identificação do agente e do controle adequado do foco"
+      ],
+      "correct": 0,
+      "exp": "Stewardship é um ciclo: diagnóstico e culturas pertinentes, terapia empírica proporcional à gravidade e revisão estruturada em 48-72 horas. Choque não admite atraso indevido, e maior espectro ou combinação permanente não são objetivos.",
+      "ref": [
+        "anvisa2023-stewardship",
+        "who2022-aware"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-007",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Fundamentos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Fundamentos",
+        "focos": [
+          "antibiograma"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Uso racional e resistência antimicrobiana",
+          "Princípios gerais"
+        ]
+      },
+      "q": "No padrão EUCAST, como deve ser interpretada a categoria I?",
+      "options": [
+        "Resistente intermediário, sem possibilidade de resposta",
+        "Sensível com exposição aumentada por dose, intervalo, infusão ou concentração no sítio",
+        "Identificação incerta do microrganismo, exigindo repetição da cultura",
+        "Inibido apenas em condições in vitro, sem qualquer relevância para a prática clínica",
+        "Sensível apenas quando o fármaco é administrado em combinação obrigatória com aminoglicosídeo"
+      ],
+      "correct": 1,
+      "exp": "No EUCAST, I significa 'sensível, exposição aumentada'. A probabilidade de sucesso é alta quando a exposição é otimizada. Não equivale a 'meio resistente' nem a identificação duvidosa.",
+      "ref": [
+        "eucast2026-definitions"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-008",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Fundamentos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Fundamentos",
+        "focos": [
+          "distribuicao",
+          "daptomicina"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Agentes da membrana bacteriana",
+          "Lipopeptídeos e polimixinas",
+          "Daptomicina",
+          "Distribuição"
+        ]
+      },
+      "q": "Qual situação ilustra melhor falha por distribuição inadequada apesar de sensibilidade in vitro?",
+      "options": [
+        "Ceftriaxona em meningite por pneumococo sensível",
+        "Azitromicina em infecção por clamídia intracelular resistente a macrolídeos",
+        "Daptomicina em pneumonia alveolar, onde é inativada pelo surfactante",
+        "Metronidazol em abscesso profundo causado por bactérias anaeróbias estritas",
+        "Penicilina benzatina intramuscular no tratamento da sífilis primária não complicada"
+      ],
+      "correct": 2,
+      "exp": "A daptomicina perde atividade no pulmão alveolar por interação com surfactante. O antibiograma não substitui a avaliação de penetração e atividade no sítio; as demais combinações são farmacologicamente coerentes.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-009",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Betalactâmicos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Betalactâmicos",
+        "focos": [
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Visão geral"
+        ]
+      },
+      "q": "Qual evento molecular é diretamente bloqueado pelos betalactâmicos?",
+      "options": [
+        "Translocação do ribossomo bacteriano na subunidade 50S durante a síntese proteica",
+        "Replicação do DNA bacteriano mediada pela enzima DNA girase",
+        "Síntese do ácido fólico pela enzima di-hidrofolato redutase (DHFR)",
+        "Reticulação do peptideoglicano por PBPs/transpeptidases",
+        "Integridade do LPS por quelação de magnésio"
+      ],
+      "correct": 3,
+      "exp": "O anel betalactâmico acila PBPs e impede a transpeptidação que reticula o peptideoglicano. Os outros alvos correspondem, respectivamente, a macrolídeos, quinolonas, trimetoprima e polimixinas.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-010",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Penicilinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Penicilinas",
+        "focos": [],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Penicilinas"
+        ]
+      },
+      "q": "Qual formulação de penicilina G produz depósito intramuscular prolongado e não deve ser usada para neurossífilis?",
+      "options": [
+        "Penicilina G cristalina",
+        "Penicilina V",
+        "Oxacilina",
+        "Ampicilina",
+        "Penicilina G benzatina"
+      ],
+      "correct": 4,
+      "exp": "A benzatina libera penicilina lentamente do depósito IM e não alcança concentrações adequadas no SNC. Neurossífilis requer penicilina G cristalina IV; V, oxacilina e ampicilina têm outros perfis.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-011",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Penicilinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Penicilinas",
+        "focos": [
+          "mssa"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Penicilinas",
+          "MSSA"
+        ]
+      },
+      "q": "Qual penicilina foi desenhada para resistir à penicilinase estafilocócica e é apropriada para MSSA?",
+      "options": [
+        "Oxacilina",
+        "Penicilina V",
+        "Ampicilina",
+        "Piperacilina",
+        "Penicilina G procaína"
+      ],
+      "correct": 0,
+      "exp": "Oxacilina é penicilina antiestafilocócica resistente à penicilinase, indicada para MSSA. Ela não supera PBP2a do MRSA. As demais pertencem a subgrupos com finalidades distintas.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-012",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Penicilinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Penicilinas",
+        "focos": [
+          "aminopenicilinas"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Penicilinas",
+          "Aminopenicilinas"
+        ]
+      },
+      "q": "Qual característica diferencia as aminopenicilinas das penicilinas naturais?",
+      "options": [
+        "Atividade confiável e previsível contra cepas hospitalares multirresistentes de MRSA",
+        "Ampliação para alguns bacilos Gram-negativos e atividade contra Enterococcus e Listeria",
+        "Estabilidade universal diante de betalactamases de espectro estendido produzidas por Enterobacterales",
+        "Cobertura exclusiva e restrita a microrganismos anaeróbios estritos",
+        "Ausência completa de reações de hipersensibilidade cruzada com penicilinas"
+      ],
+      "correct": 1,
+      "exp": "Ampicilina e amoxicilina ampliam o espectro para alguns Gram-negativos e preservam utilidade contra Enterococcus faecalis e Listeria. Continuam vulneráveis a betalactamases e podem causar alergia.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-013",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Penicilinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Penicilinas",
+        "focos": [
+          "inibidores-beta-lactamase"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Penicilinas",
+          "Inibidores Beta Lactamase"
+        ]
+      },
+      "q": "O que a associação amoxicilina-clavulanato acrescenta em relação à amoxicilina isolada?",
+      "options": [
+        "Inibição irreversível de todas as classes conhecidas de carbapenemases bacterianas",
+        "Atividade direta e ligação de alta afinidade contra a PBP2a codificada pelo gene mecA, conferindo cobertura contra MRSA",
+        "Proteção contra betalactamases suscetíveis ao clavulanato, ampliando atividade sobre alguns produtores",
+        "Penetração garantida e previsível no sistema nervoso central, mesmo sem inflamação",
+        "Conversão do mecanismo de ação do fármaco de tempo-dependente para concentração-dependente"
+      ],
+      "correct": 2,
+      "exp": "Clavulanato é inibidor suicida de determinadas betalactamases e protege a amoxicilina. Não inibe todas as enzimas, não cobre MRSA por PBP2a e não muda o índice PK/PD fundamental.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-014",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Penicilinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Penicilinas",
+        "focos": [
+          "pseudomonas"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Penicilinas",
+          "Pseudomonas"
+        ]
+      },
+      "q": "Qual penicilina tem atividade antipseudomonas e costuma ser associada ao tazobactam?",
+      "options": [
+        "Amoxicilina",
+        "Oxacilina",
+        "Penicilina V",
+        "Piperacilina",
+        "Penicilina G benzatina"
+      ],
+      "correct": 3,
+      "exp": "Piperacilina é ureidopenicilina com atividade contra Pseudomonas suscetível e é formulada com tazobactam. As demais não oferecem cobertura antipseudomonas confiável.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-015",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Cefalosporinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Cefalosporinas",
+        "focos": [],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Cefalosporinas"
+        ]
+      },
+      "q": "Qual perfil caracteriza melhor as cefalosporinas de primeira geração?",
+      "options": [
+        "Cobertura confiável e uniforme de MRSA, Enterococcus e Pseudomonas aeruginosa",
+        "Atividade exclusiva e restrita contra microrganismos anaeróbios estritos",
+        "Maior atividade contra microrganismos atípicos intracelulares do que os macrolídeos e do que as tetraciclinas",
+        "Estabilidade completa diante de todas as classes de carbapenemases bacterianas",
+        "Predomínio de atividade contra cocos Gram-positivos e alguns Gram-negativos comunitários"
+      ],
+      "correct": 4,
+      "exp": "Cefazolina e cefalexina têm bom desempenho contra estreptococos e MSSA, com cobertura limitada de alguns Gram-negativos. Cefalosporinas em geral não cobrem enterococos nem atípicos; MRSA e carbapenemases exigem exceções específicas.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-016",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Cefalosporinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Cefalosporinas",
+        "focos": [
+          "snc"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Cefalosporinas",
+          "SNC"
+        ]
+      },
+      "q": "Qual cefalosporina de terceira geração combina boa penetração no LCR, meia-vida longa e ausência de atividade antipseudomonas?",
+      "options": [
+        "Ceftriaxona",
+        "Ceftazidima",
+        "Cefepima",
+        "Cefazolina",
+        "Ceftarolina"
+      ],
+      "correct": 0,
+      "exp": "Ceftriaxona alcança LCR inflamado e tem meia-vida longa, mas não cobre Pseudomonas. Ceftazidima é a terceira geração antipseudomonas; cefepima é quarta, cefazolina primeira e ceftarolina quinta geração.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-017",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Cefalosporinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Cefalosporinas",
+        "focos": [
+          "pseudomonas"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Cefalosporinas",
+          "Pseudomonas"
+        ]
+      },
+      "q": "Qual propriedade torna a ceftazidima distinta da ceftriaxona?",
+      "options": [
+        "Ligação de alta afinidade à PBP2a codificada pelo gene mecA do MRSA",
+        "Atividade contra Pseudomonas aeruginosa suscetível",
+        "Cobertura de Enterococcus faecalis",
+        "Atividade contra bactérias sem parede",
+        "Eliminação exclusivamente fecal, sem qualquer participação da via renal"
+      ],
+      "correct": 1,
+      "exp": "Ceftazidima é cefalosporina de terceira geração com atividade antipseudomonas. Não cobre MRSA por PBP2a, enterococos ou atípicos sem parede.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-018",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Cefalosporinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Cefalosporinas",
+        "focos": [
+          "ampc"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Cefalosporinas",
+          "AmpC"
+        ]
+      },
+      "q": "Qual afirmação descreve corretamente a cefepima?",
+      "options": [
+        "É uma cefalosporina de primeira geração com atividade restrita a MSSA e estreptococos",
+        "É considerada a principal cefalosporina com atividade confiável contra enterococo resistente e Pseudomonas",
+        "É uma cefalosporina de quarta geração com atividade contra Pseudomonas e maior estabilidade diante de AmpC",
+        "Não atravessa a barreira hematoencefálica mesmo em vigência de meninges inflamadas",
+        "Seu principal alvo molecular é a subunidade ribossomal 30S bacteriana, e não as PBPs"
+      ],
+      "correct": 2,
+      "exp": "Cefepima é quarta geração, penetra porinas, tem atividade antipseudomonas e relativa estabilidade frente a AmpC. Continua sendo betalactâmico dirigido a PBPs e pode atingir o SNC.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-019",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Cefalosporinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Cefalosporinas",
+        "focos": [
+          "mrsa"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Cefalosporinas",
+          "MRSA"
+        ]
+      },
+      "q": "Por que a ceftarolina pode atuar contra MRSA?",
+      "options": [
+        "Porque inibe a enzima envolvida na síntese do ácido fólico bacteriano",
+        "Porque rompe diretamente o lipopolissacarídeo da membrana externa",
+        "Porque bloqueia a atividade catalítica da enzima DNA girase bacteriana",
+        "Porque apresenta afinidade pela PBP2a codificada por mecA",
+        "Porque é protegida pelo clavulanato"
+      ],
+      "correct": 3,
+      "exp": "A ceftarolina é uma cefalosporina com afinidade por PBP2a, o alvo de baixa afinidade que medeia resistência à meticilina. Os demais mecanismos pertencem a outras classes ou associações.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-020",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Cefalosporinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Cefalosporinas",
+        "focos": [
+          "resistencia-intrinseca"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Cefalosporinas",
+          "Resistencia Intrinseca"
+        ]
+      },
+      "q": "Qual grupo apresenta resistência intrínseca clinicamente relevante às cefalosporinas?",
+      "options": [
+        "Streptococcus pyogenes",
+        "MSSA",
+        "Neisseria meningitidis suscetível",
+        "Proteus mirabilis suscetível",
+        "Enterococcus spp."
+      ],
+      "correct": 4,
+      "exp": "Enterococos têm PBPs de baixa afinidade e são intrinsecamente resistentes às cefalosporinas. Os demais podem ser suscetíveis a agentes apropriados dentro da classe.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-021",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Carbapenêmicos e monobactâmicos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Carbapenêmicos e monobactâmicos",
+        "focos": [
+          "carbapenemicos"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Carbapenêmicos e monobactâmicos",
+          "Carbapenêmicos"
+        ]
+      },
+      "q": "Qual carbapenêmico se distingue por não cobrir Pseudomonas, Acinetobacter nem Enterococcus?",
+      "options": [
+        "Ertapenem",
+        "Meropenem",
+        "Imipenem-cilastatina",
+        "Doripenem",
+        "Aztreonam"
+      ],
+      "correct": 0,
+      "exp": "Ertapenem tem meia-vida longa e amplo espectro, mas deixa lacunas em Pseudomonas, Acinetobacter e enterococos. Meropenem, imipenem e doripenem têm perfis distintos; aztreonam não é carbapenêmico.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-022",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Carbapenêmicos e monobactâmicos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Carbapenêmicos e monobactâmicos",
+        "focos": [
+          "carbapenemicos"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Carbapenêmicos e monobactâmicos",
+          "Carbapenêmicos"
+        ]
+      },
+      "q": "Por que a cilastatina é administrada com imipenem?",
+      "options": [
+        "Para inibir betalactamases plasmidiais",
+        "Para impedir degradação renal do imipenem pela desidropeptidase I",
+        "Para reduzir a ligação competitiva do imipenem à PBP2a estafilocócica",
+        "Para ampliar atividade contra atípicos",
+        "Para aumentar a absorção oral do imipenem no trato gastrointestinal"
+      ],
+      "correct": 1,
+      "exp": "Cilastatina inibe a desidropeptidase I da borda em escova renal, evitando hidrólise do imipenem e nefrotoxicidade por metabólitos. Não é inibidor clínico de betalactamase e a formulação é parenteral.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-023",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Carbapenêmicos e monobactâmicos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Carbapenêmicos e monobactâmicos",
+        "focos": [
+          "monobactamicos"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Carbapenêmicos e monobactâmicos",
+          "Monobactâmicos"
+        ]
+      },
+      "q": "Qual espectro define o aztreonam?",
+      "options": [
+        "Cocos Gram-positivos aeróbios e bactérias anaeróbias estritas",
+        "Microrganismos atípicos respiratórios, riquétsias e ehrlichias intracelulares",
+        "Bacilos Gram-negativos aeróbios, inclusive Pseudomonas suscetível",
+        "Cepas de MRSA hospitalar e enterococo resistente à vancomicina (VRE)",
+        "Protozoários intestinais e bactérias anaeróbias estritas do trato gastrointestinal"
+      ],
+      "correct": 2,
+      "exp": "Aztreonam é monobactâmico seletivo para Gram-negativos aeróbios. Não oferece cobertura de Gram-positivos, anaeróbios, atípicos ou protozoários.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-024",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Carbapenêmicos e monobactâmicos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Carbapenêmicos e monobactâmicos",
+        "focos": [
+          "monobactamicos",
+          "resistencia"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Carbapenêmicos e monobactâmicos",
+          "Monobactâmicos"
+        ]
+      },
+      "q": "Por que aztreonam pode integrar uma combinação contra Enterobacterales produtoras de NDM?",
+      "options": [
+        "Aztreonam inibe diretamente a atividade catalítica da enzima NDM",
+        "Aztreonam bloqueia a síntese de NDM no ribossomo",
+        "NDM aumenta a entrada do aztreonam por porinas",
+        "NDM não hidrolisa aztreonam, embora enzimas coproduzidas possam fazê-lo",
+        "Aztreonam se liga à NDM e a transforma funcionalmente em uma proteína ligadora de penicilina"
+      ],
+      "correct": 3,
+      "exp": "Metalo-betalactamases como NDM poupam aztreonam, mas a bactéria frequentemente coproduz serino-betalactamases que o hidrolisam. Ceftazidima-avibactam pode proteger o aztreonam dessas enzimas; não inibe a NDM.",
+      "ref": [
+        "idsa2024-gramnegativos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-025",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Carbapenêmicos e monobactâmicos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Carbapenêmicos e monobactâmicos",
+        "focos": [
+          "carbapenemicos",
+          "resistencia"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Betalactâmicos",
+          "Carbapenêmicos e monobactâmicos",
+          "Carbapenêmicos"
+        ]
+      },
+      "q": "Qual mecanismo de resistência pode comprometer um carbapenêmico mesmo sem carbapenemase potente?",
+      "options": [
+        "Aumento da afinidade da PBP pelo fármaco",
+        "Ausência de ribossomo 70S",
+        "Ativação de ferredoxinas",
+        "Redução da síntese de folato do hospedeiro",
+        "Perda de porinas associada a AmpC ou ESBL"
+      ],
+      "correct": 4,
+      "exp": "Em Gram-negativos, combinação de menor permeabilidade por perda de porinas com AmpC/ESBL pode elevar CIM de carbapenêmicos. As outras alternativas não explicam resistência bacteriana a essa classe.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-026",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Glicopeptídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Glicopeptídeos",
+        "focos": [
+          "vancomicina",
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Glicopeptídeos",
+          "Vancomicina"
+        ]
+      },
+      "q": "Qual é o alvo imediato da vancomicina?",
+      "options": [
+        "Extremidade D-Ala-D-Ala do precursor do peptideoglicano",
+        "PBP2a, proteína ligadora de penicilina de baixa afinidade",
+        "Subunidade 30S do ribossomo bacteriano",
+        "DNA girase bacteriana (topoisomerase II)",
+        "Lipopolissacarídeo da membrana externa de Gram-negativos"
+      ],
+      "correct": 0,
+      "exp": "Vancomicina liga-se ao D-Ala-D-Ala do lipídio II e impede etapas de polimerização/reticulação. Ela não se liga à PBP2a nem aos alvos ribossomal, de DNA ou LPS.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-027",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Glicopeptídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Glicopeptídeos",
+        "focos": [
+          "vancomicina",
+          "espectro"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Glicopeptídeos",
+          "Vancomicina"
+        ]
+      },
+      "q": "Por que a vancomicina não apresenta atividade útil contra bacilos Gram-negativos?",
+      "options": [
+        "Bacilos Gram-negativos não possuem peptideoglicano em sua parede celular",
+        "A membrana externa impede a chegada da molécula volumosa ao peptideoglicano",
+        "O lipopolissacarídeo hidrolisa a vancomicina de forma análoga a uma betalactamase",
+        "A vancomicina depende de transporte ativo dependente de oxigênio para entrar na célula",
+        "O alvo terminal D-Ala-D-Ala do peptideoglicano existe apenas em fungos"
+      ],
+      "correct": 1,
+      "exp": "O peptideoglicano existe, mas fica protegido pela membrana externa, impermeável à molécula grande. Dependência de oxigênio caracteriza aminoglicosídeos; LPS não é uma enzima.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-028",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Glicopeptídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Glicopeptídeos",
+        "focos": [
+          "vancomicina",
+          "c-difficile"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Glicopeptídeos",
+          "Vancomicina"
+        ]
+      },
+      "q": "Qual via de vancomicina é apropriada para infecção por Clostridioides difficile no cólon?",
+      "options": [
+        "Intravenosa, para atingir altas concentrações luminais",
+        "Intramuscular de depósito",
+        "Oral, pois a baixa absorção mantém o fármaco no lúmen",
+        "Via inalatória, restrita ao trato respiratório",
+        "Via sublingual, com absorção variável"
+      ],
+      "correct": 2,
+      "exp": "Vancomicina oral permanece no lúmen intestinal e trata C. difficile. A formulação IV trata infecções sistêmicas, mas não gera exposição luminal terapêutica confiável.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-029",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Glicopeptídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Glicopeptídeos",
+        "focos": [
+          "vancomicina",
+          "toxicidade"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Glicopeptídeos",
+          "Vancomicina"
+        ]
+      },
+      "q": "Paciente desenvolve rubor e prurido durante infusão rápida de vancomicina, sem broncoespasmo ou hipotensão refratária. Qual mecanismo é mais provável?",
+      "options": [
+        "Anafilaxia IgE obrigatória",
+        "Hemólise em pacientes com deficiência de G6PD",
+        "Bloqueio da via de síntese do folato bacteriano",
+        "Reação de infusão por liberação de histamina",
+        "Acúmulo de serotonina por interação medicamentosa"
+      ],
+      "correct": 3,
+      "exp": "A reação de infusão à vancomicina decorre de liberação de histamina e melhora ao interromper/reduzir velocidade, com anti-histamínico quando necessário. Não implica automaticamente alergia IgE.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-030",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Glicopeptídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Glicopeptídeos",
+        "focos": [
+          "vancomicina",
+          "resistencia"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese da parede celular",
+          "Glicopeptídeos",
+          "Vancomicina"
+        ]
+      },
+      "q": "Qual alteração molecular explica o fenótipo VanA?",
+      "options": [
+        "Metilação enzimática específica do RNA ribossomal 23S mediada por metiltransferase",
+        "Mutação pontual no gene gyrA que codifica a subunidade da DNA girase",
+        "Produção da proteína PBP2a codificada pelo gene cromossômico mecA",
+        "Acetilação enzimática do aminoglicosídeo por enzima modificadora",
+        "D-Ala-D-Ala por D-Ala-D-Lac, reduzindo fortemente a afinidade do glicopeptídeo"
+      ],
+      "correct": 4,
+      "exp": "VanA reprograma o precursor para D-Ala-D-Lac e causa resistência a vancomicina e teicoplanina. As outras alterações correspondem a macrolídeos/lincosamidas, quinolonas, MRSA e aminoglicosídeos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-031",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Lipopeptídeos e polimixinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Lipopeptídeos e polimixinas",
+        "focos": [
+          "daptomicina",
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Agentes da membrana bacteriana",
+          "Lipopeptídeos e polimixinas",
+          "Daptomicina"
+        ]
+      },
+      "q": "Como a daptomicina mata bactérias suscetíveis?",
+      "options": [
+        "Insere-se na membrana de modo dependente de cálcio e causa despolarização",
+        "Liga-se ao terminal D-Ala-D-Ala do peptideoglicano",
+        "Bloqueia irreversivelmente a subunidade ribossomal 30S bacteriana",
+        "Inibe diretamente a atividade catalítica da enzima DNA girase bacteriana",
+        "Compete com o PABA (ácido para-aminobenzoico) na via enzimática de síntese do folato"
+      ],
+      "correct": 0,
+      "exp": "Daptomicina oligomeriza-se na membrana Gram-positiva de modo dependente de cálcio, produz efluxo iônico e despolarização. Os demais mecanismos pertencem a glicopeptídeos, aminoglicosídeos, quinolonas e sulfonamidas.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-032",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Lipopeptídeos e polimixinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Lipopeptídeos e polimixinas",
+        "focos": [
+          "daptomicina",
+          "toxicidade"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Agentes da membrana bacteriana",
+          "Lipopeptídeos e polimixinas",
+          "Daptomicina"
+        ]
+      },
+      "q": "Qual monitorização é especialmente pertinente durante tratamento com daptomicina?",
+      "options": [
+        "INR como único marcador de eficácia",
+        "CPK e sintomas musculares",
+        "Amilase a cada dose",
+        "Concentração urinária de folato",
+        "Repetição semanal obrigatória do Teste D"
+      ],
+      "correct": 1,
+      "exp": "Daptomicina pode causar miopatia e elevação de CPK, justificando medida basal e periódica. INR pode sofrer interferência analítica, mas não monitora eficácia; Teste D avalia clindamicina.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-033",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Lipopeptídeos e polimixinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Lipopeptídeos e polimixinas",
+        "focos": [
+          "polimixinas",
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Agentes da membrana bacteriana",
+          "Lipopeptídeos e polimixinas",
+          "Polimixinas"
+        ]
+      },
+      "q": "Qual componente bacteriano é desorganizado primariamente pelas polimixinas?",
+      "options": [
+        "Ligação ao ergosterol da membrana fúngica",
+        "PBP2a, proteína ligadora de penicilina de baixa afinidade",
+        "LPS da membrana externa de Gram-negativos",
+        "Ribossomo bacteriano na subunidade 50S",
+        "Via de síntese do ácido fólico bacteriano"
+      ],
+      "correct": 2,
+      "exp": "Polimixinas são catiônicas e deslocam cátions estabilizadores do LPS, desorganizando a membrana externa. Por isso atuam contra bacilos Gram-negativos, não contra fungos ou Gram-positivos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-034",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Lipopeptídeos e polimixinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Lipopeptídeos e polimixinas",
+        "focos": [
+          "polimixinas",
+          "toxicidade"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Agentes da membrana bacteriana",
+          "Lipopeptídeos e polimixinas",
+          "Polimixinas"
+        ]
+      },
+      "q": "Qual combinação de toxicidades é mais característica das polimixinas sistêmicas?",
+      "options": [
+        "Mielossupressão e síndrome serotoninérgica",
+        "Tendinopatia e disglucemia",
+        "Esofagite e fotossensibilidade",
+        "Nefrotoxicidade e neurotoxicidade",
+        "Colite por C. difficile e prolongamento de QT"
+      ],
+      "correct": 3,
+      "exp": "Polimixinas podem causar lesão renal dose-dependente e neurotoxicidade, inclusive bloqueio neuromuscular. As demais duplas caracterizam outras classes.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-035",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Aminoglicosídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Aminoglicosídeos",
+        "focos": [
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Aminoglicosídeos"
+        ]
+      },
+      "q": "Qual propriedade torna os aminoglicosídeos bactericidas apesar de atuarem no ribossomo?",
+      "options": [
+        "Ligação reversível e transitória à subunidade ribossomal 50S",
+        "Liga-se de forma covalente ao terminal D-Ala-D-Ala do peptideoglicano",
+        "Inibição direta e seletiva da reação de transpeptidação na síntese do peptideoglicano bacteriano",
+        "Inibe diretamente a atividade catalítica da DNA girase bacteriana",
+        "Ligação irreversível ao 30S com leitura errada do RNAm e produção de proteínas anormais"
+      ],
+      "correct": 4,
+      "exp": "Aminoglicosídeos ligam-se irreversivelmente ao 30S, provocam erro de leitura e proteínas aberrantes que amplificam dano de membrana. Os outros mecanismos pertencem a macrolídeos, linezolida, betalactâmicos e metronidazol.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-036",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Aminoglicosídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Aminoglicosídeos",
+        "focos": [
+          "espectro"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Aminoglicosídeos"
+        ]
+      },
+      "q": "Por que aminoglicosídeos não são ativos contra anaeróbios estritos?",
+      "options": [
+        "A entrada citoplasmática depende de transporte associado a oxigênio e potencial de membrana",
+        "Anaeróbios estritos não possuem ribossomos funcionais para síntese proteica",
+        "O fármaco é inativado pela enzima ferredoxina presente exclusivamente em anaeróbios estritos",
+        "A parede celular dos anaeróbios contém ergosterol abundante na membrana plasmática",
+        "A ausência de folato disponível impede a ligação do fármaco ao ribossomo 30S"
+      ],
+      "correct": 0,
+      "exp": "A captação dependente de energia requer respiração e gradiente eletroquímico. Anaeróbios têm ribossomos, mas não internalizam adequadamente o fármaco.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-037",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Aminoglicosídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Aminoglicosídeos",
+        "focos": [
+          "sinergismo"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Aminoglicosídeos",
+          "Sinergismo"
+        ]
+      },
+      "q": "Qual princípio explica o sinergismo entre um betalactâmico e um aminoglicosídeo contra certos cocos Gram-positivos?",
+      "options": [
+        "Ambos bloqueiam a mesma PBP",
+        "Lesão da parede facilita entrada do aminoglicosídeo",
+        "O aminoglicosídeo inibe betalactamases",
+        "O betalactâmico impede nefrotoxicidade",
+        "A combinação torna a entrada independente de oxigênio"
+      ],
+      "correct": 1,
+      "exp": "O inibidor de parede aumenta permeabilidade e facilita chegada do aminoglicosídeo ao 30S. Resistência de alto nível pode abolir esse efeito, e os fármacos não devem ser misturados no mesmo frasco.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-038",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Aminoglicosídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Aminoglicosídeos",
+        "focos": [
+          "toxicidade"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Aminoglicosídeos"
+        ]
+      },
+      "q": "Qual padrão de toxicidade diferencia os aminoglicosídeos?",
+      "options": [
+        "Nefrotoxicidade ausente e ototoxicidade coclear sempre completamente reversível",
+        "Apenas hepatotoxicidade idiossincrásica rara, sem qualquer efeito renal, coclear ou vestibular",
+        "Nefrotoxicidade frequentemente reversível e ototoxicidade potencialmente irreversível",
+        "Mielossupressão progressiva e previsível após 14 dias de uso contínuo",
+        "Ruptura espontânea de tendão por toxicidade direta no colágeno"
+      ],
+      "correct": 2,
+      "exp": "A lesão tubular renal tende a melhorar após suspensão, enquanto dano coclear ou vestibular pode ser permanente. Mielossupressão lembra linezolida; tendinopatia, quinolonas.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-039",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Aminoglicosídeos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Aminoglicosídeos",
+        "focos": [
+          "resistencia"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Aminoglicosídeos"
+        ]
+      },
+      "q": "Qual mecanismo é uma causa frequente de resistência adquirida a aminoglicosídeos?",
+      "options": [
+        "Troca D-Ala-D-Ala por D-Ala-D-Lac",
+        "PBP2a, proteína ligadora de penicilina de baixa afinidade",
+        "Mutação estrutural no gene da DHFR bacteriana",
+        "Enzimas que acetilam, adenilam ou fosforilam o fármaco",
+        "Perda da síntese de ergosterol pelo fungo"
+      ],
+      "correct": 3,
+      "exp": "Enzimas AAC, ANT e APH modificam aminoglicosídeos e reduzem ligação/entrada. As outras alterações pertencem a glicopeptídeos, betalactâmicos, antifolatos e antifúngicos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-040",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Macrolídeos e lincosamidas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Macrolídeos e lincosamidas",
+        "focos": [
+          "macrolideos",
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Macrolídeos e lincosamidas",
+          "Macrolídeos"
+        ]
+      },
+      "q": "Qual etapa da síntese proteica é bloqueada pelos macrolídeos?",
+      "options": [
+        "Entrada do aminoacil-tRNA no sítio A da subunidade 30S",
+        "Formação inicial do complexo ribossomal 70S de iniciação",
+        "Leitura e relaxamento do DNA pela enzima girase bacteriana",
+        "Reticulação final das cadeias do peptideoglicano da parede celular",
+        "Translocação no ribossomo 50S por ligação ao 23S"
+      ],
+      "correct": 4,
+      "exp": "Macrolídeos ligam-se ao 23S da subunidade 50S e bloqueiam translocação/alongamento. Tetraciclinas impedem entrada de tRNA; oxazolidinonas bloqueiam iniciação; quinolonas e betalactâmicos têm outros alvos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-041",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Macrolídeos e lincosamidas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Macrolídeos e lincosamidas",
+        "focos": [
+          "macrolideos",
+          "interacoes"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Macrolídeos e lincosamidas",
+          "Macrolídeos"
+        ]
+      },
+      "q": "Qual macrolídeo apresenta menor inibição clinicamente relevante do CYP3A4?",
+      "options": [
+        "Azitromicina",
+        "Claritromicina",
+        "Eritromicina",
+        "Troleandomicina",
+        "Todos inibem de forma equivalente"
+      ],
+      "correct": 0,
+      "exp": "Azitromicina produz menos interações via CYP3A4 do que eritromicina e claritromicina. Isso não elimina risco de QT nem outras interações.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-042",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Macrolídeos e lincosamidas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Macrolídeos e lincosamidas",
+        "focos": [
+          "macrolideos",
+          "clindamicina",
+          "resistencia"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Macrolídeos e lincosamidas",
+          "Macrolídeos"
+        ]
+      },
+      "q": "O gene erm pode produzir qual fenótipo de resistência?",
+      "options": [
+        "Hidrólise enzimática do anel betalactâmico por serino-betalactamases",
+        "Metilação do 23S com resistência cruzada MLSB",
+        "Substituição do terminal D-Ala-D-Lac no precursor do peptideoglicano",
+        "Proteção plasmidial da DNA girase mediada por proteínas Qnr",
+        "Perda de porina exclusiva para carbapenêmicos"
+      ],
+      "correct": 1,
+      "exp": "Erm codifica metilase do 23S e pode conferir resistência cruzada a macrolídeos, lincosamidas e estreptograminas B. Mef, em contraste, costuma causar efluxo restrito a macrolídeos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-043",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Macrolídeos e lincosamidas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Macrolídeos e lincosamidas",
+        "focos": [
+          "clindamicina",
+          "teste-d"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Macrolídeos e lincosamidas",
+          "Clindamicina"
+        ]
+      },
+      "q": "Quando o Teste D é particularmente necessário?",
+      "options": [
+        "Enterococo resistente à vancomicina isolado em múltiplas hemoculturas",
+        "Pseudomonas aeruginosa sensível a ciprofloxacino isolada em cultura de urina de rotina ambulatorial",
+        "Isolado estafilocócico resistente à eritromicina e aparentemente sensível à clindamicina",
+        "Pneumococo sensível à penicilina isolado em líquor de paciente com meningite",
+        "E. coli produtora de betalactamase de espectro estendido (ESBL)"
+      ],
+      "correct": 2,
+      "exp": "Esse padrão pode esconder resistência induzível MLSB à clindamicina. O Teste D demonstra achatamento da zona próxima à eritromicina; os demais cenários exigem testes diferentes.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-044",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Macrolídeos e lincosamidas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Macrolídeos e lincosamidas",
+        "focos": [
+          "clindamicina",
+          "toxinas"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Macrolídeos e lincosamidas",
+          "Clindamicina"
+        ]
+      },
+      "q": "Por que clindamicina pode ser adicionada ao tratamento de infecção invasiva por Streptococcus pyogenes produtora de toxina?",
+      "options": [
+        "Amplia a cobertura antimicrobiana para Pseudomonas aeruginosa resistente",
+        "Inibe irreversivelmente betalactamases suscetíveis",
+        "Neutraliza diretamente a endotoxina circulante no plasma sanguíneo",
+        "Reduz síntese de exotoxinas e mantém atividade na fase estacionária",
+        "Aumenta a eliminação renal da penicilina administrada concomitantemente"
+      ],
+      "correct": 3,
+      "exp": "Ao bloquear o 50S, clindamicina reduz toxinas e proteína M e continua útil com alta carga/fase estacionária. Ela complementa penicilina e controle de foco, sem cobrir Pseudomonas ou neutralizar endotoxina.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-045",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Macrolídeos e lincosamidas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Macrolídeos e lincosamidas",
+        "focos": [
+          "clindamicina",
+          "toxicidade"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Macrolídeos e lincosamidas",
+          "Clindamicina"
+        ]
+      },
+      "q": "Qual evento adverso tem associação particularmente forte com clindamicina?",
+      "options": [
+        "Cristalúria por sulfona",
+        "Neuropatia óptica por toxicidade mitocondrial",
+        "Ruptura de tendão por toxicidade em colágeno",
+        "Síndrome do homem vermelho",
+        "Colite por Clostridioides difficile"
+      ],
+      "correct": 4,
+      "exp": "Clindamicina altera intensamente a microbiota e é um clássico fator de risco para C. difficile. As demais toxicidades remetem a sulfonamidas, linezolida, quinolonas e vancomicina.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-046",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Oxazolidinonas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Oxazolidinonas",
+        "focos": [
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Oxazolidinonas"
+        ]
+      },
+      "q": "Qual etapa é bloqueada pela linezolida?",
+      "options": [
+        "Formação do complexo de iniciação 70S",
+        "Transpeptidação do peptideoglicano",
+        "Replicação pela topoisomerase IV",
+        "Síntese de folato pela DHPS",
+        "Bloqueio da montagem do LPS na membrana externa"
+      ],
+      "correct": 0,
+      "exp": "Linezolida liga-se ao 23S do 50S e impede a formação do complexo de iniciação 70S. Isso difere do bloqueio de alongamento por macrolídeos e dos alvos de parede, DNA e folato.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-047",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Oxazolidinonas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Oxazolidinonas",
+        "focos": [
+          "espectro"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Oxazolidinonas"
+        ]
+      },
+      "q": "Qual espectro resume melhor as oxazolidinonas?",
+      "options": [
+        "Bacilos Gram-negativos aeróbios, incluindo Pseudomonas",
+        "Gram-positivos resistentes, incluindo MRSA e VRE",
+        "Anaeróbios e protozoários exclusivamente",
+        "Restrita exclusivamente a micobactérias atípicas",
+        "Restrita a fungos que possuem ergosterol na membrana"
+      ],
+      "correct": 1,
+      "exp": "Linezolida e tedizolida cobrem Gram-positivos, inclusive MRSA e VRE, mas não Gram-negativos devido a barreiras intrínsecas e efluxo. Linezolida também integra esquemas especializados para TB resistente, mas não apenas micobactérias.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-048",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Oxazolidinonas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Oxazolidinonas",
+        "focos": [
+          "farmacocinetica"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Oxazolidinonas"
+        ]
+      },
+      "q": "Qual vantagem farmacocinética favorece a troca da linezolida IV para oral?",
+      "options": [
+        "Depósito intramuscular por semanas",
+        "Ativação exclusiva pela flora intestinal",
+        "Biodisponibilidade oral próxima de 100%",
+        "Excreção apenas pulmonar",
+        "Absorção aumentada por quelantes"
+      ],
+      "correct": 2,
+      "exp": "A biodisponibilidade oral da linezolida é praticamente completa, permitindo manter a mesma dose na troca IV-VO quando o paciente absorve. Isso não elimina a necessidade de monitorar toxicidade.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-049",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Oxazolidinonas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Oxazolidinonas",
+        "focos": [
+          "toxicidade"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 50S",
+          "Oxazolidinonas"
+        ]
+      },
+      "q": "Qual conjunto de eventos adversos é compatível com uso prolongado de linezolida?",
+      "options": [
+        "Nefrotoxicidade e ototoxicidade dose-dependentes, cumulativas e por vezes irreversíveis",
+        "Tendinopatia espontânea e risco aumentado de aneurisma de aorta",
+        "Síndrome do homem vermelho relacionada à velocidade rápida de infusão intravenosa",
+        "Mielossupressão, neuropatia periférica/óptica e acidose lática",
+        "Nefrolitíase por cristalúria isolada, sem outros achados sistêmicos"
+      ],
+      "correct": 3,
+      "exp": "Linezolida pode suprimir medula, sobretudo plaquetas, e em cursos longos causar neuropatias e disfunção mitocondrial com acidose. Como inibidora fraca da MAO, também exige atenção a fármacos serotoninérgicos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-050",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Tetraciclinas e glicilciclinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Tetraciclinas e glicilciclinas",
+        "focos": [
+          "tetraciclinas",
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Tetraciclinas e glicilciclinas",
+          "Tetraciclinas"
+        ]
+      },
+      "q": "Como as tetraciclinas inibem a tradução?",
+      "options": [
+        "Induzem leitura errada irreversível do RNAm",
+        "Impedem a formação inicial do complexo ribossomal 70S na subunidade 50S",
+        "Bloqueiam a translocação do ribossomo por ligação ao RNA 23S",
+        "Clivam diretamente as moléculas de RNA mensageiro bacteriano",
+        "Impedem a entrada do aminoacil-tRNA no sítio A da subunidade 30S"
+      ],
+      "correct": 4,
+      "exp": "Tetraciclinas ligam-se reversivelmente ao 30S e impedem a acomodação do aminoacil-tRNA. Aminoglicosídeos causam leitura errada; linezolida bloqueia iniciação; macrolídeos bloqueiam translocação.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-051",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Tetraciclinas e glicilciclinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Tetraciclinas e glicilciclinas",
+        "focos": [
+          "tetraciclinas",
+          "espectro"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Tetraciclinas e glicilciclinas",
+          "Tetraciclinas"
+        ]
+      },
+      "q": "Qual grupo de microrganismos é classicamente coberto por doxiciclina?",
+      "options": [
+        "Riquétsias, clamídias e micoplasmas",
+        "Enterococos resistentes à vancomicina de forma universal",
+        "Pseudomonas aeruginosa",
+        "Candida e Aspergillus",
+        "Bacilos anaeróbios apenas"
+      ],
+      "correct": 0,
+      "exp": "Doxiciclina tem excelente atividade contra agentes intracelulares/atípicos como Rickettsia, Chlamydia e Mycoplasma. Não é agente confiável para Pseudomonas, fungos ou VRE universalmente.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-052",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Tetraciclinas e glicilciclinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Tetraciclinas e glicilciclinas",
+        "focos": [
+          "tetraciclinas",
+          "interacoes"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Tetraciclinas e glicilciclinas",
+          "Tetraciclinas"
+        ]
+      },
+      "q": "Por que antiácidos, ferro e laticínios podem reduzir a exposição oral a tetraciclinas?",
+      "options": [
+        "Induzem fortemente a expressão de betalactamases cromossômicas do tipo AmpC",
+        "Cátions polivalentes quelam o fármaco e formam complexos pouco absorvíveis",
+        "Aumentam a taxa de filtração glomerular e a depuração renal",
+        "Bloqueiam a ativação enzimática dependente de ferredoxina",
+        "Metilam o RNA ribossomal 23S bacteriano, reduzindo a afinidade pelo fármaco"
+      ],
+      "correct": 1,
+      "exp": "Cálcio, magnésio, alumínio e ferro formam quelatos com tetraciclinas e reduzem absorção. Separar horários evita a interação; os demais mecanismos não explicam esse efeito.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-053",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Tetraciclinas e glicilciclinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Tetraciclinas e glicilciclinas",
+        "focos": [
+          "tigeciclina",
+          "farmacocinetica"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Tetraciclinas e glicilciclinas",
+          "Tigeciclina"
+        ]
+      },
+      "q": "Qual limitação farmacocinética da tigeciclina torna inadequado seu uso em bacteremia?",
+      "options": [
+        "Inativação completa pelo surfactante pulmonar alveolar",
+        "Eliminação exclusivamente urinária, sem participação hepática",
+        "Grande volume de distribuição e baixas concentrações séricas",
+        "Ausência de atividade contra Gram-positivos",
+        "Biodisponibilidade oral completa, próxima a 100%"
+      ],
+      "correct": 2,
+      "exp": "Tigeciclina distribui-se intensamente aos tecidos, deixando níveis sanguíneos baixos; por isso não é boa escolha para bacteremia. Inativação por surfactante caracteriza daptomicina.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-054",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Tetraciclinas e glicilciclinas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Tetraciclinas e glicilciclinas",
+        "focos": [
+          "tetraciclinas",
+          "resistencia"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da síntese proteica",
+          "Subunidade 30S",
+          "Tetraciclinas e glicilciclinas",
+          "Tetraciclinas"
+        ]
+      },
+      "q": "Quais mecanismos frequentemente causam resistência às tetraciclinas?",
+      "options": [
+        "Coexistência de PBP2a e produção de carbapenemase",
+        "D-Ala-D-Lac e espessamento de parede",
+        "Perda de LPS e inibição de folato",
+        "Bombas de efluxo e proteção ribossomal",
+        "Ativação por nitroredutase"
+      ],
+      "correct": 3,
+      "exp": "Efluxo (tetA e relacionados) e proteínas de proteção ribossomal (como TetM) são mecanismos clássicos. Tigeciclina contorna parte deles, mas não todos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-055",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Antifolatos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Antifolatos",
+        "focos": [
+          "sulfonamidas",
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores do metabolismo do folato",
+          "Antifolatos",
+          "Sulfonamidas"
+        ]
+      },
+      "q": "Em que ordem SMX-TMP bloqueia a via do folato?",
+      "options": [
+        "Sulfametoxazol inibe DHFR; trimetoprima inibe DHPS",
+        "Ambos os fármacos inibem a mesma PBP, sem diferença de sítio",
+        "Ambos bloqueiam DNA girase",
+        "Trimetoprima compete com PABA; sulfametoxazol bloqueia timidilato sintase",
+        "Sulfametoxazol inibe DHPS; trimetoprima inibe DHFR"
+      ],
+      "correct": 4,
+      "exp": "Sulfametoxazol mimetiza PABA e inibe diidropteroato sintase; trimetoprima inibe diidrofolato redutase. O bloqueio sequencial reduz tetraidrofolato e síntese de timidina.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-056",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Antifolatos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Antifolatos",
+        "focos": [
+          "sulfonamidas",
+          "espectro"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores do metabolismo do folato",
+          "Antifolatos",
+          "Sulfonamidas"
+        ]
+      },
+      "q": "Qual microrganismo tem SMX-TMP como fármaco central para tratamento e profilaxia?",
+      "options": [
+        "Pneumocystis jirovecii",
+        "Pseudomonas aeruginosa",
+        "Treponema pallidum",
+        "Bacteroides fragilis",
+        "Enterococcus faecium resistente à vancomicina"
+      ],
+      "correct": 0,
+      "exp": "SMX-TMP é primeira escolha para pneumocistose e sua profilaxia. Também cobre Nocardia e Stenotrophomonas, mas não oferece atividade confiável contra Pseudomonas, anaeróbios, Treponema ou VRE.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-057",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Antifolatos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Antifolatos",
+        "focos": [
+          "trimetoprima",
+          "toxicidade"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores do metabolismo do folato",
+          "Antifolatos",
+          "Trimetoprima"
+        ]
+      },
+      "q": "Por que trimetoprima pode elevar creatinina sem reduzir verdadeiramente a filtração glomerular?",
+      "options": [
+        "Aumenta produção muscular de creatina",
+        "Inibe secreção tubular de creatinina",
+        "Causa hemólise obrigatória",
+        "Cristaliza sempre nos glomérulos",
+        "Bloqueia a aferente por prostaglandinas"
+      ],
+      "correct": 1,
+      "exp": "Trimetoprima reduz secreção tubular de creatinina, elevando o valor sérico sem queda proporcional da TFG. A combinação também pode causar lesão renal verdadeira, que exige contexto clínico.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-058",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Antifolatos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Antifolatos",
+        "focos": [
+          "trimetoprima",
+          "toxicidade"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores do metabolismo do folato",
+          "Antifolatos",
+          "Trimetoprima"
+        ]
+      },
+      "q": "Qual distúrbio eletrolítico pode ocorrer com trimetoprima, sobretudo com IECA, BRA ou espironolactona?",
+      "options": [
+        "Hipocalemia",
+        "Hipernatremia",
+        "Hipercalemia",
+        "Hipocalcemia",
+        "Hipofosfatemia"
+      ],
+      "correct": 2,
+      "exp": "Trimetoprima age de modo semelhante à amilorida no néfron distal e reduz excreção de potássio. O risco aumenta com doença renal e outros fármacos que elevam K+.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-059",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Antifolatos",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Antifolatos",
+        "focos": [
+          "sulfonamidas",
+          "resistencia"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores do metabolismo do folato",
+          "Antifolatos",
+          "Sulfonamidas"
+        ]
+      },
+      "q": "Qual mecanismo pode produzir resistência específica a SMX-TMP?",
+      "options": [
+        "Mutação no gene gyrA da DNA girase",
+        "PBP2a, proteína ligadora de penicilina de baixa afinidade",
+        "Metilação erm do RNA ribossomal 23S",
+        "Genes sul e dfr que codificam alvos com menor afinidade",
+        "Terminal D-Ala-D-Lac, que substitui o dipeptídeo original"
+      ],
+      "correct": 3,
+      "exp": "Genes sul alteram DHPS e genes dfr alteram DHFR, reduzindo afinidade pelos fármacos. Os demais mecanismos pertencem a quinolonas, betalactâmicos, MLSB e glicopeptídeos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-060",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Metronidazol",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Metronidazol",
+        "focos": [
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Agentes que lesionam ácidos nucleicos",
+          "Nitroimidazóis",
+          "Metronidazol"
+        ]
+      },
+      "q": "Por que metronidazol é seletivo para anaeróbios e alguns protozoários?",
+      "options": [
+        "Precisa de oxigênio molecular disponível para entrar na célula",
+        "Liga-se apenas a uma PBP específica presente exclusivamente em anaeróbios estritos",
+        "Quelação direta e irreversível do ergosterol presente na membrana fúngica",
+        "Inibe também a enzima DHFR humana, exigindo terapia de resgate com folinato",
+        "Seu grupo nitro é reduzido nesses organismos, formando radicais que lesam DNA"
+      ],
+      "correct": 4,
+      "exp": "Metronidazol é pró-fármaco; sistemas de baixo potencial redox o reduzem e geram intermediários que quebram DNA. Oxigênio reoxida intermediários e limita atividade em aeróbios.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-061",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Metronidazol",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Metronidazol",
+        "focos": [
+          "espectro"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Agentes que lesionam ácidos nucleicos",
+          "Nitroimidazóis",
+          "Metronidazol"
+        ]
+      },
+      "q": "Qual espectro corresponde ao metronidazol?",
+      "options": [
+        "Anaeróbios e protozoários suscetíveis",
+        "Cocos Gram-positivos aeróbios e atípicos",
+        "Pseudomonas e Acinetobacter",
+        "MRSA e VRE",
+        "Espiroquetas exclusivamente"
+      ],
+      "correct": 0,
+      "exp": "Metronidazol cobre anaeróbios e protozoários como Giardia, Entamoeba e Trichomonas. Não deve ser usado como cobertura de aeróbios, MRSA/VRE ou Pseudomonas.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-062",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Metronidazol",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Metronidazol",
+        "focos": [
+          "toxicidade"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Agentes que lesionam ácidos nucleicos",
+          "Nitroimidazóis",
+          "Metronidazol"
+        ]
+      },
+      "q": "Qual toxicidade ganha importância em cursos prolongados de metronidazol?",
+      "options": [
+        "Miopatia com CPK elevada como achado principal",
+        "Neuropatia periférica",
+        "Ruptura de tendão por toxicidade em colágeno",
+        "Ototoxicidade coclear dose-dependente e cumulativa",
+        "Mielossupressão cumulativa obrigatória"
+      ],
+      "correct": 1,
+      "exp": "Neuropatia periférica é toxicidade cumulativa reconhecida. Miopatia lembra daptomicina; tendão, quinolonas; ototoxicidade, aminoglicosídeos; mielossupressão, linezolida/antifolatos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-063",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Quinolonas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Quinolonas",
+        "focos": [
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da replicação do DNA",
+          "Fluoroquinolonas"
+        ]
+      },
+      "q": "Quais enzimas são alvos das fluoroquinolonas?",
+      "options": [
+        "Alteração conjunta das enzimas DHPS e DHFR",
+        "Ligação a PBPs com ativação secundária de autolisinas",
+        "DNA girase e topoisomerase IV",
+        "23S e 16S",
+        "MurA e alanina racemase"
+      ],
+      "correct": 2,
+      "exp": "Fluoroquinolonas estabilizam complexos clivados de DNA girase/topoisomerase IV e bloqueiam replicação. Os demais pares pertencem a antifolatos, parede, ribossomo e outros inibidores de parede.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-064",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Quinolonas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Quinolonas",
+        "focos": [
+          "espectro"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da replicação do DNA",
+          "Fluoroquinolonas"
+        ]
+      },
+      "q": "Qual fluoroquinolona prioriza bacilos Gram-negativos e possui atividade antipseudomonas mais característica?",
+      "options": [
+        "Moxifloxacino",
+        "Delafloxacino",
+        "Norfloxacino",
+        "Ciprofloxacino",
+        "Nenhuma fluoroquinolona"
+      ],
+      "correct": 3,
+      "exp": "Ciprofloxacino é o representante clássico com forte atividade Gram-negativa e antipseudomonas. Levofloxacino também pode cobrir Pseudomonas, enquanto moxifloxacino prioriza pneumococo/anaeróbios e não é urinário.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-065",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Quinolonas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Quinolonas",
+        "focos": [
+          "farmacocinetica"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da replicação do DNA",
+          "Fluoroquinolonas"
+        ]
+      },
+      "q": "Por que moxifloxacino não é escolha adequada para infecção urinária?",
+      "options": [
+        "Não é absorvido de forma adequada quando administrado por via oral",
+        "É rapidamente inativado pelo pH fisiológico do plasma sanguíneo",
+        "Não atua sobre o DNA bacteriano nem sobre topoisomerases",
+        "É eliminado apenas pelo pulmão",
+        "Produz concentrações urinárias baixas"
+      ],
+      "correct": 4,
+      "exp": "A eliminação do moxifloxacino gera pouca exposição urinária, apesar da boa biodisponibilidade e atividade sistêmica. Sensibilidade in vitro não compensa concentração inadequada no sítio.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-066",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Quinolonas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Quinolonas",
+        "focos": [
+          "toxicidade"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da replicação do DNA",
+          "Fluoroquinolonas"
+        ]
+      },
+      "q": "Qual conjunto de eventos adversos exige parcimônia com fluoroquinolonas?",
+      "options": [
+        "Tendinopatia, neuropatia, efeitos no SNC, disglucemia e prolongamento de QT",
+        "Apenas náusea leve e autolimitada, sem outros efeitos relevantes",
+        "Nefrotoxicidade e ototoxicidade como toxicidades definidoras",
+        "Síndrome do homem vermelho associada à velocidade rápida de infusão intravenosa isolada",
+        "Mielossupressão previsível após 14 dias"
+      ],
+      "correct": 0,
+      "exp": "Fluoroquinolonas têm toxicidades multissistêmicas potencialmente incapacitantes, além de associação com eventos aórticos em suscetíveis. As demais opções descrevem outros fármacos ou subestimam o risco.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-067",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Quinolonas",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Quinolonas",
+        "focos": [
+          "resistencia"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Inibidores da replicação do DNA",
+          "Fluoroquinolonas"
+        ]
+      },
+      "q": "Qual mecanismo promove resistência adquirida às fluoroquinolonas?",
+      "options": [
+        "Terminal D-Ala-D-Lac, que substitui o dipeptídeo original",
+        "Mutações em gyrA/parC, efluxo e proteção plasmidial do alvo",
+        "Presença isolada de PBP2a, sem outro mecanismo associado",
+        "Enzimas modificadoras AAC/ANT/APH atuando isoladamente sobre o fármaco",
+        "Metilação do RNA ribossomal 23S mediada pelo gene erm"
+      ],
+      "correct": 1,
+      "exp": "Alterações nas regiões determinantes de resistência de gyrA/parC reduzem ligação; efluxo e proteínas Qnr também contribuem. Os demais mecanismos pertencem a outras classes.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-068",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Agentes urinários",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Agentes urinários",
+        "focos": [
+          "fosfomicina",
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Outros agentes de uso urinário",
+          "Fosfomicina e nitrofurantoína",
+          "Fosfomicina"
+        ]
+      },
+      "q": "Qual é o alvo inicial da fosfomicina?",
+      "options": [
+        "PBP2a, proteína ligadora de penicilina de baixa afinidade",
+        "DNA girase bacteriana, também chamada de topoisomerase tipo II",
+        "MurA, bloqueando etapa citoplasmática precoce da síntese de peptideoglicano",
+        "Subunidade ribossomal 50S envolvida diretamente na etapa final da síntese proteica bacteriana",
+        "Terminal D-Ala-D-Ala do precursor do peptideoglicano"
+      ],
+      "correct": 2,
+      "exp": "Fosfomicina entra por transportadores e inibe MurA, uma etapa anterior à formação do precursor do peptideoglicano. Betalactâmicos agem mais tarde nas PBPs.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-069",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Agentes urinários",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Agentes urinários",
+        "focos": [
+          "nitrofurantoina",
+          "mecanismo"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Outros agentes de uso urinário",
+          "Fosfomicina e nitrofurantoína",
+          "Nitrofurantoína"
+        ]
+      },
+      "q": "Como a nitrofurantoína produz dano bacteriano?",
+      "options": [
+        "Ligação ao terminal D-Ala-D-Ala do peptideoglicano",
+        "Inibição exclusiva da enzima di-hidrofolato redutase (DHFR) bacteriana",
+        "Formação de poros na membrana de modo dependente da concentração de cálcio",
+        "Nitroredutases geram intermediários reativos que atingem múltiplos alvos",
+        "Metilação enzimática do RNA ribossomal 23S"
+      ],
+      "correct": 3,
+      "exp": "A nitrofurantoína é reduzida por enzimas bacterianas e forma produtos reativos que lesam DNA, ribossomos e outras macromoléculas. Seu mecanismo multi-alvo ajuda a explicar resistência relativamente menos frequente.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-070",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Agentes urinários",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Agentes urinários",
+        "focos": [
+          "fosfomicina",
+          "nitrofurantoina",
+          "distribuicao"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Outros agentes de uso urinário",
+          "Fosfomicina e nitrofurantoína",
+          "Fosfomicina"
+        ]
+      },
+      "q": "Por que fosfomicina oral e nitrofurantoína não devem ser usadas para pielonefrite?",
+      "options": [
+        "Não são excretadas de forma significativa nem concentradas na via urinária",
+        "Atuam apenas contra microrganismos Gram-positivos multirresistentes",
+        "São inativadas rapidamente pelo pH ácido da urina",
+        "Precisam da presença constante de surfactante pulmonar alveolar para funcionar adequadamente",
+        "Concentram-se na urina, mas não atingem exposição adequada no parênquima renal ou sangue"
+      ],
+      "correct": 4,
+      "exp": "Ambas são excelentes agentes luminais da bexiga, mas inadequadas para infecção além dela por baixa exposição tecidual/sistêmica. Pielonefrite exige agente que penetre o parênquima.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-071",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Agentes urinários",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Agentes urinários",
+        "focos": [
+          "nitrofurantoina",
+          "toxicidade"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Antibacterianos",
+          "Outros agentes de uso urinário",
+          "Fosfomicina e nitrofurantoína",
+          "Nitrofurantoína"
+        ]
+      },
+      "q": "Qual toxicidade rara, porém importante, associa-se ao uso prolongado de nitrofurantoína?",
+      "options": [
+        "Pneumonite/fibrose pulmonar e hepatotoxicidade",
+        "Ruptura de tendão por toxicidade em colágeno",
+        "Ototoxicidade vestibular irreversível de instalação tardia",
+        "Síndrome serotoninérgica por interação medicamentosa",
+        "Síndrome do homem vermelho relacionada à infusão rápida"
+      ],
+      "correct": 0,
+      "exp": "Nitrofurantoína pode causar reação pulmonar aguda e, em uso crônico, pneumopatia intersticial/fibrose, além de hepatotoxicidade e neuropatia. As demais toxicidades correspondem a outras classes.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-072",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Resistência e stewardship",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Resistência e stewardship",
+        "focos": [
+          "mrsa",
+          "resistencia"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Uso racional e resistência antimicrobiana",
+          "MRSA"
+        ]
+      },
+      "q": "Qual mecanismo define MRSA?",
+      "options": [
+        "Betalactamase TEM isolada",
+        "PBP2a de baixa afinidade codificada por mecA/mecC",
+        "Terminal D-Ala-D-Lac, que substitui o dipeptídeo original",
+        "Metilação enzimática do RNA ribossomal 23S",
+        "Mutação estrutural da DNA girase bacteriana"
+      ],
+      "correct": 1,
+      "exp": "MRSA resulta principalmente da aquisição de mecA/mecC e expressão de PBP2a, que mantém transpeptidação apesar da maioria dos betalactâmicos. Penicilinase isolada define outro fenótipo.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-073",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Resistência e stewardship",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Resistência e stewardship",
+        "focos": [
+          "esbl",
+          "resistencia"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Uso racional e resistência antimicrobiana",
+          "ESBL"
+        ]
+      },
+      "q": "O que caracteriza uma ESBL (betalactamase de espectro estendido), diferenciando-a de outras betalactamases?",
+      "options": [
+        "Betalactamase cromossômica ou plasmidial do tipo AmpC, que também hidrolisa cefalosporinas de espectro estendido, mas costuma resistir à inibição por clavulanato, respondendo melhor a avibactam",
+        "Carbapenemase de classe A (como KPC), que hidrolisa cefalosporinas de espectro estendido e também carbapenêmicos, com inibição por clavulanato pouco confiável na rotina laboratorial",
+        "Betalactamase capaz de hidrolisar penicilinas e cefalosporinas de espectro estendido, geralmente inibida por clavulanato in vitro",
+        "Penicilinase de espectro estreito (como TEM-1/SHV-1 originais), inibida por clavulanato, mas sem atividade relevante contra cefalosporinas de espectro estendido",
+        "Metaloenzima dependente de zinco que hidrolisa amplamente carbapenêmicos, mas poupa o aztreonam entre os betalactâmicos disponíveis, sem resposta a clavulanato"
+      ],
+      "correct": 2,
+      "exp": "ESBLs (como as da família CTX-M) hidrolisam penicilinas, cefalosporinas de espectro estendido (oximino-cefalosporinas) e aztreonam, e são caracteristicamente inibidas por clavulanato in vitro — esse padrão de inibição é o principal critério que as distingue laboratorialmente de outras betalactamases. AmpC hidrolisa o mesmo espectro de cefalosporinas, mas tipicamente não é inibida por clavulanato (responde a avibactam), o que a diferencia de ESBL apesar do espectro hidrolítico semelhante. Carbapenemases de classe A (KPC) estendem a hidrólise aos carbapenêmicos e têm resposta inconsistente ao clavulanato. Penicilinases de espectro estreito (TEM-1/SHV-1) também são inibidas por clavulanato, mas não hidrolisam cefalosporinas de espectro estendido — a mutação que amplia esse espectro é justamente o que define uma ESBL. Metalo-betalactamases hidrolisam carbapenêmicos, poupam o aztreonam e não respondem a clavulanato.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos",
+        "paterson2005-esbl-clinical-update"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-074",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Resistência e stewardship",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Resistência e stewardship",
+        "focos": [
+          "aware",
+          "stewardship"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Uso racional e resistência antimicrobiana",
+          "AWaRe"
+        ]
+      },
+      "q": "Qual combinação representa corretamente as categorias AWaRe?",
+      "options": [
+        "Access: administração exclusivamente por via oral em nível ambulatorial; Watch: uso pediátrico hospitalar restrito",
+        "Access: administração exclusivamente por via oral; Watch: administração intravenosa hospitalar; Reserve: uso exclusivamente por via tópica",
+        "Access: bacteriostáticos; Watch: bactericidas; Reserve: antifúngicos",
+        "Access: preferenciais para síndromes comuns; Watch: maior potencial de seleção; Reserve: último recurso para resistência selecionada",
+        "Access: dispensado sem qualquer prescrição médica; Watch: uso hospitalar restrito; Reserve: uso experimental não aprovado"
+      ],
+      "correct": 3,
+      "exp": "AWaRe é uma ferramenta de stewardship baseada no impacto ecológico e prioridade de uso, não em via, local ou efeito bactericida. Access deve compor a maior parte do consumo apropriado; Reserve é protegido.",
+      "ref": [
+        "who2022-aware"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-075",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Resistência e stewardship",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Resistência e stewardship",
+        "focos": [
+          "stewardship"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Uso racional e resistência antimicrobiana"
+        ]
+      },
+      "q": "Em qual momento o 'antibiotic time-out' é mais produtivo?",
+      "options": [
+        "Apenas depois de completar totalmente o curso prescrito de antibióticos, independente da evolução clínica",
+        "Antes de colher qualquer amostra biológica para cultura microbiológica e exames complementares",
+        "Somente se ocorrer uma reação alérgica grave e documentada ao fármaco em uso",
+        "Exclusivamente no momento da alta hospitalar do paciente, após completar o curso total",
+        "Em 48-72 horas, quando diagnóstico, culturas, resposta e possibilidade de descalonamento podem ser revistos"
+      ],
+      "correct": 4,
+      "exp": "A revisão em 48-72 h permite suspender terapia se não houver infecção, estreitar espectro, ajustar dose/via/duração e conferir controle do foco. Esperar o fim perde o principal benefício.",
+      "ref": [
+        "anvisa2023-stewardship",
+        "who2022-aware"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "antimicrobianos-076",
+      "tema": "Antimicrobianos - fundamentos",
+      "cat": "Resistência e stewardship",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Farmacologia",
+        "disciplinasRelacionadas": [
+          "Infectologia",
+          "Microbiologia"
+        ],
+        "tema": "Antimicrobianos - fundamentos",
+        "subtema": "Resistência e stewardship",
+        "focos": [
+          "controle-de-foco",
+          "stewardship"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Farmacologia",
+          "Antimicrobianos",
+          "Uso racional e resistência antimicrobiana",
+          "Controle De Foco"
+        ]
+      },
+      "q": "Qual intervenção reduz carga bacteriana sem depender de ampliar o espectro antibiótico?",
+      "options": [
+        "Drenagem de abscesso e remoção de dispositivo infectado quando indicadas",
+        "Adicionar duas classes antimicrobianas distintas com o mesmo alvo molecular",
+        "Manter antimicrobiano até normalizar toda PCR",
+        "Evitar a coleta de culturas microbiológicas para não atrasar o tratamento",
+        "Trocar a via oral pela via intravenosa em toda infecção, independente da gravidade"
+      ],
+      "correct": 0,
+      "exp": "Controle do foco remove pus, tecido necrótico ou material colonizado que reduz atividade antimicrobiana. Escalar espectro não substitui drenagem/remoção, e os demais comportamentos não são universalmente corretos.",
+      "ref": [
+        "aulas2026-antimicrobianos",
+        "guia2026-antimicrobianos"
+      ],
+      "itemVersion": 1,
+      "editorialState": "em_revisao"
+    }
+  ],
+  "fontes": {
+    "aulas2026-antimicrobianos": "PUCPR. \u003cem>Antimicrobianos I, II e III\u003c/em> [materiais de aula]. Disciplina Agressão e Defesa 2, Medicina, 2026.2.",
+    "guia2026-antimicrobianos": "\u003cem>Antimicrobianos: fundamentos, classes farmacológicas e aplicação clínica\u003c/em> [guia integrado do usuário]. Infectologia; revisão de 26 ago. 2026.",
+    "anvisa2023-stewardship": "Agência Nacional de Vigilância Sanitária. \u003cem>Diretriz Nacional para Elaboração de Programa de Gerenciamento de Antimicrobianos em Serviços de Saúde\u003c/em>. Brasília: Anvisa; 2023.",
+    "who2022-aware": "World Health Organization. \u003cem>The WHO AWaRe (Access, Watch, Reserve) antibiotic book\u003c/em>. Geneva: WHO; 2022. https://www.who.int/publications/i/item/9789240062382",
+    "eucast2026-definitions": "EUCAST. \u003cem>Definitions of S, I and R\u003c/em> (documento explicativo, sem numeração de versão própria); e \u003cem>Breakpoint tables for interpretation of MICs and zone diameters\u003c/em>, versão 16.1, vigente 24 jun.-31 dez. 2026.",
+    "idsa2024-gramnegativos": "Tamma PD, et al. IDSA 2024 Guidance on the Treatment of Antimicrobial-Resistant Gram-Negative Infections. \u003cem>Clinical Infectious Diseases\u003c/em>. 2024.",
+    "paterson2005-esbl-clinical-update": "Paterson DL, Bonomo RA. Extended-Spectrum β-Lactamases: A Clinical Update. \u003cem>Clinical Microbiology Reviews\u003c/em>. 2005;18(4):657–686. doi:10.1128/CMR.18.4.657-686.2005. PMID:16223952."
+  }
+}
+</script>
+
+<script src="../_shared/app.js"></script>
+<script>
+// Dados específicos desta lista — o motor de quiz (renderização, resposta,
+// salvamento) e as preferências de tema/palete/visão vêm de ../_shared/app.js.
+// Não hardcode conteúdo de questão aqui; edite o banco central em vez disso.
+
+const quizData = JSON.parse(document.getElementById("quiz-data").textContent);
+const QUIZ_ID = quizData.quizId;
+const QUIZ_TITLE = quizData.title;
+const questions = quizData.questions; // { id, tema, cat, q, img, imgAlt, options, correct, exp, ref: [slug,...] }
+const fontes = quizData.fontes;       // { slug: citationHtml }
+
+document.getElementById("page-title").textContent = "Questões — " + QUIZ_TITLE;
+document.getElementById("quiz-title").textContent = QUIZ_TITLE;
+document.getElementById("quiz-desc").textContent = quizData.description || "";
+document.getElementById("quiz-footnote").textContent = quizData.footnote || "";
+
+// Reference numbering is assigned once, by first appearance in the ORIGINAL
+// question order (not the shuffled display order), so numbers stay stable
+// across reshuffles/resets within the same file.
+const refOrder = [];
+questions.forEach(item => {
+  (item.ref || []).forEach(slug => {
+    if (!refOrder.includes(slug)) refOrder.push(slug);
+  });
+});
+const refNumberMap = {};
+refOrder.forEach((slug, i) => { refNumberMap[slug] = i + 1; });
+
+document.getElementById("focus-prev").addEventListener("click", () => { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.getElementById("focus-next").addEventListener("click", () => { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.addEventListener("keydown", event => {
+  if (viewMode !== "focus" || settingsOverlay.classList.contains("open")) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if (event.key === "ArrowLeft" && focusPosition > 0) { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  if (event.key === "ArrowRight" && focusPosition < questionOrder.length - 1) { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+});
+setTheme(themeMode);
+setPalette(paletteMode);
+setView(viewMode, true);
+
+renderQuiz();
+renderRefs();
+</script>
+</body>
+</html>

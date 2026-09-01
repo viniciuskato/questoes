@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desempenho e Plano de Estudo — Banco de Questões</title>
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --card-bg: #ffffff;
+    --text: #1f2937;
+    --text-muted: #6b7280;
+    --border: #e2e6ea;
+    --accent: #2563eb;
+    --accent-soft: #eaf1ff;
+    --good: #15803d;
+    --good-bg: #ecfdf3;
+    --mid: #b45309;
+    --mid-bg: #fffbeb;
+    --bad: #b91c1c;
+    --bad-bg: #fef2f2;
+    --shadow: 0 1px 3px rgba(16,24,40,0.08), 0 1px 2px rgba(16,24,40,0.04);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+  }
+  header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff; padding: 2.5rem 1.5rem 2rem; text-align: center;
+  }
+  header h1 { margin: 0 0 0.4rem; font-size: 1.6rem; }
+  header p { margin: 0 auto; opacity: 0.9; font-size: 0.95rem; max-width: 700px; }
+  .container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  .loader {
+    background: var(--card-bg); border: 1px dashed var(--border); border-radius: 12px;
+    padding: 1.6rem; text-align: center; margin-bottom: 1.5rem; box-shadow: var(--shadow);
+  }
+  .loader.drag-over { border-color: var(--accent); background: var(--accent-soft); }
+  .loader p { margin: 0 0 0.9rem; color: var(--text-muted); font-size: 0.9rem; }
+  .loader .buttons { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+  button.primary, button.secondary {
+    border-radius: 8px; padding: 0.55rem 1rem; font-size: 0.88rem; cursor: pointer;
+  }
+  button.primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); font-weight: 600; }
+  button.secondary { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border); }
+  button.secondary:hover { color: var(--accent); border-color: var(--accent); }
+  .meta-line { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.7rem; }
+  #file-input, #dir-input { display: none; }
+
+  #empty-state { text-align: center; color: var(--text-muted); padding: 3rem 1rem; }
+
+  .summary-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.8rem; margin-bottom: 1.6rem;
+  }
+  .stat-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.9rem 1rem; box-shadow: var(--shadow);
+  }
+  .stat-card .num { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+  .stat-card .label { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
+  .mastery-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.7rem; margin-bottom:1rem; }
+  .mastery-card { --tone:var(--accent); position:relative; overflow:hidden; padding:.9rem 1rem; border:1px solid var(--border); border-radius:12px; background:var(--card-bg); box-shadow:var(--shadow); }
+  .mastery-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:var(--tone); }
+  .mastery-card .num { color:var(--tone); font-size:1.35rem; font-weight:800; }
+  .mastery-card strong { display:block; margin:.08rem 0; font-size:.78rem; }
+  .mastery-card span { display:block; color:var(--text-muted); font-size:.68rem; line-height:1.35; }
+  .mastery-note { margin:0 0 1.3rem; color:var(--text-muted); font-size:.75rem; }
+  .study-hub { --violet:#7c3aed; --cyan:#0891b2; --amber:#d97706; --green:#16a34a; margin-top:2rem; padding-top:1.4rem; border-top:2px solid var(--border); }
+  .study-hub-head { display:flex; justify-content:space-between; align-items:end; gap:1rem; margin-bottom:.8rem; }
+  .study-hub-head h2,.study-hub-head p { margin:0; }
+  .study-hub-head h2 { font-size:1.18rem; }
+  .study-hub-head p { color:var(--text-muted); font-size:.76rem; }
+  .session-hero { display:grid; grid-template-columns:1.35fr .65fr; gap:1rem; padding:1.2rem; border:1px solid color-mix(in srgb,var(--accent) 25%,var(--border)); border-radius:16px; background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--card-bg)),var(--card-bg) 65%); box-shadow:0 14px 36px rgba(15,23,42,.08); }
+  .session-kicker { margin:0 0 .3rem; color:var(--accent); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+  .session-hero h3 { margin:0; font-size:clamp(1.1rem,3vw,1.5rem); letter-spacing:-.02em; }
+  .session-hero p { margin:.4rem 0 0; color:var(--text-muted); font-size:.82rem; max-width:58ch; }
+  .session-score { display:flex; align-items:center; justify-content:center; gap:.7rem; }
+  .session-ring { --value:62; position:relative; width:80px; aspect-ratio:1; display:grid; place-items:center; border-radius:50%; background:conic-gradient(var(--accent) calc(var(--value)*1%),color-mix(in srgb,var(--border) 72%,transparent) 0); }
+  .session-ring::before { content:""; position:absolute; width:60px; aspect-ratio:1; border-radius:50%; background:var(--card-bg); }
+  .session-ring strong { position:relative; font-size:1rem; }
+  .session-score-copy strong,.session-score-copy span { display:block; } .session-score-copy strong{font-size:.84rem}.session-score-copy span{color:var(--text-muted);font-size:.68rem}
+  .session-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:.65rem; margin:.7rem 0; }
+  .session-metric { padding:.75rem .85rem; border:1px solid var(--border); border-radius:12px; background:var(--card-bg); }
+  .session-metric strong,.session-metric span{display:block}.session-metric strong{font-size:1.1rem}.session-metric span{color:var(--text-muted);font-size:.7rem}
+  .study-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:.7rem; }
+  .study-card { padding:1rem; border:1px solid var(--border); border-radius:14px; background:var(--card-bg); box-shadow:var(--shadow); }
+  .study-card-head { display:flex; justify-content:space-between; gap:.7rem; margin-bottom:.7rem; }.study-card-head strong{font-size:.84rem}.study-card-head span{color:var(--text-muted);font-size:.68rem}
+  .topic-row { display:grid; grid-template-columns:minmax(120px,1fr) 1.35fr 40px; align-items:center; gap:.6rem; margin:.65rem 0; }
+  .topic-label strong,.topic-label small{display:block}.topic-label strong{font-size:.75rem}.topic-label small{color:var(--text-muted);font-size:.62rem}
+  .topic-track{height:8px;overflow:hidden;border-radius:99px;background:color-mix(in srgb,var(--border) 70%,transparent)}.topic-fill{height:100%;width:var(--progress);border-radius:inherit;background:var(--bar)}.topic-value{text-align:right;color:var(--text-muted);font-size:.68rem}
+  .today-plan{counter-reset:step;list-style:none;margin:0;padding:0}.today-plan li{counter-increment:step;position:relative;padding:0 0 .8rem 2.1rem}.today-plan li::before{content:counter(step);position:absolute;left:0;width:1.5rem;height:1.5rem;display:grid;place-items:center;border-radius:50%;color:#fff;background:var(--step);font-size:.68rem;font-weight:800}.today-plan strong,.today-plan small{display:block}.today-plan strong{font-size:.76rem}.today-plan small{color:var(--text-muted);font-size:.66rem;line-height:1.4}
+  .data-caveat{margin-top:.55rem;padding:.65rem .75rem;border-radius:10px;color:var(--mid);background:var(--mid-bg);font-size:.68rem;line-height:1.4}
+  .priority-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin:1rem 0}.priority-card{position:relative;padding:.9rem 1rem;border:1px solid var(--border);border-radius:13px;background:var(--card-bg)}.priority-card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--tone)}.priority-card .rank{color:var(--tone);font-size:.66rem;font-weight:800;text-transform:uppercase}.priority-card h3{margin:.35rem 0 .25rem;font-size:.86rem}.priority-card p{margin:0;color:var(--text-muted);font-size:.7rem}.priority-card a{display:inline-block;margin-top:.5rem;color:var(--tone);font-size:.7rem;font-weight:750;text-decoration:none}
+  .study-guides-title{margin:1.3rem 0 .65rem;font-size:.95rem}.study-guide{margin-bottom:.6rem;border:1px solid var(--border);border-radius:11px;background:var(--card-bg);overflow:hidden}.study-guide summary{cursor:pointer;padding:.85rem 1rem;font-size:.82rem;font-weight:700}.study-content{padding:0 1rem .9rem;color:var(--text);font-size:.76rem;line-height:1.5}.study-content h4{margin:.7rem 0 .2rem;color:var(--text-muted);font-size:.7rem;text-transform:uppercase}.study-content ol,.study-content ul{margin:.2rem 0;padding-left:1.2rem}.study-content a{color:var(--accent)}.study-method{margin-top:.65rem;padding:.55rem .65rem;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 7px 7px 0}
+  .hub-tabs { position:sticky; top:0; z-index:20; display:flex; gap:.25rem; width:fit-content; margin:0 auto 1rem; padding:.28rem; border:1px solid var(--border); border-radius:11px; background:color-mix(in srgb,var(--card-bg) 92%,transparent); box-shadow:var(--shadow); backdrop-filter:blur(10px); }
+  .hub-tab { border:0; border-radius:8px; padding:.55rem .85rem; color:var(--text-muted); background:transparent; font:inherit; font-size:.78rem; font-weight:700; cursor:pointer; }
+  .hub-tab:hover { color:var(--accent); background:var(--accent-soft); }.hub-tab[aria-selected="true"]{color:#fff;background:var(--accent)}.hub-panel[hidden]{display:none}
+  .focus-card { display:grid; grid-template-columns:1fr auto; gap:1.2rem; align-items:center; padding:1.25rem 1.3rem; border:1px solid color-mix(in srgb,#7c3aed 36%,var(--border)); border-radius:16px; background:linear-gradient(135deg,color-mix(in srgb,#7c3aed 11%,var(--card-bg)),var(--card-bg) 68%); box-shadow:0 14px 34px rgba(15,23,42,.08); }
+  .focus-eyebrow{margin:0 0 .3rem;color:#7c3aed;font-size:.68rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase}.focus-card h2{margin:0;font-size:clamp(1.15rem,3vw,1.55rem);letter-spacing:-.025em}.focus-card p{margin:.4rem 0 .75rem;max-width:58ch;color:var(--text-muted);font-size:.8rem}
+  .focus-progress{display:flex;align-items:center;gap:.65rem;max-width:420px}.focus-progress .track{flex:1;height:8px;overflow:hidden;border-radius:99px;background:color-mix(in srgb,var(--border) 72%,transparent)}.focus-progress .fill{width:39%;height:100%;border-radius:inherit;background:#7c3aed}.focus-progress span{color:var(--text-muted);font-size:.7rem}
+  .focus-action{min-width:155px;padding:.75rem .9rem;border-radius:11px;color:#fff;background:#7c3aed;text-align:center;text-decoration:none;font-size:.78rem;font-weight:800}.focus-action small{display:block;margin-top:.15rem;opacity:.78;font-size:.64rem;font-weight:500}
+  .queue-head{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin:1.25rem 0 .55rem}.queue-head h2,.queue-head p{margin:0}.queue-head h2{font-size:.95rem}.queue-head p{color:var(--text-muted);font-size:.7rem}
+  .study-queue{border:1px solid var(--border);border-radius:14px;background:var(--card-bg);overflow:hidden;box-shadow:var(--shadow)}.queue-item{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:.75rem;padding:.85rem 1rem;border-bottom:1px solid var(--border)}.queue-item:last-child{border-bottom:0}
+  .queue-rank{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;color:var(--tone);background:color-mix(in srgb,var(--tone) 11%,var(--card-bg));font-size:.7rem;font-weight:850}.queue-copy strong,.queue-copy small{display:block}.queue-copy strong{font-size:.78rem}.queue-copy small{margin-top:.12rem;color:var(--text-muted);font-size:.67rem;line-height:1.35}.queue-status{color:var(--tone);font-size:.68rem;font-weight:800;text-decoration:none;white-space:nowrap}
+  .plan-note{display:flex;gap:.55rem;margin-top:.7rem;padding:.65rem .75rem;border-radius:10px;color:var(--mid);background:var(--mid-bg);font-size:.68rem;line-height:1.4}.panel-intro{margin:0 0 .9rem;padding:.8rem .9rem;border:1px solid var(--border);border-radius:11px;color:var(--text-muted);background:var(--card-bg);font-size:.75rem}.routes-list .study-guide{margin-bottom:.7rem}.routes-list .study-guide summary{display:flex;align-items:center;justify-content:space-between;gap:.8rem}.route-state{color:var(--text-muted);font-size:.65rem;font-weight:600}
+
+  h2.section-title {
+    font-size: 1.05rem; margin: 2rem 0 0.9rem; padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .improve-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.2rem 1.3rem; margin-bottom: 0.8rem; box-shadow: var(--shadow);
+  }
+  .improve-card .item {
+    display: flex; justify-content: space-between; align-items: center; gap: 0.8rem;
+    padding: 0.55rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem;
+  }
+  .improve-card .item:last-child { border-bottom: none; }
+  .improve-card .item .name { flex: 1; }
+  .improve-card .item .cat-tag {
+    font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.15rem;
+  }
+  .pct-badge {
+    font-weight: 700; font-size: 0.85rem; padding: 0.15rem 0.55rem; border-radius: 999px;
+    flex: 0 0 auto;
+  }
+  .pct-good { color: var(--good); background: var(--good-bg); }
+  .pct-mid { color: var(--mid); background: var(--mid-bg); }
+  .pct-bad { color: var(--bad); background: var(--bad-bg); }
+
+  .quiz-block {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.3rem 1.4rem; margin-bottom: 1.2rem; box-shadow: var(--shadow);
+  }
+  .quiz-block h3 { margin: 0 0 0.2rem; font-size: 1.05rem; }
+  .quiz-block .subtitle { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+  .bar-row { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.55rem; font-size: 0.85rem; }
+  .bar-row .bar-label { flex: 0 0 150px; color: var(--text); }
+  .bar-track { flex: 1; height: 10px; background: #eef1f4; border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; }
+  .bar-fill.good { background: var(--good); }
+  .bar-fill.mid { background: var(--mid); }
+  .bar-fill.bad { background: var(--bad); }
+  .bar-pct { flex: 0 0 42px; text-align: right; font-weight: 600; font-size: 0.82rem; }
+
+  .trend-wrap { display: flex; align-items: center; gap: 1rem; margin-top: 0.8rem; flex-wrap: wrap; }
+  .trend-svg { flex: 0 0 auto; }
+  .trend-legend { font-size: 0.78rem; color: var(--text-muted); }
+
+  .question-list { margin-top: 0.9rem; }
+  .question-row {
+    display: flex; justify-content: space-between; gap: 0.8rem; align-items: flex-start;
+    padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.84rem;
+  }
+  .question-row:last-child { border-bottom: none; }
+  .question-row .qtext { flex: 1; color: var(--text); }
+  .question-row .qtext .cat-tag { display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
+  .notice { background: var(--mid-bg); color: var(--mid); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; font-size: 0.82rem; margin-bottom: 0.9rem; }
+  @media (max-width:680px) { .mastery-grid,.priority-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .session-hero,.study-grid,.focus-card{grid-template-columns:1fr}.session-score{justify-content:flex-start}.focus-action{width:100%} }
+  @media (max-width:420px) { .mastery-grid,.priority-grid,.session-metrics { grid-template-columns:1fr; } .topic-row{grid-template-columns:minmax(105px,1fr) 1fr 36px;gap:.4rem} }
+  @media (max-width:520px) { .hub-tabs{width:100%}.hub-tab{flex:1;padding-inline:.45rem}.queue-item{grid-template-columns:30px 1fr}.queue-status{grid-column:2} }
+  .item-analysis { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 0.8rem; box-shadow: var(--shadow); }
+  .item-analysis summary { cursor: pointer; padding: 1rem 1.2rem; font-weight: 600; }
+  .item-body { padding: 0 1.2rem 1.1rem; }
+  .version-block { border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 0.8rem; }
+  .version-meta, .sample-note { font-size: 0.78rem; color: var(--text-muted); }
+  .option-row { display: grid; grid-template-columns: minmax(160px, 1fr) auto; gap: 0.7rem; align-items: center; padding: 0.35rem 0; font-size: 0.82rem; }
+  .warning-tag { color: var(--bad); font-weight: 600; }
+  .option-freq { display: flex; align-items: center; gap: 0.5rem; }
+  .option-bar { width: 64px; height: 6px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--border) 70%, transparent); }
+  .option-bar-fill { display: block; height: 100%; border-radius: inherit; background: var(--text-muted); }
+  .option-num { white-space: nowrap; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .notice, .calibration-help { cursor: default; }
+  .notice summary, .calibration-help summary { cursor: pointer; list-style: none; font-weight: 600; }
+  .notice summary::-webkit-details-marker, .calibration-help summary::-webkit-details-marker { display: none; }
+  .notice summary::after, .calibration-help summary::after { content: " ›"; color: var(--text-muted); }
+  .notice[open] summary::after, .calibration-help[open] summary::after { content: " ⌄"; }
+  .notice p, .calibration-help p { margin: 0.5rem 0 0; }
+  .calibration-help { margin-bottom: 0.9rem; font-size: 0.82rem; color: var(--text-muted); }
+  .certainty-row .bar-label { flex: 0 0 150px; cursor: help; }
+  .certainty-row .bar-pct { flex: 0 0 100px; }
+  .bar-n { font-weight: 400; color: var(--text-muted); }
+
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --card-bg: #181b21; --text: #e5e7eb; --text-muted: #9aa2b1;
+    --border: #2a2e37; --accent: #60a5fa; --accent-soft: #1e2735;
+    --good: #4ade80; --good-bg: #10241a; --mid: #fbbf24; --mid-bg: #29210f;
+    --bad: #f87171; --bad-bg: #2a1414; --shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+  :root[data-theme="dark"] .bar-track { background: #2a2e37; }
+  :root[data-theme="dark"] header { background: linear-gradient(135deg, #1e3a8a, #312e81); }
+  :root[data-palette="presleep"] { --accent: #d9822b; --accent-soft: #fbe9d3; --mid: #d9822b; --mid-bg: #fbe9d3; }
+  :root[data-palette="presleep"] header { background: linear-gradient(135deg, #6b3f14, #a15c1a); }
+  :root[data-theme="dark"][data-palette="presleep"] {
+    --bg: #15100c; --card-bg: #201810; --text: #ece0cf; --text-muted: #ab9a83;
+    --border: #362a1c; --accent: #e0993d; --accent-soft: #2e2013;
+    --good: #9ccc65; --good-bg: #1e2712; --mid: #e0993d; --mid-bg: #2e2013;
+    --bad: #e2725b; --bad-bg: #2c1912; --shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  :root[data-theme="dark"][data-palette="presleep"] .bar-track { background: #2c2318; }
+  :root[data-theme="dark"][data-palette="presleep"] header { background: linear-gradient(135deg, #2c1d0f, #5a3a16); }
+
+  .settings-trigger { position: fixed; top: 1rem; right: 1rem; z-index: 50; display: inline-flex; align-items: center; gap: 0.45rem; border: 1px solid rgba(255,255,255,0.35); border-radius: 9px; padding: 0.52rem 0.72rem; background: rgba(15,23,42,0.78); color: #fff; font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer; box-shadow: 0 5px 18px rgba(0,0,0,0.22); backdrop-filter: blur(8px); }
+  .settings-trigger:hover { background: var(--accent); }
+  .settings-overlay { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; background: rgba(15,23,42,0.58); backdrop-filter: blur(4px); }
+  .settings-overlay.open { display: flex; }
+  .settings-dialog { width: min(28rem,100%); background: var(--card-bg); color: var(--text); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 24px 70px rgba(0,0,0,.3); }
+  .settings-header { display: flex; justify-content: space-between; gap: 1rem; padding: 1.2rem 1.25rem 1rem; border-bottom: 1px solid var(--border); }
+  .settings-header h2 { margin: 0; color: var(--text); font-size: 1.15rem; }
+  .settings-header p { margin: .18rem 0 0; color: var(--text-muted); font-size: .82rem; }
+  .settings-close { width: 2rem; height: 2rem; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); font-size: 1.35rem; cursor: pointer; }
+  .settings-body { padding: 1.1rem 1.25rem; }
+  .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .9rem; border: 1px solid var(--border); border-radius: 11px; background: var(--bg); }
+  .setting-copy strong,.setting-copy span { display:block; } .setting-copy span { margin-top:.15rem; color:var(--text-muted); font-size:.76rem; }
+  .segmented-control { display:inline-flex; padding:.2rem; gap:.15rem; border:1px solid var(--border); border-radius:9px; background:var(--card-bg); box-shadow:var(--shadow); }
+  .segmented-control button { border:0; border-radius:6px; padding:.38rem .58rem; background:transparent; color:var(--text-muted); font:inherit; font-size:.78rem; font-weight:650; cursor:pointer; }
+  .segmented-control button.active { color:#fff; background:var(--accent); }
+  .settings-footer { display:flex; justify-content:flex-end; padding:0 1.25rem 1.2rem; }
+  .settings-done { border:0; border-radius:8px; padding:.58rem 1rem; background:var(--accent); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+  body.settings-open { overflow:hidden; }
+  @media (max-width:520px) { .settings-trigger .settings-label { display:none; } .setting-row { align-items:stretch; flex-direction:column; } .segmented-control button { flex:1; } }
+</style>
+</head>
+<body>
+<button type="button" class="settings-trigger" aria-haspopup="dialog" aria-label="Abrir configurações"><span aria-hidden="true">⚙</span><span class="settings-label">Configurações</span></button>
+
+<header>
+  <h1>Desempenho e Plano de Estudo</h1>
+  <p>Um único centro para analisar resultados, identificar prioridades e decidir a próxima sessão.</p>
+</header>
+
+<div class="container">
+  <nav class="hub-tabs" role="tablist" aria-label="Navegação do centro de estudo">
+    <button class="hub-tab" id="tab-plan" role="tab" aria-selected="true" aria-controls="panel-plan" data-panel="panel-plan">Prioridade</button>
+    <button class="hub-tab" id="tab-performance" role="tab" aria-selected="false" aria-controls="panel-performance" data-panel="panel-performance">Desempenho</button>
+    <button class="hub-tab" id="tab-routes" role="tab" aria-selected="false" aria-controls="panel-routes" data-panel="panel-routes">Roteiros</button>
+  </nav>
+
+  <section class="hub-panel" id="panel-plan" role="tabpanel" aria-labelledby="tab-plan">
+    <article class="focus-card">
+      <div><p class="focus-eyebrow">Prioridade 1 · Continue daqui</p><h2>Antimicrobianos</h2><p>Faça mais 15 questões sem consulta. Este é o maior volume pendente e o único tema ativo sem perfil de domínio calculado.</p><div class="focus-progress"><div class="track"><div class="fill"></div></div><span>30/76 · 39%</span></div></div>
+      <a class="focus-action" href="../medicina/antimicrobianos-fundamentos.html">Continuar agora<small>meta: 15 questões</small></a>
+    </article>
+
+    <div class="queue-head"><div><h2>Depois disso</h2><p>Uma fila curta, ordenada pelo próximo ganho provável.</p></div></div>
+    <div class="study-queue">
+      <div class="queue-item" style="--tone:#0891b2"><span class="queue-rank">2</span><span class="queue-copy"><strong>Radiografia de Tórax</strong><small>Medir: 0/18. Faça a linha de base completa antes de revisar teoria.</small></span><a class="queue-status" href="../medicina/radiografia-torax-basica.html">18 questões →</a></div>
+      <div class="queue-item" style="--tone:#d97706"><span class="queue-rank">3</span><span class="queue-copy"><strong>Distúrbios de Sódio e Água</strong><small>Recuperar: 21% consolidado e 67% não dominado.</small></span><a class="queue-status" href="../medicina/disturbios-sodio-agua-feitas.html">Revisar →</a></div>
+      <div class="queue-item" style="--tone:#16a34a"><span class="queue-rank">4</span><span class="queue-copy"><strong>Endocardite Infecciosa</strong><small>Manter: 48% consolidado; converta os 21% disponíveis com pista.</small></span><a class="queue-status" href="../medicina/endocardite-revisao-desempenho.html">Manutenção →</a></div>
+    </div>
+    <div class="plan-note"><span aria-hidden="true">⚠</span><span>As 30 questões de Antimicrobianos foram informadas nesta sessão, mas o registro não foi exportado. Salve o próximo bloco para calcular os quatro níveis de domínio.</span></div>
+  </section>
+
+  <section class="hub-panel" id="panel-performance" role="tabpanel" aria-labelledby="tab-performance" hidden>
+    <p class="panel-intro">Aqui ficam as métricas detalhadas. Carregue a pasta de registros somente quando quiser analisar resultados; ela não compete mais com a prioridade de estudo.</p>
+    <div class="loader" id="loader">
+      <p>Selecione <code>Questões/_dados/registros/</code>, arquivos JSON individuais ou arraste-os aqui.</p>
+      <div class="buttons"><button class="primary" onclick="document.getElementById('dir-input').click()">Selecionar registros</button><button class="secondary" onclick="document.getElementById('file-input').click()">Selecionar arquivos</button><button class="secondary" id="clear-btn" onclick="clearCache()" style="display:none">Limpar dados</button></div>
+      <input type="file" id="dir-input" webkitdirectory directory multiple><input type="file" id="file-input" accept=".json" multiple><div class="meta-line" id="meta-line"></div>
+    </div>
+    <div id="empty-state">Nenhum registro carregado ainda.</div>
+    <div id="dashboard-content" style="display:none"></div>
+  </section>
+
+  <section class="hub-panel routes-list" id="panel-routes" role="tabpanel" aria-labelledby="tab-routes" hidden>
+    <p class="panel-intro">Consulte um roteiro somente quando chegar ao tema. Os detalhes ficam recolhidos para manter a página leve.</p>
+    <details class="study-guide"><summary><span>Farmacologia — Antimicrobianos</span><span class="route-state">avançar</span></summary><div class="study-content"><h4>Sequência</h4><ol><li>PK/PD, CIM e atividade bactericida/bacteriostática.</li><li>Classes por alvo: parede, membrana, ribossomo, folato e DNA.</li><li>Espectro, usos, toxicidades e comparações.</li><li>Resistência, AWaRe e reavaliação em 48–72 horas.</li></ol><div class="study-method"><strong>Aplicação:</strong> faça blocos curtos e salve o progresso separadamente das sugestões.</div></div></details>
+    <details class="study-guide"><summary><span>Radiografia de Tórax Básica</span><span class="route-state">medir</span></summary><div class="study-content"><h4>Sequência</h4><ol><li>Técnica: PA/AP, inspiração, rotação e penetração.</li><li>Leitura sistemática.</li><li>Padrões antes de diagnósticos.</li><li>Imagem antes das alternativas.</li></ol><div class="study-method"><strong>Aplicação:</strong> “técnica → achado → localização → hipótese”.</div></div></details>
+    <details class="study-guide"><summary><span>Nefrologia — Distúrbios de Sódio e Água</span><span class="route-state">recuperar</span></summary><div class="study-content"><h4>Sequência</h4><ol><li>Compartimentos, VEC e osmolalidade.</li><li>Hiponatremia/hipernatremia × estado volêmico.</li><li>SIHAD × perda cerebral de sal × DI.</li><li>Recuperação dos mecanismos errados.</li></ol><div class="study-method"><strong>Aplicação:</strong> “água, sódio ou ambos?” e depois “qual é o VEC?”.</div></div></details>
+    <details class="study-guide"><summary><span>Endocardite Infecciosa</span><span class="route-state">manter</span></summary><div class="study-content"><h4>Sequência</h4><ol><li>Risco, vegetação e microbiologia.</li><li>Clínica, hemoculturas, eco e Duke-ISCVID.</li><li>Antibioticoterapia por agente, valva e suscetibilidade.</li><li>Cirurgia e complicações.</li></ol><div class="study-method"><strong>Aplicação:</strong> priorize antibioticoterapia e itens disponíveis apenas com pista.</div></div></details>
+  </section>
+</div>
+<div class="settings-overlay" id="settings-overlay" aria-hidden="true"><section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title"><div class="settings-header"><div><h2 id="settings-title">Configurações</h2><p>Personalize a aparência do painel.</p></div><button type="button" class="settings-close" aria-label="Fechar configurações">&times;</button></div><div class="settings-body"><div class="setting-row"><div class="setting-copy"><strong>Tema</strong><span>Escolha a claridade da interface.</span></div><div class="segmented-control" aria-label="Tema da interface"><button type="button" data-theme-choice="light" aria-pressed="false">Claro</button><button type="button" data-theme-choice="dark" aria-pressed="false">Escuro</button></div></div><div class="setting-row"><div class="setting-copy"><strong>Paleta de cores</strong><span>Normal ou tons que afetam menos o sono.</span></div><div class="segmented-control" aria-label="Paleta de cores"><button type="button" data-palette-choice="normal" aria-pressed="false">Normal</button><button type="button" data-palette-choice="presleep" aria-pressed="false">Pré-sono</button></div></div></div><div class="settings-footer"><button type="button" class="settings-done">Concluído</button></div></section></div>
+
+<script src="dashboard-analytics.js"></script>
+<script>
+const settingsOverlay = document.getElementById("settings-overlay");
+const settingsTrigger = document.querySelector(".settings-trigger");
+function setTheme(mode) { const theme = mode === "dark" ? "dark" : "light"; document.documentElement.dataset.theme = theme; document.querySelectorAll("[data-theme-choice]").forEach(button => { const active = button.dataset.themeChoice === theme; button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active)); }); try { localStorage.setItem("questoes-theme", theme); } catch (_) {} }
+function setPalette(mode) { const palette = mode === "presleep" ? "presleep" : "normal"; document.documentElement.dataset.palette = palette; document.querySelectorAll("[data-palette-choice]").forEach(button => { const active = button.dataset.paletteChoice === palette; button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active)); }); try { localStorage.setItem("questoes-palette", palette); } catch (_) {} }
+function openSettings() { settingsOverlay.classList.add("open"); settingsOverlay.setAttribute("aria-hidden","false"); document.body.classList.add("settings-open"); settingsOverlay.querySelector(".settings-close").focus(); }
+function closeSettings() { settingsOverlay.classList.remove("open"); settingsOverlay.setAttribute("aria-hidden","true"); document.body.classList.remove("settings-open"); settingsTrigger.focus(); }
+settingsTrigger.addEventListener("click", openSettings); settingsOverlay.querySelector(".settings-close").addEventListener("click", closeSettings); settingsOverlay.querySelector(".settings-done").addEventListener("click", closeSettings); settingsOverlay.addEventListener("click", event => { if (event.target === settingsOverlay) closeSettings(); }); document.addEventListener("keydown", event => { if (event.key === "Escape" && settingsOverlay.classList.contains("open")) closeSettings(); }); document.querySelectorAll("[data-theme-choice]").forEach(button => button.addEventListener("click", () => setTheme(button.dataset.themeChoice))); document.querySelectorAll("[data-palette-choice]").forEach(button => button.addEventListener("click", () => setPalette(button.dataset.paletteChoice))); let savedTheme = "light", savedPalette = "normal"; try { savedTheme = localStorage.getItem("questoes-theme") || "light"; savedPalette = localStorage.getItem("questoes-palette") || "normal"; } catch (_) {} setTheme(savedTheme); setPalette(savedPalette);
+
+const hubTabs = [...document.querySelectorAll(".hub-tab")];
+function activateHubTab(tab, focus = false) {
+  hubTabs.forEach(button => {
+    const active = button === tab;
+    button.setAttribute("aria-selected", String(active));
+    button.tabIndex = active ? 0 : -1;
+    document.getElementById(button.dataset.panel).hidden = !active;
+  });
+  if (focus) tab.focus();
+}
+hubTabs.forEach((tab, index) => {
+  tab.addEventListener("click", () => activateHubTab(tab));
+  tab.addEventListener("keydown", event => {
+    if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+    event.preventDefault();
+    const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? hubTabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + hubTabs.length) % hubTabs.length;
+    activateHubTab(hubTabs[nextIndex], true);
+  });
+});
+activateHubTab(hubTabs[0]);
+
+const STORAGE_KEY = "questoes_dashboard_registros_v1";
+let registros = [];
+
+function pctClass(pct) {
+  if (pct >= 80) return "good";
+  if (pct >= 60) return "mid";
+  return "bad";
+}
+function pctBadgeClass(pct) {
+  if (pct >= 80) return "pct-good";
+  if (pct >= 60) return "pct-mid";
+  return "pct-bad";
+}
+function fmtPct(n) { return Math.round(n) + "%"; }
+function esc(value) { return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function fmtTime(ms) { return ms < 1000 ? Math.round(ms) + " ms" : (ms / 1000).toFixed(1).replace(".0", "") + " s"; }
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }) +
+         " " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+function isValidRegistro(obj) {
+  return obj && typeof obj.quiz === "string" && Array.isArray(obj.answers);
+}
+
+async function handleFiles(fileList) {
+  const files = Array.from(fileList).filter(f => f.name.toLowerCase().endsWith(".json"));
+  if (files.length === 0) {
+    alert("Nenhum arquivo .json encontrado na seleção.");
+    return;
+  }
+  const parsed = [];
+  for (const file of files) {
+    try {
+      const text = await file.text();
+      const obj = JSON.parse(text);
+      if (isValidRegistro(obj)) parsed.push(obj);
+    } catch (e) { /* ignore malformed file */ }
+  }
+  if (parsed.length === 0) {
+    alert("Os arquivos selecionados não têm o formato esperado de registro de sessão.");
+    return;
+  }
+  registros = parsed;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ savedAt: new Date().toISOString(), data: registros }));
+  document.getElementById("meta-line").textContent = registros.length + " registro(s) carregado(s) agora.";
+  render();
+}
+
+function clearCache() {
+  localStorage.removeItem(STORAGE_KEY);
+  registros = [];
+  render();
+}
+
+function loadFromCache() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.data)) {
+      registros = parsed.data;
+      document.getElementById("meta-line").textContent =
+        "Carregado do cache local em " + fmtDate(parsed.savedAt) + ". Selecione a pasta novamente para atualizar.";
+      document.getElementById("clear-btn").style.display = "inline-flex";
+    }
+  } catch (e) { /* ignore */ }
+}
+
+document.getElementById("dir-input").addEventListener("change", e => handleFiles(e.target.files));
+document.getElementById("file-input").addEventListener("change", e => handleFiles(e.target.files));
+
+const loaderEl = document.getElementById("loader");
+["dragenter", "dragover"].forEach(evt =>
+  loaderEl.addEventListener(evt, e => { e.preventDefault(); loaderEl.classList.add("drag-over"); })
+);
+["dragleave", "drop"].forEach(evt =>
+  loaderEl.addEventListener(evt, e => { e.preventDefault(); loaderEl.classList.remove("drag-over"); })
+);
+loaderEl.addEventListener("drop", e => {
+  if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+});
+
+const CERTAINTY_LABELS = { know: "evocação livre", elimination: "eliminação", recognition: "reconhecimento", "false-confidence": "confiança falsa", guess: "chute" };
+const CERTAINTY_LABELS_LONG = {
+  know: "Evocou a resposta sem olhar as alternativas",
+  elimination: "Eliminou as alternativas erradas",
+  recognition: "Reconheceu a resposta certa ao ler",
+  "false-confidence": "Achou que tinha marcado a certa, mas errou",
+  guess: "Chutou"
+};
+function certaintyLabel(val) { return CERTAINTY_LABELS[val] || "não informado"; }
+
+const CERTAINTY_KEYS = ["know", "elimination", "recognition", "false-confidence", "guess"];
+
+function masteryLevel(answer) {
+  if (answer && (answer.partial === true || answer.selfAssessment === "partial")) return "partial";
+  if (answer && answer.correct === true && answer.certainty === "know") return "consolidated";
+  if (answer && answer.correct === true && (answer.certainty === "elimination" || answer.certainty === "recognition")) return "with-cue";
+  return "not-mastered";
+}
+
+function newCertaintyStats() {
+  return Object.fromEntries(CERTAINTY_KEYS.map(k => [k, { correct: 0, total: 0 }]));
+}
+
+function aggregate(registrosInput) {
+  // Process chronologically so "last attempt" per question reflects the most recent answer, not array order.
+  const registros = registrosInput.slice().sort(
+    (a, b) => new Date(a.finishedAt || a.startedAt || 0) - new Date(b.finishedAt || b.startedAt || 0)
+  );
+  const byQuiz = {};
+  for (const reg of registros) {
+    if (!byQuiz[reg.quiz]) {
+      byQuiz[reg.quiz] = { title: reg.title || reg.quiz, sessions: [], questionsMap: {}, catMap: {}, certaintyStats: newCertaintyStats() };
+    }
+    const qz = byQuiz[reg.quiz];
+    const total = reg.answers.length;
+    const correct = reg.answers.filter(a => a.correct).length;
+    const date = reg.finishedAt || reg.startedAt || new Date().toISOString();
+    qz.sessions.push({ date, correct, total, pct: total ? (correct / total) * 100 : 0 });
+
+    for (const a of reg.answers) {
+      const qKey = a.qId || (a.qIndex + "::" + a.question);
+      if (!qz.questionsMap[qKey]) {
+        qz.questionsMap[qKey] = { qId: a.qId || null, question: a.question, cat: a.cat, correct: 0, total: 0, lastCertainty: null, lastCorrect: null, lastPartial: false, lastDate: null, itemVersions: new Set() };
+      }
+      const qrow = qz.questionsMap[qKey];
+      if (!(qrow.itemVersions instanceof Set)) qrow.itemVersions = new Set();
+      if (a.itemVersion) qrow.itemVersions.add(a.itemVersion);
+      qrow.total++;
+      if (a.correct) qrow.correct++;
+      qrow.lastCertainty = a.certainty || null;
+      qrow.lastCorrect = a.correct;
+      qrow.lastPartial = a.partial === true || a.selfAssessment === "partial";
+      qrow.lastDate = date;
+
+      if (!qz.catMap[a.cat]) qz.catMap[a.cat] = { correct: 0, total: 0 };
+      qz.catMap[a.cat].total++;
+      if (a.correct) qz.catMap[a.cat].correct++;
+
+      if (a.certainty && qz.certaintyStats[a.certainty]) {
+        qz.certaintyStats[a.certainty].total++;
+        if (a.correct) qz.certaintyStats[a.certainty].correct++;
+      }
+    }
+  }
+  return byQuiz;
+}
+
+function buildTrendSvg(sessions) {
+  const w = 220, h = 50, pad = 6;
+  if (sessions.length < 2) {
+    return `<span class="trend-legend">${sessions.length} sessão registrada — precisa de 2+ para ver tendência</span>`;
+  }
+  const n = sessions.length;
+  const stepX = (w - pad * 2) / (n - 1);
+  const pts = sessions.map((s, i) => {
+    const x = pad + i * stepX;
+    const y = h - pad - (s.pct / 100) * (h - pad * 2);
+    return [x, y];
+  });
+  const path = pts.map(p => p.join(",")).join(" ");
+  const circles = pts.map((p, i) => {
+    const s = sessions[i];
+    const colorVar = s.pct >= 80 ? "--good" : s.pct >= 60 ? "--mid" : "--bad";
+    return `<circle cx="${p[0]}" cy="${p[1]}" r="3" style="fill:var(${colorVar})"><title>${fmtDate(s.date)}: ${fmtPct(s.pct)}</title></circle>`;
+  }).join("");
+  return `<svg class="trend-svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <polyline points="${path}" fill="none" style="stroke:var(--accent)" stroke-width="2" />
+    ${circles}
+  </svg>
+  <span class="trend-legend">Primeira: ${fmtPct(sessions[0].pct)} → Última: ${fmtPct(sessions[n-1].pct)}</span>`;
+}
+
+function render() {
+  const empty = document.getElementById("empty-state");
+  const content = document.getElementById("dashboard-content");
+  const meta = document.getElementById("meta-line");
+  const clearBtn = document.getElementById("clear-btn");
+
+  if (registros.length === 0) {
+    empty.style.display = "block";
+    content.style.display = "none";
+    clearBtn.style.display = "none";
+    return;
+  }
+
+  empty.style.display = "none";
+  content.style.display = "block";
+  clearBtn.style.display = "inline-flex";
+
+  const byQuiz = aggregate(registros);
+  const globalItems = DashboardAnalytics.aggregate(registros);
+  const quizIds = Object.keys(byQuiz);
+
+  let totalSessions = 0, totalCorrect = 0, totalAnswered = 0;
+  const allCats = {};
+  const allQuestions = [];
+  const globalCertainty = newCertaintyStats();
+  const overconfidentWrong = [];
+  const luckyCorrect = [];
+
+  quizIds.forEach(qid => {
+    const qz = byQuiz[qid];
+    totalSessions += qz.sessions.length;
+    qz.sessions.forEach(s => { totalCorrect += s.correct; totalAnswered += s.total; });
+    Object.entries(qz.catMap).forEach(([cat, v]) => {
+      if (!allCats[cat]) allCats[cat] = { correct: 0, total: 0 };
+      allCats[cat].correct += v.correct;
+      allCats[cat].total += v.total;
+    });
+    CERTAINTY_KEYS.forEach(k => {
+      globalCertainty[k].correct += qz.certaintyStats[k].correct;
+      globalCertainty[k].total += qz.certaintyStats[k].total;
+    });
+    Object.values(qz.questionsMap).forEach(q => {
+      allQuestions.push({ ...q, quiz: qz.title });
+      if (!q.lastPartial && q.lastCorrect === false && (q.lastCertainty === "know" || q.lastCertainty === "false-confidence")) {
+        overconfidentWrong.push({ ...q, quiz: qz.title });
+      }
+      if (q.lastCorrect === true && (q.lastCertainty === "elimination" || q.lastCertainty === "recognition")) {
+        luckyCorrect.push({ ...q, quiz: qz.title });
+      }
+    });
+  });
+
+  const overallPct = totalAnswered ? (totalCorrect / totalAnswered) * 100 : 0;
+  const latestMastery = new Map();
+  registros.slice().sort((a,b) => new Date(a.finishedAt || a.startedAt || 0) - new Date(b.finishedAt || b.startedAt || 0)).forEach(reg => {
+    (reg.answers || []).forEach(answer => {
+      const key = answer.qId || `${reg.quiz}::${answer.qIndex}::${answer.question || ""}`;
+      latestMastery.set(key, answer);
+    });
+  });
+  const masteryCounts = { consolidated:0, "with-cue":0, partial:0, "not-mastered":0 };
+  latestMastery.forEach(answer => { masteryCounts[masteryLevel(answer)]++; });
+  const masteryTotal = latestMastery.size;
+  const masteryPct = key => masteryTotal ? (masteryCounts[key] / masteryTotal) * 100 : 0;
+
+  let html = "";
+
+  html += `<div class="summary-grid">
+    <div class="stat-card"><div class="num">${totalSessions}</div><div class="label">Sessões registradas</div></div>
+    <div class="stat-card"><div class="num">${quizIds.length}</div><div class="label">Bancos de questões estudados</div></div>
+    <div class="stat-card"><div class="num">${totalAnswered}</div><div class="label">Questões respondidas (total)</div></div>
+    <div class="stat-card"><div class="num">${globalItems.length}</div><div class="label">Itens únicos (qId global; legados isolados)</div></div>
+    <div class="stat-card"><div class="num">${fmtPct(overallPct)}</div><div class="label">Acerto geral</div></div>
+  </div>`;
+
+  html += `<h2 class="section-title">Perfil de domínio — tentativa mais recente</h2>
+  <div class="mastery-grid">
+    <div class="mastery-card" style="--tone:#15803d"><div class="num">${fmtPct(masteryPct("consolidated"))}</div><strong>Consolidado</strong><span>${masteryCounts.consolidated} itens · evocação livre</span></div>
+    <div class="mastery-card" style="--tone:#2563eb"><div class="num">${fmtPct(masteryPct("with-cue"))}</div><strong>Disponível com pista</strong><span>${masteryCounts["with-cue"]} itens · reconhecimento/eliminação</span></div>
+    <div class="mastery-card" style="--tone:#d97706"><div class="num">${fmtPct(masteryPct("partial"))}</div><strong>Parcial</strong><span>${masteryCounts.partial} itens · resposta incompleta</span></div>
+    <div class="mastery-card" style="--tone:#b91c1c"><div class="num">${fmtPct(masteryPct("not-mastered"))}</div><strong>Não dominado</strong><span>${masteryCounts["not-mastered"]} itens · erro ou chute</span></div>
+  </div>
+  <p class="mastery-note">Os quatro níveis não substituem o acerto geral: mostram a qualidade da recuperação da memória e usam somente a tentativa mais recente de cada item.</p>`;
+
+  // O que precisa melhorar — categorias
+  const catList = Object.entries(allCats)
+    .map(([cat, v]) => ({ cat, pct: v.total ? (v.correct / v.total) * 100 : 0, n: v.total, correct: v.correct }))
+    .sort((a, b) => a.pct - b.pct);
+  const weakCats = catList.filter(c => c.pct < 80).slice(0, 6);
+
+  html += `<h2 class="section-title">O que precisa melhorar</h2>`;
+  html += `<div class="improve-card">`;
+  if (weakCats.length === 0) {
+    html += `<div class="item"><span class="name">Nenhuma categoria abaixo de 80% de acerto até agora — bom desempenho geral.</span></div>`;
+  } else {
+    weakCats.forEach(c => {
+      html += `<div class="item">
+        <span class="name">${c.cat}<span class="cat-tag">${c.correct}/${c.n} questões corretas ao longo das sessões</span></span>
+        <span class="pct-badge ${pctBadgeClass(c.pct)}">${fmtPct(c.pct)}</span>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+
+  if (overconfidentWrong.length > 0) {
+    html += `<div class="improve-card">
+      <div style="font-weight:600; margin-bottom:0.4rem; font-size:0.9rem; color:var(--bad);">Prioridade alta — achou que sabia, mas errou (na tentativa mais recente)</div>`;
+    overconfidentWrong.slice(0, 10).forEach(q => {
+      html += `<div class="item">
+        <span class="name">${q.question}<span class="cat-tag">${q.quiz} · ${q.cat} · confiança marcada: ${certaintyLabel(q.lastCertainty)}</span></span>
+        <span class="pct-badge pct-bad">errou</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (luckyCorrect.length > 0) {
+    html += `<div class="improve-card">
+      <div style="font-weight:600; margin-bottom:0.4rem; font-size:0.9rem; color:var(--accent);">Disponível com pista — acertou por reconhecimento ou exclusão</div>`;
+    luckyCorrect.slice(0, 10).forEach(q => {
+      html += `<div class="item">
+        <span class="name">${q.question}<span class="cat-tag">${q.quiz} · ${q.cat} · acertou por ${certaintyLabel(q.lastCertainty)}</span></span>
+        <span class="pct-badge pct-mid">${certaintyLabel(q.lastCertainty)}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  const weakQuestions = allQuestions
+    .filter(q => q.total >= 1 && (q.correct / q.total) < 1)
+    .sort((a, b) => (a.correct / a.total) - (b.correct / b.total))
+    .slice(0, 10);
+  if (weakQuestions.length > 0) {
+    html += `<div class="improve-card">
+      <div style="font-weight:600; margin-bottom:0.4rem; font-size:0.9rem;">Questões mais erradas (histórico completo)</div>`;
+    weakQuestions.forEach(q => {
+      const pct = (q.correct / q.total) * 100;
+      html += `<div class="item">
+        <span class="name">${q.question}<span class="cat-tag">${q.quiz} · ${q.cat} · ${q.correct}/${q.total} acertos · última vez: ${certaintyLabel(q.lastCertainty)}</span></span>
+        <span class="pct-badge ${pctBadgeClass(pct)}">${fmtPct(pct)}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  const certaintyRows = CERTAINTY_KEYS.map(k => ({
+    key: k,
+    label: CERTAINTY_LABELS[k],
+    longLabel: CERTAINTY_LABELS_LONG[k],
+    pct: globalCertainty[k].total ? (globalCertainty[k].correct / globalCertainty[k].total) * 100 : null,
+    n: globalCertainty[k].total,
+    correct: globalCertainty[k].correct
+  })).filter(r => r.n > 0);
+
+  if (certaintyRows.length > 0) {
+    html += `<h2 class="section-title">Calibração de confiança</h2>`;
+    html += `<div class="improve-card">
+      <details class="calibration-help"><summary>Como ler estes números</summary>
+        <p>Compara evocação livre, eliminação, reconhecimento após pista e chute. Reconhecer a resposta ao ler indica memória disponível com pista, mas domínio insuficiente para evocação consciente — por isso continua como prioridade de revisão. "Chute" perto de 20% (1 em 5 alternativas) é compatível com acaso.</p>
+      </details>`;
+    certaintyRows.forEach(r => {
+      html += `<div class="bar-row certainty-row">
+        <span class="bar-label" title="${esc(r.longLabel)}">${r.label}</span>
+        <span class="bar-track"><span class="bar-fill ${pctClass(r.pct)}" style="width:${r.pct}%"></span></span>
+        <span class="bar-pct">${fmtPct(r.pct)} <span class="bar-n">(${r.correct}/${r.n})</span></span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `<h2 class="section-title">Análise global por item</h2>
+    <details class="notice"><summary>Limites de interpretação</summary><p>Dificuldade observada é a proporção de erros nesta amostra, não uma propriedade fixa do item. Versões são analisadas separadamente. A discriminação clássica só seria estimada com pelo menos ${DashboardAnalytics.MIN_CLASSICAL_N} tentativas, ${DashboardAnalytics.MIN_CLASSICAL_USERS} usuários identificados e escore independente; repetições de uma única pessoa não satisfazem esse requisito. "Possível ambiguidade" é um sinal editorial, não um diagnóstico.</p></details>`;
+
+  globalItems.forEach(item => {
+    const total = item.versions.reduce((sum, version) => sum + version.attempts, 0);
+    const identity = item.qId ? `qId ${esc(item.qId)}` : "registro legado sem qId (não agregado entre listas)";
+    html += `<details class="item-analysis">
+      <summary>${esc(item.question)} <span class="cat-tag">${identity} · n=${total} · ${item.quizIds.length} lista(s)</span></summary>
+      <div class="item-body"><div class="version-meta">Listas: ${item.quizIds.map(esc).join(", ")} · Categoria: ${esc(item.category)}</div>`;
+    item.versions.forEach(version => {
+      const difficulty = version.observedDifficulty === null ? "—" : fmtPct(version.observedDifficulty * 100);
+      const time = version.responseTime ? ` · tempo mediano ${fmtTime(version.responseTime.medianMs)} (n=${version.responseTime.n} com tempo)` : " · tempo não disponível";
+      html += `<div class="version-block"><strong>Versão ${esc(version.version)}</strong>
+        <div class="version-meta">n=${version.attempts} · ${version.correct}/${version.attempts} acertos · dificuldade observada ${difficulty}${time}</div>
+        <div class="sample-note">Discriminação: ${esc(version.discrimination.reason)}.</div>`;
+      if (version.distractors.length) {
+        html += `<div style="margin-top:.55rem;font-weight:600;font-size:.82rem">Escolha dos distratores</div>`;
+        version.distractors.forEach(option => {
+          const never = option.count === 0 ? ` <span class="warning-tag">nunca escolhido</span>` : "";
+          const ambiguous = option.ambiguity ? ` <span class="warning-tag">possível ambiguidade: ${option.highConfidenceCount} escolha(s) com alta confiança</span>` : "";
+          html += `<div class="option-row"><span>${esc(option.label)}${never}${ambiguous}</span><span class="option-freq"><span class="option-bar"><span class="option-bar-fill" style="width:${option.frequency * 100}%"></span></span><span class="option-num">${option.count}/${version.attempts} (${fmtPct(option.frequency * 100)})</span></span></div>`;
+        });
+      } else {
+        html += `<div class="sample-note" style="margin-top:.5rem">Sem alternativa escolhida/texto suficiente no registro para analisar distratores.</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div></details>`;
+  });
+
+  html += `<h2 class="section-title">Detalhe por banco de questões</h2>`;
+
+  quizIds.forEach(qid => {
+    const qz = byQuiz[qid];
+    const sessions = qz.sessions;
+    const lastSession = sessions[sessions.length - 1];
+    const bestSession = sessions.reduce((a, b) => (b.pct > a.pct ? b : a), sessions[0]);
+
+    html += `<div class="quiz-block">
+      <h3>${qz.title}</h3>
+      <div class="subtitle">${sessions.length} sessão(ões) · última em ${fmtDate(lastSession.date)} (${fmtPct(lastSession.pct)}) · melhor: ${fmtPct(bestSession.pct)}</div>`;
+
+    html += `<div class="trend-wrap">${buildTrendSvg(sessions)}</div>`;
+
+    const catRows = Object.entries(qz.catMap)
+      .map(([cat, v]) => ({ cat, pct: v.total ? (v.correct / v.total) * 100 : 0, n: v.total, correct: v.correct }))
+      .sort((a, b) => a.pct - b.pct);
+
+    html += `<div style="margin-top:1.1rem;">`;
+    catRows.forEach(c => {
+      html += `<div class="bar-row">
+        <span class="bar-label">${c.cat}</span>
+        <span class="bar-track"><span class="bar-fill ${pctClass(c.pct)}" style="width:${c.pct}%"></span></span>
+        <span class="bar-pct">${fmtPct(c.pct)}</span>
+      </div>`;
+    });
+    html += `</div>`;
+
+    const qRows = Object.values(qz.questionsMap)
+      .filter(q => (q.correct / q.total) < 1)
+      .sort((a, b) => (a.correct / a.total) - (b.correct / b.total));
+    if (qRows.length > 0) {
+      html += `<div class="question-list">`;
+      qRows.forEach(q => {
+        const pct = (q.correct / q.total) * 100;
+        html += `<div class="question-row">
+          <span class="qtext">${q.question}<span class="cat-tag">${q.cat} · última vez: ${certaintyLabel(q.lastCertainty)}</span></span>
+          <span class="pct-badge ${pctBadgeClass(pct)}">${q.correct}/${q.total}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  content.innerHTML = html;
+}
+
+loadFromCache();
+render();
+</script>
+</body>
+</html>

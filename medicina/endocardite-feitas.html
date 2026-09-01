@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Questões</title>
+<link rel="stylesheet" href="../_shared/theme.css">
+<style>
+  /* Específico deste template: cabeçalho, contêiner, botão flutuante de
+     configurações e variantes extras de botão (progresso/qualidade). O
+     restante do tema e dos componentes de quiz vem de ../_shared/theme.css —
+     não duplique regras já definidas lá. */
+  header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff;
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 0.4rem; font-size: 1.6rem; }
+  header p { margin: 0 auto; opacity: 0.9; font-size: 0.95rem; max-width: 700px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  button.export-progress { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+  button.export-progress:hover { background: color-mix(in srgb, var(--accent) 84%, #000); color: var(--accent-contrast); }
+  button.export-quality { border-color: #a66b00; color: #8a5900; }
+  button.export-quality:hover { background: #fff7e6; color: #6f4800; }
+  .save-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .save-guidance { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem; margin: -0.6rem 0 1rem; }
+  .save-guidance p { margin: 0; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); color: var(--text-muted); font-size: 0.76rem; }
+  .save-guidance strong { color: var(--text); }
+  .settings-trigger {
+    position: fixed; top: 1rem; right: 1rem; z-index: 50; display: inline-flex; align-items: center; gap: 0.45rem;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: 9px; padding: 0.52rem 0.72rem;
+    background: rgba(15,23,42,0.78); color: #fff; font: inherit; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 5px 18px rgba(0,0,0,0.22); backdrop-filter: blur(8px);
+  }
+  .settings-trigger:hover { background: var(--accent); color: var(--accent-contrast); }
+
+  body[data-view="focus"] .editorial-notice,
+  body[data-view="focus"] .footnote { display: none; }
+
+  .footnote {
+    text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 2rem;
+  }
+  .editorial-notice {
+    margin: 1rem 0; padding: 0.75rem 0.9rem; border-left: 4px solid #a66b00;
+    background: #fff7e6; color: #5f4300; border-radius: 6px; font-size: 0.86rem;
+  }
+  .editorial-notice a { color: inherit; font-weight: 700; }
+
+  :root[data-theme="dark"] button.export-quality { color: #f0b96a; border-color: #b8791f; }
+  :root[data-theme="dark"] button.export-quality:hover { background: #2e2013; color: #ffd28a; }
+  :root[data-palette="presleep"] .editorial-notice { background: #fdf1de; color: #6b3f14; border-left-color: #a66b00; }
+  :root[data-theme="dark"][data-palette="presleep"] .editorial-notice { background: #2e2013; color: #f0b96a; border-left-color: #b8791f; }
+
+  @media (max-width: 560px) {
+    .settings-trigger .settings-label { display: none; }
+    .setting-row { align-items: stretch; flex-direction: column; }
+    .setting-row .segmented-control { align-self: stretch; }
+    .setting-row .segmented-control button { flex: 1; }
+    .save-guidance { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<button type="button" class="settings-trigger" aria-haspopup="dialog" aria-label="Abrir configurações">
+  <span aria-hidden="true">⚙</span><span class="settings-label">Configurações</span>
+</button>
+
+<header>
+  <h1 id="quiz-title"></h1>
+  <p id="quiz-desc"></p>
+</header>
+
+<div class="container">
+  <div class="editorial-notice" role="note">
+    Banco educacional em auditoria editorial progressiva. Estrutura validada não equivale
+    a aprovação clínica de cada item. Consulte a
+    <a href="../_banco/POLITICA-EDITORIAL.md">política editorial</a>.
+  </div>
+  <div class="toolbar">
+    <div class="score">Acertos: <span id="score-correct">0</span> · Parciais: <span id="score-partial">0</span> · <span id="score-total">0</span>/<span id="score-max">0</span> respondidas</div>
+    <div class="toolbar-right">
+      <a class="dash-link" href="../_dados/dashboard.html" target="_blank">Ver desempenho</a>
+      <div class="save-actions" aria-label="Opções de salvamento">
+        <button class="export export-progress" id="save-progress" onclick="saveRegistro()" title="Salva respostas e desempenho em _dados/registros">💾 Salvar progresso</button>
+        <button class="export export-quality" id="save-quality" onclick="saveQualityReviews()" title="Salva avaliações editoriais em _dados/melhorias de questões">✎ Enviar sugestões (<span id="quality-pending">0</span>)</button>
+      </div>
+      <button class="reset" onclick="resetQuiz()">Reiniciar</button>
+    </div>
+  </div>
+  <div class="save-guidance" aria-label="Destino dos arquivos salvos">
+    <p><strong>Progresso:</strong> escolha <code>_dados/registros/</code>. Contém respostas, acertos e confiança.</p>
+    <p><strong>Sugestões:</strong> escolha <code>_dados/melhorias de questões/</code>. Contém somente revisão editorial.</p>
+  </div>
+  <p class="export-hint" id="export-hint">Arquivo baixado. Mova-o para <code>Questões/_dados/registros/</code> para que apareça no painel de desempenho.</p>
+
+  <nav class="focus-navigation" aria-label="Navegação entre questões">
+    <button type="button" id="focus-prev">&larr; Anterior</button>
+    <span class="focus-position" id="focus-position" aria-live="polite"></span>
+    <button type="button" id="focus-next">Próxima &rarr;</button>
+  </nav>
+
+  <div id="quiz"></div>
+
+  <div class="refs">
+    <h2>Referências</h2>
+    <ol id="ref-list"></ol>
+  </div>
+
+  <p class="footnote" id="quiz-footnote"></p>
+</div>
+
+<div class="settings-overlay" id="settings-overlay" aria-hidden="true">
+  <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-describedby="settings-description">
+    <div class="settings-header">
+      <div><h2 id="settings-title">Configurações</h2><p id="settings-description">Personalize a aparência e a forma de navegar pelas questões.</p></div>
+      <button type="button" class="settings-close" aria-label="Fechar configurações">&times;</button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Tema</strong><span>Escolha a claridade da interface.</span></div>
+        <div class="segmented-control" aria-label="Tema da interface">
+          <button type="button" data-theme-choice="light" aria-pressed="false">Claro</button><button type="button" data-theme-choice="dark" aria-pressed="false">Escuro</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Paleta de cores</strong><span>Normal ou tons que afetam menos o sono.</span></div>
+        <div class="segmented-control" aria-label="Paleta de cores">
+          <button type="button" data-palette-choice="normal" aria-pressed="false">Normal</button><button type="button" data-palette-choice="presleep" aria-pressed="false">Pré-sono</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Exibição das questões</strong><span>Veja todas ou concentre-se em uma por tela.</span></div>
+        <div class="segmented-control" aria-label="Formato das questões">
+          <button type="button" data-view-choice="list" aria-pressed="false">Lista</button><button type="button" data-view-choice="focus" aria-pressed="false">Uma por vez</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-footer"><button type="button" class="settings-done">Concluído</button></div>
+  </section>
+</div>
+
+<script type="application/json" id="quiz-data">
+{
+  "quizId": "endocardite-feitas",
+  "title": "Endocardite Infecciosa — Já Feitas",
+  "description": "Questões de Endocardite que já apareceram em pelo menos uma sessão registrada. Útil para repetição e consolidação.",
+  "footnote": "",
+  "questions": [
+    {
+      "id": "endocardite-01",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Epidemiologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Epidemiologia",
+        "focos": [],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Epidemiologia"
+        ]
+      },
+      "q": "Qual é a incidência mundial estimada da endocardite infecciosa e qual é sua faixa de mortalidade intra-hospitalar?",
+      "options": [
+        "A incidência mundial estimada é de aproximadamente 13,8 casos por 100.000 pessoas-ano, com mortalidade intra-hospitalar entre 15% e 30%",
+        "A incidência mundial estimada é de aproximadamente 3,8 casos por 100.000 pessoas-ano, com mortalidade intra-hospitalar entre 15% e 30%",
+        "Nos países de alta renda, o envelhecimento populacional foi acompanhado por redução proporcional dos casos associados a próteses e dispositivos intracardíacos",
+        "A mortalidade intra-hospitalar situa-se entre 5% e 10%, concentrando-se nos casos por estreptococos orais e sendo menor nos casos por S. aureus",
+        "Em países de alta renda, estreptococos orais permanecem os agentes predominantes, enquanto S. aureus e enterococos são mais associados a países de baixa renda"
+      ],
+      "correct": 0,
+      "exp": "A incidência mundial estimada em 2019 foi de 13,8/100.000 pessoas-ano (~66.300 mortes), com mortalidade intra-hospitalar entre 15% e 30%, variando com agente, sítio, complicações, idade e possibilidade de cirurgia. O perfil migrou da doença reumática em jovens para população idosa com valvopatia degenerativa, próteses e dispositivos, com predomínio de S. aureus e E. faecalis.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-02",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Fatores de risco",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Fatores de risco",
+        "focos": [],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Fatores de risco"
+        ]
+      },
+      "q": "Qual é a importância de uma endocardite infecciosa prévia como fator de risco para um novo episódio?",
+      "options": [
+        "Próteses valvares cirúrgicas conferem risco maior que próteses transcateter, cujo risco se aproxima ao de uma valva nativa sem doença estrutural",
+        "EI prévia confere maior risco individual de recorrência e pior prognóstico, sendo considerada isoladamente um fator de risco relevante",
+        "O maior risco entre cardiopatias congênitas ocorre após reparo completo sem material protético, superando o período perioperatório e as lesões cianóticas não corrigidas",
+        "Valvopatia estrutural discreta sem repercussão confere risco semelhante ao material protético intracardíaco, razão pela qual ambas recebem a mesma indicação de profilaxia",
+        "Dispositivos eletrônicos implantáveis aumentam o risco apenas enquanto a loja do gerador apresenta sinais inflamatórios locais"
+      ],
+      "correct": 1,
+      "exp": "Os fatores cardíacos reconhecidos incluem: EI prévia, prótese valvar ou material protético (inclui próteses transcateter), valvopatia estrutural relevante (sobretudo degenerativa ou reumática), cardiopatia congênita selecionada e dispositivo cardíaco eletrônico implantável ou outro material intracardíaco.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-03",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Fatores de risco",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Fatores de risco",
+        "focos": [],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Fatores de risco"
+        ]
+      },
+      "q": "Como a higiene oral, as bacteremias cotidianas e os procedimentos odontológicos se relacionam ao risco de endocardite infecciosa?",
+      "options": [
+        "Hemodiálise não se associa a maior risco de EI, pois o acesso vascular utilizado é considerado estéril por definição clínica e dispensa vigilância adicional",
+        "O uso de drogas injetáveis reduz o risco de EI em câmaras direitas comparado à população geral, pois a válvula tricúspide seria naturalmente resistente à colonização bacteriana",
+        "Má higiene oral e bacteremias cotidianas repetidas são consideradas particularmente relevantes, tanto quanto procedimentos odontológicos na presença de doença dentária ativa",
+        "Cateteres venosos centrais e procedimentos invasivos recentes não são considerados exposições relevantes para EI quando de curta permanência, pela baixa bacteremia associada",
+        "Imunossupressão e fragilidade clínica não estão entre os fatores de risco não cardíacos reconhecidos para EI, sendo relevantes apenas nas formas fúngicas raras da doença"
+      ],
+      "correct": 2,
+      "exp": "Entre os fatores não cardíacos: cateter venoso/arterial central, hospitalização ou procedimento invasivo recente, hemodiálise, imunossupressão, fragilidade, uso de drogas injetáveis, procedimentos odontológicos com doença dentária ativa — e, de forma particularmente relevante, má higiene oral com bacteremias cotidianas repetidas.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-04",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Fisiopatologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Fisiopatologia",
+        "focos": [],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Fisiopatologia"
+        ]
+      },
+      "q": "Como se forma uma vegetação na endocardite infecciosa, desde a lesão endotelial até o biofilme microbiano?",
+      "options": [
+        "A vegetação inicia-se pela adesão direta do microrganismo ao endotélio íntegro; o depósito de plaquetas e fibrina ocorreria somente depois da colonização microbiana já estabelecida, sem papel do fluxo turbulento",
+        "O biofilme aumenta a atividade metabólica bacteriana e a exposição aos antimicrobianos, permitindo reduzir a duração do tratamento antibiótico e dispensar a associação de fármacos bactericidas",
+        "A baixa atividade metabólica no interior da vegetação aumentaria a ação dos betalactâmicos, cuja eficácia bactericida independeria do tempo de exposição do fármaco à vegetação",
+        "Lesão endotelial e fluxo turbulento promovem depósito de plaquetas e fibrina (endocardite trombótica não bacteriana), substrato sobre o qual a bacteremia permite adesão microbiana e formação de biofilme",
+        "A fibrina e as plaquetas depositadas limitariam a adesão microbiana e tornariam a embolização sistêmica mais provável que a destruição valvar local ao longo de toda a evolução clínica"
+      ],
+      "correct": 3,
+      "exp": "A matriz de fibrina e plaquetas reduz a penetração de antimicrobianos e abriga microrganismos metabolicamente pouco ativos — por isso o tratamento exige fármacos bactericidas por semanas e, quando há tecido destruído, abscesso ou material infectado, controle cirúrgico do foco.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-05",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Fisiopatologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Fisiopatologia",
+        "focos": [],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Fisiopatologia"
+        ]
+      },
+      "q": "Quais são os quatro mecanismos centrais responsáveis pelas consequências clínicas da endocardite infecciosa?",
+      "options": [
+        "Destruição valvar; vasoespasmo coronariano agudo; embolização asséptica estéril; depósito amiloide progressivo no tecido valvar ao longo dos meses",
+        "Formação de aneurisma aórtico dissecante; pericardite constritiva; embolização séptica; hipertensão pulmonar primária de origem não infecciosa",
+        "Insuficiência cardíaca isolada; miocardite autoimune; embolização séptica; fibrose endomiocárdica restritiva de origem não infecciosa associada",
+        "Extensão perivalvar; embolização séptica; fenômenos imunológicos; hipertrofia ventricular compensatória isolada decorrente da sobrecarga hemodinâmica",
+        "Destruição valvar/insuficiência cardíaca; extensão perivalvar (abscesso, fístula, bloqueio AV); embolização séptica; fenômenos imunológicos por imunocomplexos"
+      ],
+      "correct": 4,
+      "exp": "Os quatro mecanismos: destruição valvar e insuficiência cardíaca; extensão perivalvar com abscesso, fístula ou bloqueio AV; embolização séptica; e fenômenos imunológicos por imunocomplexos (ex.: glomerulonefrite).",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-06",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Microbiologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Microbiologia",
+        "focos": [],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Microbiologia"
+        ]
+      },
+      "q": "Quais agentes devem ser priorizados na cobertura empírica inicial da endocardite infecciosa de valva nativa adquirida na comunidade?",
+      "options": [
+        "S. aureus, estreptococos orais, S. gallolyticus, enterococos e o grupo HACEK",
+        "Estafilococos coagulase-negativos como agente predominante, seguidos por fungos filamentosos",
+        "Predomínio quase exclusivo de bacilos Gram-negativos não fermentadores, como Pseudomonas aeruginosa",
+        "Predomínio de anaeróbios estritos, como Bacteroides fragilis, refletindo origem gastrointestinal",
+        "Predomínio de Candida spp. e outros fungos, exigindo antifúngico empírico rotineiro nessa população"
+      ],
+      "correct": 0,
+      "exp": "Na tabela de contexto x agentes: valva nativa comunitária → S. aureus, estreptococos orais, S. gallolyticus, enterococos e HACEK.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-07",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Microbiologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Microbiologia",
+        "focos": [],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Microbiologia"
+        ]
+      },
+      "q": "Quais microrganismos devem ser considerados na endocardite de prótese valvar e de que fatores depende sua frequência?",
+      "options": [
+        "Estafilococos coagulase-negativos têm importância sobretudo na valva nativa de origem comunitária e são claramente menos associados a material protético em qualquer momento pós-implante",
+        "Além de S. aureus e enterococos, há risco aumentado de estafilococos coagulase-negativos, Gram-negativos e fungos, variando conforme o tempo desde o implante e a exposição à assistência à saúde",
+        "Fungos predominariam de forma isolada na prótese tardia comunitária, sendo pouco relevantes no período precoce associado à assistência à saúde logo após o implante",
+        "A prótese precoce exigiria cobertura centrada exclusivamente em estreptococos orais e no grupo HACEK; Gram-negativos ganhariam importância apenas na prótese tardia comunitária",
+        "Estreptococos do grupo viridans predominariam nas primeiras semanas após a cirurgia, enquanto estafilococos coagulase-negativos predominariam apenas na prótese tardia comunitária isolada"
+      ],
+      "correct": 1,
+      "exp": "Em prótese: S. aureus, estafilococos coagulase-negativos (particularmente importantes nesse cenário), enterococos, com risco de Gram-negativos e fungos conforme tempo desde o implante e assistência à saúde.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-08",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Microbiologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Microbiologia",
+        "focos": [],
+        "competencia": "Integração clínica",
+        "complexidade": "Integração",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Microbiologia"
+        ]
+      },
+      "q": "Qual agente, valva acometida e complicação embólica são típicos da endocardite infecciosa associada ao uso de drogas injetáveis?",
+      "options": [
+        "O acometimento predominante é da valva aórtica, com êmbolos sistêmicos para baço e rim como manifestação embólica mais comum",
+        "Estreptococos do grupo viridans predominam nesse contexto, refletindo a flora oral habitual do usuário de drogas",
+        "O agente predominante é S. aureus, com acometimento típico da valva tricúspide e risco de êmbolos pulmonares sépticos",
+        "O grupo HACEK é o agente mais frequentemente implicado, dada a exposição parenteral repetida a cateteres",
+        "Fungos filamentosos são o agente mais comum, superando as bactérias Gram-positivas nessa população"
+      ],
+      "correct": 2,
+      "exp": "Uso de drogas injetáveis: S. aureus é o agente predominante, geralmente acometendo a tricúspide, com possibilidade de êmbolos pulmonares sépticos.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-09",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Microbiologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Microbiologia",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Microbiologia"
+        ]
+      },
+      "q": "Como deve ser investigada uma suspeita de endocardite infecciosa com hemoculturas persistentemente negativas?",
+      "options": [
+        "Priorizar sorologia para Coxiella e Bartonella antes mesmo de revisar o uso prévio de antimicrobianos, pois agentes fastidiosos seriam sempre a causa mais frequente de hemoculturas negativas",
+        "Repetir apenas uma hemocultura após 48 horas e, caso permaneça negativa, direcionar de imediato a investigação para endocardite trombótica não bacteriana, sem novas etapas de investigação",
+        "Iniciar cobertura antifúngica empírica enquanto se aguarda o resultado da sorologia, pois fungos constituiriam sempre a principal causa microbiológica nesse cenário de negatividade persistente",
+        "Revisar toda exposição prévia a antimicrobianos (causa mais comum de negatividade), direcionar sorologia/PCR para agentes fastidiosos como Coxiella e Bartonella, sem atribuir a negatividade a causa abacteriana",
+        "Solicitar apenas métodos moleculares diretamente no sangue periférico, pois a exposição prévia a antimicrobianos não interferiria em nada na investigação por hemocultura convencional"
+      ],
+      "correct": 3,
+      "exp": "Antibiótico prévio é a causa mais comum de hemocultura negativa. Deve-se rever exposições, direcionar sorologia/PCR (Coxiella burnetii, Bartonella spp., Tropheryma whipplei, fungos etc. conforme exposição) e, se houver cirurgia, enviar tecido valvar para cultura, histopatologia e métodos moleculares.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-10",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Microbiologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Microbiologia",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Microbiologia"
+        ]
+      },
+      "q": "Qual investigação adicional é indicada quando Streptococcus gallolyticus é isolado nas hemoculturas de um paciente com endocardite infecciosa, e por quê?",
+      "options": [
+        "Avaliação odontológica, pela associação predominante desse agente com periodontite e bacteremia após manipulação gengival",
+        "Ecocardiografia seriada para pesquisar endocardite fúngica concomitante, associação descrita com esse estreptococo",
+        "Investigação do trato urinário, especialmente para neoplasia de bexiga e alterações estruturais predisponentes",
+        "Investigação hepatobiliar por imagem, associação que supera a relação desse agente com lesões colorretais",
+        "Investigação colônica (ex.: colonoscopia), pela associação bem estabelecida com neoplasia/lesões de cólon"
+      ],
+      "correct": 4,
+      "exp": "O material cita explicitamente: \"Streptococcus gallolyticus exige investigação colônica\" — associação clássica com neoplasia/pólipos de cólon.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-11",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Quadro clínico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Quadro clínico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Quadro clínico"
+        ]
+      },
+      "q": "Como a endocardite infecciosa aguda difere da subaguda quanto ao curso, ao agente típico e à condição prévia da valva?",
+      "options": [
+        "A EI aguda estafilocócica tem curso fulminante em dias, tipicamente sobre valva nativa previamente normal; a subaguda, frequentemente por estreptococos do grupo viridans, evolui de forma arrastada sobre valva já lesada",
+        "A EI subaguda se caracterizaria por hemoculturas frequentemente negativas e por evolução arrastada ao longo de semanas, enquanto a forma aguda seria definida sempre pela positividade precoce das hemoculturas colhidas",
+        "A forma aguda predominaria tipicamente em valvas já previamente lesadas, sobretudo por estreptococos do grupo viridans; já a subaguda acometeria valvas normais, tipicamente causada por S. aureus",
+        "A distinção entre as formas se basearia principalmente na presença de complicações embólicas: sistêmicas e disseminadas na forma aguda, e exclusivamente pulmonares isoladas na forma subaguda",
+        "S. aureus predominaria igualmente nas duas formas de apresentação clínica da doença; o estado prévio da valva determinaria isoladamente se a apresentação seria aguda ou subaguda"
+      ],
+      "correct": 0,
+      "exp": "Conforme Delgado et al. (ESC 2023): EI subaguda combina febre arrastada/recorrente, sopro sobre valvopatia prévia, esplenomegalia e emagrecimento, tipicamente por estreptococos viridans em valva já lesada — em contraste com a EI aguda estafilocócica, fulminante, sobre valva nativa até então normal.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-12",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Quadro clínico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Quadro clínico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Quadro clínico"
+        ]
+      },
+      "q": "Como diferenciar nódulos de Osler, manchas de Roth e lesões de Janeway quanto à apresentação e ao mecanismo?",
+      "options": [
+        "Nódulos de Osler seriam sempre indolores e decorreriam de microembolização séptica direta às polpas digitais, enquanto lesões de Janeway seriam dolorosas e decorreriam de imunocomplexos circulantes",
+        "Nódulos de Osler (dolorosos, polpas digitais) e manchas de Roth refletem fenômenos imunológicos por imunocomplexos, enquanto lesões de Janeway (indolores, palmoplantares) refletem microembolização séptica",
+        "Manchas de Roth seriam achados cutâneos localizados nas regiões palmoplantares, mecanicamente idênticos às lesões de Janeway quanto à origem embólica direta e ao mecanismo fisiopatológico subjacente",
+        "A presença de estigmas periféricos clássicos teria sempre alta sensibilidade diagnóstica, de modo que a ausência deles praticamente excluiria por completo o diagnóstico de endocardite infecciosa",
+        "Hemorragias em lasca subungueais e petéquias cutâneas seriam consideradas classicamente fenômenos imunológicos mediados por imunocomplexos, e não fenômenos vasculares diretos da própria doença"
+      ],
+      "correct": 1,
+      "exp": "Fenômenos imunológicos: nódulos de Osler (dolorosos), manchas de Roth (hemorragias retinianas com centro pálido), glomerulonefrite. Fenômenos vasculares: petéquias, hemorragias em lasca, lesões de Janeway (indolores, palmoplantares), aneurisma infeccioso, hemorragia intracraniana. Esses achados têm baixa sensibilidade — sua ausência não afasta EI.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-13",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Diagnóstico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Diagnóstico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Diagnóstico"
+        ]
+      },
+      "q": "Como devem ser coletadas as hemoculturas na investigação de endocardite infecciosa?",
+      "options": [
+        "Dois conjuntos periféricos colhidos do mesmo sítio de punção, com frascos aeróbio e anaeróbio, obtidos apenas após a administração da primeira dose do antimicrobiano já prescrito",
+        "Três conjuntos de hemocultura, sendo apenas um periférico e os outros dois colhidos diretamente do cateter venoso, em sequência, para comparar o tempo de positividade entre os sítios",
+        "Três conjuntos de hemoculturas periféricas, de sítios de punção distintos, com frascos aeróbio e anaeróbio, colhidos idealmente antes do antimicrobiano, evitando coleta exclusiva por cateter",
+        "Três frascos aeróbios periféricos apenas, reservando os frascos anaeróbios exclusivamente para os pacientes com foco abdominal claramente suspeito já identificado na história clínica",
+        "Dois conjuntos periféricos colhidos simultaneamente do mesmo sítio de punção, já que o volume total obtido seria sempre mais relevante do que a independência entre as punções realizadas"
+      ],
+      "correct": 2,
+      "exp": "Três conjuntos de hemoculturas periféricas de sítios distintos, com intervalo de ao menos ~1h/30min entre elas quando possível, cada conjunto com frascos aeróbio e anaeróbio de volume adequado, colhidos antes do antimicrobiano no paciente estável, evitando coleta exclusiva de cateter.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-14",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Diagnóstico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Diagnóstico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Diagnóstico"
+        ]
+      },
+      "q": "Qual é o papel do ecocardiograma transtorácico e quando o transesofágico está indicado na investigação de endocardite infecciosa?",
+      "options": [
+        "O ETE seria sempre o exame inicial de escolha na maioria dos pacientes, ficando o ETT reservado apenas aos casos em que há contraindicação esofágica formalmente documentada antes do exame",
+        "Um resultado de ETT negativo reduziria suficientemente a probabilidade de EI mesmo havendo bacteremia confirmada por S. aureus, dispensando o ETE sempre que não houver sopro cardíaco audível ao exame",
+        "Em pacientes com prótese valvar, a tomografia cardíaca substituiria integralmente o ETE em todos os cenários clínicos, porque o material protético limitaria ambos os métodos de imagem ecocardiográfica de modo semelhante e equivalente",
+        "O ETT é o exame inicial; o ETE é indicado quando o ETT é negativo/inconclusivo com alta suspeita, na presença de prótese/dispositivo, em bacteremia por S. aureus com risco clínico, ou para definir complicações e anatomia cirúrgica",
+        "Na bacteremia confirmada por S. aureus, o ETE seria reservado apenas aos pacientes com ETT já positivo, servindo unicamente para medir com precisão o tamanho da vegetação antes do procedimento cirúrgico programado"
+      ],
+      "correct": 3,
+      "exp": "ETT é o exame inicial. ETE indicado se ETT negativo/inconclusivo com alta suspeita, prótese/dispositivo, bacteremia por S. aureus com risco clínico, ou necessidade de definir complicações/anatomia cirúrgica. Se negativo e suspeita persistir, repetir ETT/ETE em 5–7 dias (ou antes, se deterioração).",
+      "ref": [
+        "delgado2023-esc-endocardite",
+        "petersen2024-eco-ei"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-15",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Diagnóstico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Diagnóstico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Diagnóstico"
+        ]
+      },
+      "q": "Qual é o papel da tomografia cardíaca, do PET/CT com 18F-FDG e do SPECT/CT na investigação da endocardite infecciosa?",
+      "options": [
+        "O PET/CT apresenta maior utilidade na valva nativa; em próteses, a captação perivalvar inflamatória normal do pós-operatório reduziria a especificidade do exame mesmo além do período inicial recomendado de espera",
+        "A TC cardíaca seria sempre superior para caracterizar vegetações pequenas e móveis, enquanto o ETE ficaria reservado exclusivamente a delimitar abscessos e pseudoaneurismas de maior tamanho",
+        "TC ou RM de corpo inteiro deveria integrar a avaliação inicial mesmo sem sintomas neurológicos, pois embolizações silenciosas modificariam obrigatoriamente a classificação de gravidade e o prognóstico",
+        "SPECT/CT com leucócitos marcados precederia sempre a ecocardiografia quando há prótese valvar, ficando o ETE reservado apenas para os resultados considerados inconclusivos pela equipe",
+        "A tomografia cardíaca caracteriza abscessos, pseudoaneurismas, fístulas e deiscência; PET/CT com 18F-FDG e SPECT/CT com leucócitos marcados aumentam a acurácia sobretudo em prótese e dispositivo"
+      ],
+      "correct": 4,
+      "exp": "TC cardíaca caracteriza abscessos, pseudoaneurismas, fístulas e deiscência. PET/CT e SPECT/CT aumentam a acurácia sobretudo em prótese/dispositivo e ajudam a localizar focos extracardíacos. TC/RM cerebral e de corpo inteiro são guiadas por sintomas e planejamento cirúrgico, não de rotina indiscriminada.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-16",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Diagnóstico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Diagnóstico",
+        "focos": [],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Diagnóstico"
+        ]
+      },
+      "q": "Quais achados microbiológicos, de imagem e cirúrgicos constituem critérios maiores Duke-ISCVID 2023?",
+      "options": [
+        "Hemoculturas/testes microbiológicos com padrão compatível e imagem demonstrando vegetação, perfuração, abscesso, pseudoaneurisma, fístula, deiscência protética ou nova regurgitação — incluindo, nos critérios ampliados, achados de TC cardíaca, PET/CT e inspeção cirúrgica",
+        "Febre acima de 38°C associada a fenômeno de embolia arterial de grande vaso constituiria, isoladamente, um critério maior clínico composto e suficiente, dispensando totalmente qualquer confirmação microbiológica, sorológica ou de imagem complementar",
+        "Imagem maior permaneceria restrita exclusivamente à ecocardiografia transtorácica e transesofágica convencionais; achados de TC cardíaca, PET/CT e inspeção cirúrgica contribuiriam apenas como critérios menores acessórios, mesmo diante de prótese valvar confirmada",
+        "Predisposição cardíaca estrutural somada a fenômeno imunológico isolado constituiria critério maior suficiente, mesmo com toda a investigação microbiológica e de imagem completamente negativa ao longo do seguimento",
+        "Uma única hemocultura positiva por microrganismo típico de endocardite já constituiria critério maior por si só, mesmo sem persistência bacteriêmica ou confirmação por uma segunda amostra colhida de forma independente"
+      ],
+      "correct": 0,
+      "exp": "Critérios maiores Duke-ISCVID 2023: microbiologia (agente típico em ≥2 hemoculturas, ou não típico em ≥3, ou testes específicos para Coxiella/Bartonella/T. whipplei) + imagem (lesão anatômica compatível, nova regurgitação, deiscência protética, atividade PET/CT anormal) — os critérios ampliados incorporam TC cardíaca, PET/CT e inspeção cirúrgica direta.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-17",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Diagnóstico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Diagnóstico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Diagnóstico"
+        ]
+      },
+      "q": "Quais combinações de critérios maiores e menores classificam uma endocardite infecciosa clínica como definitiva pelo Duke-ISCVID 2023?",
+      "options": [
+        "1 critério maior; ou 1 maior + 2 menores; ou 4 menores",
+        "2 critérios maiores; ou 1 maior + 3 menores; ou 5 menores",
+        "2 critérios maiores; ou 1 maior + 2 menores; ou 4 menores",
+        "2 critérios maiores; ou 1 maior + 1 menor; ou 3 menores",
+        "1 critério maior + 3 menores; ou 4 critérios menores"
+      ],
+      "correct": 1,
+      "exp": "EI definitiva: 2 maiores; ou 1 maior + 3 menores; ou 5 menores (critérios patológicos também definem doença). EI possível: 1 maior + 1 menor; ou 3 menores — 3 menores isolados classificam apenas como \"possível\", não \"definitiva\".",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-18",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Diagnóstico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Diagnóstico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Diagnóstico"
+        ]
+      },
+      "q": "Qual achado de regurgitação valvular integra um critério maior, e não menor, nos critérios Duke-ISCVID 2023?",
+      "options": [
+        "Predisposição cardíaca conhecida, EI prévia, prótese/dispositivo ou uso de drogas injetáveis",
+        "Febre ≥38°C",
+        "Nova regurgitação valvular significativa identificada por ecocardiografia",
+        "Fenômenos vasculares (embolia arterial maior, infarto pulmonar séptico, aneurisma micótico, hemorragia intracraniana, lesões de Janeway)",
+        "Fenômenos imunológicos (glomerulonefrite, nódulos de Osler, manchas de Roth, fator reumatoide)"
+      ],
+      "correct": 2,
+      "exp": "Nova regurgitação significativa entra no critério maior de imagem, junto com lesão anatômica compatível, deiscência protética e atividade PET/CT anormal. Predisposição, febre ≥38°C, fenômenos vasculares e imunológicos (e microbiologia que não atinge critério maior) são os critérios menores.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-19",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Quais agentes e fatores clínicos devem orientar a terapia antimicrobiana empírica da endocardite infecciosa?",
+      "options": [
+        "Manter o esquema antimicrobiano empírico inalterado até o final de todo o tratamento reduziria as recaídas, mesmo quando o agente identificado e sua sensibilidade in vitro permitem claro estreitamento do espectro utilizado",
+        "Na prótese valvar precoce, a cobertura antimicrobiana inicial poderia se concentrar apenas em estafilococos e enterococos, deixando totalmente os Gram-negativos para um eventual ajuste posterior conforme resultado das culturas",
+        "No paciente clinicamente estável, colher apenas dois conjuntos de hemocultura logo após a primeira dose de antibiótico reduziria o risco de atraso terapêutico sem qualquer perda relevante de sensibilidade diagnóstica global",
+        "A escolha deve cobrir estafilococos, estreptococos e enterococos, considerando valva nativa vs. protética, tempo desde o implante, aquisição comunitária vs. associada à assistência, antibióticos prévios, alergias e resistência local",
+        "A via oral poderia iniciar toda a fase empírica do tratamento em pacientes estáveis, antes mesmo da identificação laboratorial do agente causador, sempre que houver alta biodisponibilidade do fármaco inicialmente escolhido"
+      ],
+      "correct": 3,
+      "exp": "A terapia empírica deve cobrir estafilococos, estreptococos e enterococos, considerando o cenário clínico; deve-se redirecionar o esquema assim que houver identificação e antibiograma. Colher culturas antes do antimicrobiano sempre que possível (exceto em choque séptico, quando não se atrasa o tratamento após coleta rápida).",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-20",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é o tratamento dirigido da endocardite por estreptococos orais ou Streptococcus gallolyticus sensíveis em valva nativa e protética?",
+      "options": [
+        "Vancomicina isolada por 4 semanas em valva nativa e 6 semanas em prótese valvar, mesmo quando há sensibilidade plena e bem documentada do microrganismo à penicilina no antibiograma laboratorial realizado",
+        "Oxacilina isolada por 4 semanas em valva nativa e 6 semanas em prótese valvar, com ceftriaxona reservada exclusivamente aos casos de alergia imediata bem comprovada à penicilina",
+        "Daptomicina isolada por 4 semanas em valva nativa e 6 semanas em prótese valvar cirurgicamente implantada, associando gentamicina de rotina inclusive nos casos considerados não complicados clinicamente",
+        "Penicilina ou ceftriaxona por apenas 2 semanas mesmo em valva nativa não complicada e sem endocardite prévia, sem qualquer necessidade de sinergismo com aminoglicosídeo em nenhum cenário clínico possível",
+        "Penicilina G, amoxicilina ou ceftriaxona por 4 semanas em valva nativa e 6 semanas em prótese; regime de 2 semanas associado a gentamicina restrito a EI nativa não complicada, com função renal normal e critérios estritos"
+      ],
+      "correct": 4,
+      "exp": "Penicilina G (12–18 milhões UI/dia), amoxicilina (12 g/dia) ou ceftriaxona (2 g/dia) IV: 4 semanas em valva nativa, 6 semanas em prótese. O regime curto de 2 semanas + gentamicina é reservado a EI nativa não complicada, função renal normal e critérios estritos.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-21",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Como é tratada a endocardite estafilocócica de valva nativa por MSSA e por MRSA, e qual é o papel dos aminoglicosídeos?",
+      "options": [
+        "Em MSSA, usa-se oxacilina ou cefazolina por 4-6 semanas, sem adição rotineira de aminoglicosídeo; em MRSA, vancomicina com monitorização farmacocinética ou daptomicina em alta dose são as opções centrais",
+        "Vancomicina seria sempre preferida tanto para MSSA quanto para MRSA em valva nativa e protética; oxacilina ficaria reservada a MSSA apenas em caso de intolerância comprovada à vancomicina",
+        "Gentamicina deveria ser associada de rotina ao betalactâmico durante as duas primeiras semanas de toda EI estafilocócica por MSSA em valva nativa não complicada previamente",
+        "MSSA em valva nativa receberia apenas 2 semanas de oxacilina quando não há foco metastático identificado na avaliação, estendendo-se a 4 semanas somente se houver embolização documentada",
+        "Daptomicina em dose de 6 mg/kg/dia seria sempre preferida à vancomicina para MRSA em qualquer cenário clínico, reservando doses maiores apenas aos casos com prótese valvar"
+      ],
+      "correct": 0,
+      "exp": "MSSA valva nativa: oxacilina (12 g/dia) ou cefazolina (6 g/dia) por 4–6 semanas, sem aminoglicosídeo de rotina. MRSA/estafilococo resistente: vancomicina com monitorização farmacocinética ou daptomicina em alta dose, usualmente 4–6 semanas.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-22",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é o esquema típico para endocardite por Enterococcus faecalis sensível e quando a gentamicina pode ser considerada?",
+      "options": [
+        "Ceftriaxona em monoterapia por 6 semanas completas de tratamento, aproveitando sua suposta atividade intrínseca bactericida contra enterococos plenamente sensíveis à ampicilina",
+        "Ampicilina associada a ceftriaxona (dose dividida) por 6 semanas, com alternativa de ampicilina/amoxicilina + gentamicina por período limitado em pacientes selecionados com função renal adequada",
+        "Vancomicina em monoterapia por 6 semanas completas, mesmo em cepas plenamente sensíveis à ampicilina, apenas para assegurar maior ação bactericida no esquema escolhido",
+        "Ampicilina em monoterapia por 6 semanas completas de tratamento, adicionando ceftriaxona somente se houver resistência de alto nível a aminoglicosídeo já claramente documentada",
+        "Ampicilina associada a gentamicina por apenas 2 semanas completas, duração equivalente à usada nos estreptococos orais plenamente sensíveis à penicilina isolada"
+      ],
+      "correct": 1,
+      "exp": "Ampicilina 12 g/dia IV + ceftriaxona 4 g/dia IV (dividida em 2 doses) por 6 semanas; alternativa: ampicilina/amoxicilina + gentamicina por período limitado se suscetível e função renal adequada.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-23",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é o tratamento recomendado e sua duração para endocardite por microrganismos do grupo HACEK em valva nativa e protética?",
+      "options": [
+        "Penicilina G isolada por 4 semanas em valva nativa e 6 semanas em prótese, presumindo sensibilidade uniforme do grupo",
+        "Vancomicina isolada por 4 semanas, dada suposta resistência intrínseca do grupo HACEK a betalactâmicos",
+        "Ceftriaxona, geralmente por 4 semanas em valva nativa e 6 semanas em prótese",
+        "Daptomicina em alta dose por 2 semanas, esquema padrão recomendado para esse grupo",
+        "Metronidazol associado a aminoglicosídeo, refletindo natureza predominantemente anaeróbia desse grupo"
+      ],
+      "correct": 2,
+      "exp": "HACEK: ceftriaxona 2 g/dia IV — em geral 4 semanas na valva nativa e 6 semanas na prótese. O grupo HACEK é composto por bacilos Gram-negativos fastidiosos, não anaeróbios.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-24",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Quais critérios permitiram a transição da terapia intravenosa para a oral no ensaio POET?",
+      "options": [
+        "Pacientes estáveis com EI esquerda por qualquer agente, incluindo fungos e organismos multirresistentes, poderiam iniciar terapia oral após apenas 72 horas de tratamento intravenoso efetivo, independentemente de complicações estruturais associadas ou necessidade de intervenção cirúrgica",
+        "A estratégia foi estudada principalmente em pacientes com EI direita associada ao uso de drogas injetáveis, exigindo apenas 7 dias de tratamento intravenoso inicial, sem necessidade de estabilidade clínica prévia nem confirmação da identidade do agente causador",
+        "A estabilidade hemodinâmica isolada e a sensibilidade in vitro do agente já bastariam para autorizar a transição para via oral, mesmo diante de abscesso identificado sem indicação cirúrgica imediata claramente estabelecida pela equipe",
+        "Pacientes com EI esquerda por estreptococos, E. faecalis, S. aureus ou estafilococos coagulase-negativos, clinicamente estáveis, após pelo menos 10 dias de terapia intravenosa efetiva (ou ao menos 7 dias após cirurgia), sem abscesso ou outra complicação com indicação cirúrgica ao ETE",
+        "A identificação do agente causador somada à simples queda da proteína C-reativa sérica já permitiriam a transição para via oral, sem exigência de reavaliação ecocardiográfica prévia nem cumprimento de tempo mínimo intravenoso estabelecido"
+      ],
+      "correct": 3,
+      "exp": "POET incluiu 400 adultos com EI esquerda (estreptococos, E. faecalis, S. aureus ou estafilococos coagulase-negativos), estáveis, após ≥10 dias de terapia IV efetiva (≥7 dias pós-cirurgia), com ETE sem abscesso/indicação cirúrgica antes da randomização — não inferioridade da via oral protocolizada para o desfecho composto em 6 meses.",
+      "ref": [
+        "iversen2019-poet"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-25",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Cirurgia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Cirurgia",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Cirurgia"
+        ]
+      },
+      "q": "Quais são as três indicações centrais para cirurgia na endocardite infecciosa?",
+      "options": [
+        "Insuficiência renal aguda, febre persistente isolada e leucocitose",
+        "Hipertensão pulmonar, arritmia ventricular e disfunção hepática",
+        "Idade avançada, comorbidade cardiovascular prévia e tempo prolongado de bacteremia, independentemente de outros achados",
+        "Falha do ecocardiograma em demonstrar vegetação, isoladamente, já configura indicação cirúrgica",
+        "Insuficiência cardíaca, infecção não controlada e prevenção de embolização"
+      ],
+      "correct": 4,
+      "exp": "As três indicações-mãe: insuficiência cardíaca (regurgitação/obstrução/fístula aguda grave), infecção não controlada (abscesso, vegetação crescente, bacteremia persistente, fungo/multirresistente) e prevenção de embolia (vegetação ≥10 mm com evento prévio ou outra indicação).",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-26",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Cirurgia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Cirurgia",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Cirurgia"
+        ]
+      },
+      "q": "Como um AIT, um AVC isquêmico ou uma hemorragia intracraniana influenciam o momento da cirurgia na endocardite infecciosa?",
+      "options": [
+        "Após AIT ou AVC isquêmico sem hemorragia intracraniana, coma ou dano neurológico devastador, a cirurgia indicada por insuficiência cardíaca, infecção não controlada ou alto risco embólico geralmente não deve ser adiada; na hemorragia intracraniana, o momento é individualizado, sem atraso rígido universal",
+        "Após AVC isquêmico, a cirurgia costuma ser adiada por 2 semanas; após hemorragia intracraniana, por 4 semanas, mesmo diante de insuficiência cardíaca refratária, infecção não controlada ou alto risco embólico recorrente",
+        "A trombectomia mecânica e a trombólise intravenosa teriam papel equivalente no AVC isquêmico por êmbolo séptico, já que o risco hemorrágico da vegetação infectada não distingue as duas abordagens de reperfusão",
+        "Anticoagulação plena reduziria a recorrência de fenômenos embólicos e é geralmente iniciada assim que se exclui hemorragia intracraniana, ainda que sem evidência robusta de benefício líquido nesse contexto",
+        "Na presença de coma estabelecido após o evento neurológico, a decisão cirúrgica dependeria principalmente da estabilidade hemodinâmica atual do paciente, com pouco peso da extensão do dano neurológico ou do prognóstico funcional esperado"
+      ],
+      "correct": 0,
+      "exp": "Após AIT/AVC isquêmico sem hemorragia, coma ou dano devastador, cirurgia indicada não deve ser adiada. Na hemorragia intracraniana, decisão individualizada (recomendações atuais abandonam atraso rígido universal). Trombólise IV não é recomendada (risco hemorrágico); anticoagulação não é iniciada para prevenir embolia da EI.",
+      "ref": [
+        "delgado2023-esc-endocardite",
+        "siquierpadilla2022-timing-cirurgico"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-27",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Situações especiais",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Situações especiais",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Situações especiais"
+        ]
+      },
+      "q": "Quais são as limitações diagnósticas da ecocardiografia e a duração habitual do tratamento na endocardite de valva protética?",
+      "options": [
+        "A ecocardiografia transtorácica teria sensibilidade uniformemente alta também em prótese valvar, dispensando por completo o ETE ou métodos de imagem complementares",
+        "A ecocardiografia pode ser falsamente negativa, ampliando o papel do ETE, TC cardíaca e PET/CT; a duração antimicrobiana costuma ser de pelo menos 6 semanas",
+        "A duração do tratamento antimicrobiano em prótese costumaria ser mais curta que em valva nativa, refletindo uma suposta menor carga bacteriana local",
+        "S. aureus e fungos seriam agentes de baixa relevância clínica nesse contexto, ao contrário do observado classicamente em valva nativa",
+        "Deiscência protética e disfunção protética reduziriam a probabilidade de indicação cirúrgica, por já indicarem um processo cicatricial completamente estabilizado"
+      ],
+      "correct": 1,
+      "exp": "Em prótese, a ecocardiografia pode ser falsamente negativa; ETE, TC cardíaca e PET/CT têm papel ampliado. Deiscência, abscesso, disfunção protética, S. aureus, fungos e bacteremia persistente aumentam a probabilidade de cirurgia. Duração antimicrobiana costuma ser de pelo menos 6 semanas.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-28",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Situações especiais",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Situações especiais",
+        "focos": [],
+        "competencia": "Integração clínica",
+        "complexidade": "Integração",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Situações especiais"
+        ]
+      },
+      "q": "Como deve ser reconhecida e tratada a endocardite associada a dispositivo cardíaco eletrônico implantável?",
+      "options": [
+        "Antimicrobianos isolados, sem qualquer intervenção adicional, seriam considerados adequados quando não há inflamação visível da loja do gerador, mesmo diante de vegetação claramente aderida ao cabo do dispositivo já implantado",
+        "A ausência de sinais inflamatórios evidentes na loja tornaria improvável a infecção do cabo do dispositivo cardíaco; nesses casos, hemoculturas positivas deveriam sempre sugerir a existência de outro foco infeccioso primário",
+        "Sinais de bolsa podem estar ausentes; diante de bacteremia por S. aureus ou evidência de infecção de cabo/valva, a extração completa do sistema é o padrão quando a infecção é definida, pois o tratamento conservador isolado tem alto risco de recidiva",
+        "A retirada isolada do gerador com preservação completa dos cabos ofereceria controle infeccioso plenamente semelhante ao da extração completa do sistema, sempre que as culturas simplesmente vierem a negativar",
+        "O reimplante do dispositivo poderia ocorrer no lado contralateral durante a própria extração cirúrgica, caso o paciente dependa de estimulação cardíaca contínua, sem qualquer período de vigilância clínica prévio necessário"
+      ],
+      "correct": 2,
+      "exp": "Sinais de bolsa podem estar ausentes. Em bacteremia por S. aureus ou evidência de infecção de cabo/valva, investigar sistematicamente. Extração completa do sistema é o padrão quando a infecção é definida; tratamento conservador isolado tem alto risco de recidiva. Reimplante só após reavaliar necessidade e documentar controle da infecção.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-29",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Situações especiais",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Situações especiais",
+        "focos": [],
+        "competencia": "Integração clínica",
+        "complexidade": "Integração",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Situações especiais"
+        ]
+      },
+      "q": "Quais são a valva, os fatores de risco e a manifestação embólica típicos da endocardite de câmaras direitas?",
+      "options": [
+        "Predomina na valva pulmonar e nas câmaras direitas em geral, com associação pouco relevante ao uso de drogas injetáveis ou a cateteres",
+        "Cursa tipicamente com êmbolos sistêmicos para baço, rim e cérebro, de forma semelhante à EI de valvas esquerdas",
+        "A cirurgia na EI direita é reservada à insuficiência cardíaca esquerda associada, não sendo indicada por bacteremia persistente ou regurgitação tricúspide grave",
+        "Predomina na valva tricúspide, associa-se a uso de drogas injetáveis, cateteres e dispositivos, manifestando-se com bacteremia e êmbolos pulmonares sépticos",
+        "Não costuma cursar com fenômenos embólicos pulmonares, ao contrário do que se observa na EI de valvas esquerdas"
+      ],
+      "correct": 3,
+      "exp": "EI direita predomina na tricúspide, associada a drogas injetáveis, cateteres e dispositivos, manifestando-se com bacteremia e êmbolos pulmonares sépticos. Cirurgia é considerada em bacteremia persistente, disfunção tricúspide grave e vegetações residuais grandes após embolias pulmonares recorrentes.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-30",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Prevenção",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Prevenção",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Prevenção"
+        ]
+      },
+      "q": "Para quais pacientes e procedimentos odontológicos está indicada a profilaxia antimicrobiana da endocardite infecciosa, e qual fármaco deixou de ser recomendado pela AHA?",
+      "options": [
+        "A profilaxia antimicrobiana seria indicada rotineiramente para qualquer grau de valvopatia, moderada ou grave, antes de qualquer procedimento odontológico com sangramento previsto, independentemente do tipo específico de manipulação gengival, periapical ou mucosa realizada",
+        "Clindamicina permaneceria alternativa preferencial e considerada segura na alergia imediata à penicilina, por sua ampla cobertura da flora oral e boa tolerância clínica, apesar da falta de evidência robusta de eficácia equivalente comprovada em estudos recentes",
+        "Procedimentos gastrointestinais e geniturinários com biópsia receberiam profilaxia antimicrobiana rotineira nos mesmos grupos cardíacos de alto risco definidos para odontologia, mesmo havendo risco de bacteremia geralmente considerado bem mais baixo",
+        "A profilaxia realizada pontualmente antes de procedimentos odontológicos isolados teria maior impacto populacional agregado que a higiene oral contínua e a prevenção de bacteremias cotidianas repetidas, apesar da baixa frequência desses procedimentos isolados",
+        "É reservada a pacientes de alto risco (ex.: prótese valvar/material protético, EI prévia, certas cardiopatias congênitas) submetidos a procedimentos odontológicos que manipulam gengiva, região periapical ou perfuram a mucosa oral; clindamicina não é mais recomendada pela AHA para essa finalidade"
+      ],
+      "correct": 4,
+      "exp": "Profilaxia restrita a alto risco em procedimento odontológico com manipulação gengival/periapical/perfuração de mucosa. Amoxicilina 2 g VO é o regime usual; em alergia, cefalexina, azitromicina/claritromicina ou doxiciclina — clindamicina não é mais recomendada pela AHA. A medida mais importante continua sendo higiene oral regular e cuidados assépticos gerais, não a profilaxia pontual.",
+      "ref": [
+        "delgado2023-esc-endocardite",
+        "wilson2021-aha-profilaxia"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-31",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Diagnóstico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Diagnóstico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Diagnóstico"
+        ]
+      },
+      "q": "Como os critérios Duke-ISCVID 2023 definem endocardite infecciosa possível e rejeitada?",
+      "options": [
+        "Possível: 1 critério maior + 1 menor, ou 3 critérios menores; Rejeitada: diagnóstico alternativo firme, resolução do quadro com ≤4 dias de antibiótico, ou não preenchimento dos critérios de \"possível\"",
+        "Possível: 1 critério maior isolado ou 2 critérios menores isolados e independentes; Rejeitada: duas hemoculturas negativas obtidas logo após o início do antibiótico já prescrito ao paciente",
+        "Possível: 1 critério maior somado a 2 menores, ou 4 critérios menores isolados; Rejeitada: ETT sem qualquer vegetação visível associado à ausência completa de febre no paciente",
+        "Possível: 2 critérios menores isolados ou apenas 1 critério maior isolado; Rejeitada: ausência isolada de um único critério microbiológico maior no exame já realizado",
+        "Possível: 1 critério maior associado a exatamente 3 critérios menores; Rejeitada: resolução clínica completa do quadro após apenas 7 dias de antibioticoterapia dirigida"
+      ],
+      "correct": 0,
+      "exp": "EI definitiva: 2 maiores; ou 1 maior + 3 menores; ou 5 menores. EI possível: 1 maior + 1 menor; ou 3 menores. EI rejeitada: diagnóstico alternativo firme, resolução da síndrome com ≤4 dias de antibioticoterapia, ausência de evidência patológica em cirurgia/necropsia com ≤4 dias de antibiótico, ou não preenchimento dos critérios de \"possível\".",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-32",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Diagnóstico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Diagnóstico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Diagnóstico"
+        ]
+      },
+      "q": "Como o tempo desde o implante de material protético modifica a classificação do PET/CT com 18F-FDG nos critérios Duke-ISCVID 2023?",
+      "options": [
+        "A captação periprotética seria considerada critério maior desde o momento exato do implante, mas perderia todo o valor diagnóstico após 3 meses pela fibrose cicatricial esperada nessa fase",
+        "Atividade metabólica anormal é critério MAIOR se o exame for feito >3 meses após o implante; se ≤3 meses, o mesmo achado é critério MENOR, pela inflamação pós-operatória esperada",
+        "A captação ao PET/CT seria sempre critério maior na valva nativa e sempre critério menor nas próteses valvares, em razão da inflamação normal esperada ao redor do material implantado",
+        "O PET/CT seria considerado critério maior quando realizado até 3 meses após o implante, e passaria a valer apenas como critério menor depois desse período estabelecido",
+        "PET/CT normal realizado até 3 meses reduziria sempre a classificação para EI possível, mesmo quando existe um critério ecocardiográfico maior claramente presente"
+      ],
+      "correct": 1,
+      "exp": "Nos critérios Duke-ISCVID 2023, atividade anormal ao PET/CT em válvula/material protético é critério MAIOR quando o exame ocorre >3 meses após o implante; se realizado ≤3 meses do implante, o mesmo achado passa a critério MENOR, já que inflamação pós-operatória inespecífica é esperada nesse intervalo.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-33",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Microbiologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Microbiologia",
+        "focos": [
+          "diagnóstico"
+        ],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Microbiologia"
+        ]
+      },
+      "q": "Quais resultados de PCR ou sorologia preenchem o critério maior microbiológico Duke-ISCVID 2023 para Coxiella burnetii, Bartonella spp. ou Tropheryma whipplei?",
+      "options": [
+        "Duas hemoculturas positivas para C. burnetii ou Bartonella, sendo a sorologia específica considerada apenas critério menor auxiliar da investigação",
+        "IgM anti-C. burnetii em título maior ou igual a 1:800, ou IgG anti-Bartonella em qualquer título por imunofluorescência indireta",
+        "PCR positivo para C. burnetii, Bartonella spp. ou T. whipplei; ou IgG de fase I anti-C. burnetii >1:800; ou IgG anti-Bartonella ≥1:800 por imunofluorescência",
+        "IgG de fase II anti-C. burnetii em título acima de 1:800, ou PCR negativo associado a IgG anti-Bartonella maior ou igual a 1:800",
+        "PCR positivo apenas quando realizado diretamente em tecido valvar; resultados obtidos no sangue periférico não integrariam o critério maior microbiológico"
+      ],
+      "correct": 2,
+      "exp": "Como C. burnetii e Bartonella spp. são de difícil isolamento em hemocultura convencional, o critério maior microbiológico para esses agentes é preenchido por PCR positivo (também válido para T. whipplei) ou por sorologia com títulos específicos: IgG de fase I anti-C. burnetii >1:800, ou IgG anti-Bartonella ≥1:800 por imunofluorescência.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-34",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Microbiologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Microbiologia",
+        "focos": [
+          "diagnóstico"
+        ],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Microbiologia"
+        ]
+      },
+      "q": "Em comparação aos critérios de Duke modificados (2000), quais mudanças os critérios Duke-ISCVID 2023 trouxeram para a lista de patógenos \"típicos\" e para os critérios menores de predisposição/microbiologia?",
+      "options": [
+        "A lista de patógenos teria sido restringida apenas aos agentes com bacteremia persistente já formalmente documentada, e o CIED teria passado de predisposição menor a critério maior isolado na revisão publicada",
+        "E. faecalis foi mantido como agente típico apenas quando adquirido estritamente na comunidade e sem qualquer foco primário identificável na investigação clínica inicial realizada no paciente",
+        "A lista de organismos típicos teria permanecido exatamente igual à versão anterior de 2000; a revisão apenas teria acrescentado cultura de sítio estéril como novo critério maior microbiológico",
+        "Ampliação da lista de organismos típicos (S. lugdunensis, S. dysgalactiae, Gemella, Abiotrophia, Granulicatella) e adição de dois critérios menores: CIED como predisposição e cultura positiva de sítio estéril não sanguíneo",
+        "PCR universal teria substituído por completo a exigência clássica de múltiplas hemoculturas para os organismos típicos, mantendo intacta toda a lista de patógenos publicada originalmente em 2000"
+      ],
+      "correct": 3,
+      "exp": "A revisão 2023 ampliou a lista de patógenos típicos (S. lugdunensis, S. dysgalactiae, Gemella, Abiotrophia, Granulicatella, além de flexibilizar critérios para E. faecalis adquirido na comunidade) e acrescentou novos critérios menores: CIED como condição predisponente e cultura positiva de sítio estéril extra-sanguíneo como evidência microbiológica que não atinge critério maior.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-35",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Diagnóstico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Diagnóstico",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Diagnóstico"
+        ]
+      },
+      "q": "Quando a inspeção direta durante cirurgia cardíaca constitui critério maior Duke-ISCVID 2023?",
+      "options": [
+        "A inspeção cirúrgica contaria como critério maior somente quando acompanhada de cultura ou histopatologia positiva confirmatória do material retirado",
+        "O achado intraoperatório teria passado de critério maior na classificação de 2000 para critério menor isolado na revisão publicada em 2023",
+        "A inspeção direta valeria como critério maior apenas em necropsia post mortem, mas nunca durante cirurgia realizada com o paciente ainda vivo",
+        "O achado cirúrgico equivaleria sempre apenas a um critério de imagem menor e precisaria ser combinado obrigatoriamente com um critério microbiológico maior",
+        "Pode ser critério maior isolado quando a EI é documentada por inspeção direta durante a cirurgia, sem exigir confirmação microbiológica ou de imagem adicional"
+      ],
+      "correct": 4,
+      "exp": "Os critérios Duke-ISCVID 2023 mantêm um critério maior \"cirúrgico\": evidência de EI documentada por inspeção direta durante cirurgia cardíaca (ex.: vegetação, abscesso, deiscência protética visualizados diretamente) é suficiente isoladamente como critério maior, complementando os critérios maiores microbiológico e de imagem.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-36",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Microbiologia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Microbiologia",
+        "focos": [],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Microbiologia"
+        ]
+      },
+      "q": "Qual é a implicação do isolamento de Streptococcus gallolyticus subsp. gallolyticus em um paciente com endocardite e como ela difere da subsp. pasteurianus?",
+      "options": [
+        "Há forte associação com neoplasia colorretal, indicando colonoscopia mesmo sem sintomas gastrointestinais — associação bem mais fraca na subsp. pasteurianus, mais ligada a comorbidades hepatobiliares",
+        "A associação com neoplasia colorretal seria exclusiva da subsp. pasteurianus, não se aplicando de forma alguma à subsp. gallolyticus, que teria baixo risco oncológico reconhecido",
+        "O achado não teria relevância oncológica estabelecida na literatura, sendo a colonoscopia reservada apenas a pacientes com sintomas gastrointestinais concomitantes já evidentes",
+        "A investigação colonoscópica só se justificaria havendo anemia ferropriva associada e documentada, sendo dispensável na ausência completa desse achado laboratorial específico",
+        "A associação epidemiológica descrita seria com neoplasias gástricas, não colorretais, sendo a endoscopia digestiva alta o exame indicado nesse contexto clínico particular"
+      ],
+      "correct": 0,
+      "exp": "S. gallolyticus subsp. gallolyticus (antigo S. bovis biotipo I) tem associação bem estabelecida com neoplasia/pólipos colorretais, justificando colonoscopia mesmo em paciente assintomático do ponto de vista gastrointestinal. A subsp. pasteurianus (antigo biotipo II) tem associação mais fraca com neoplasia colorretal e mais ligação a doença hepatobiliar e idade extrema.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-37",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é o esquema sinérgico clássico para endocardite por Enterococcus faecalis sensível à ampicilina e qual alternativa reduz a nefrotoxicidade?",
+      "options": [
+        "Vancomicina isolada em monoterapia constituiria o esquema clássico de escolha nesse cenário; daptomicina isolada seria a alternativa poupadora de nefrotoxicidade renal",
+        "Ampicilina + gentamicina como esquema clássico; ampicilina + ceftriaxona como alternativa eficaz mesmo em cepas com resistência de alto nível a aminoglicosídeo (HLAR)",
+        "Penicilina G isolada em altas doses constituiria o esquema clássico de escolha nesse cenário; linezolida isolada seria a alternativa poupadora de nefrotoxicidade renal",
+        "Ampicilina isolada em monoterapia constituiria o esquema clássico de escolha nesse cenário, sem alternativa validada disponível para poupar nefrotoxicidade em cepas HLAR",
+        "Ceftriaxona isolada em monoterapia constituiria o esquema clássico de escolha nesse cenário; vancomicina associada a gentamicina seria a alternativa poupadora de nefrotoxicidade"
+      ],
+      "correct": 1,
+      "exp": "O esquema sinérgico clássico para E. faecalis sensível é ampicilina + gentamicina. Quando há resistência de alto nível a aminoglicosídeo (HLAR) ou se busca evitar nefrotoxicidade, ampicilina + ceftriaxona (sinergismo por dupla inibição de PBPs) é alternativa validada e eficaz, inclusive em HLAR.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-38",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Quadro clínico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Quadro clínico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Quadro clínico"
+        ]
+      },
+      "q": "Como lesões de Janeway, nódulos de Osler e manchas de Roth se diferenciam quanto ao mecanismo fisiopatológico?",
+      "options": [
+        "Nódulos de Osler e lesões de Janeway compartilhariam exatamente o mesmo mecanismo embólico séptico direto, diferindo apenas na localização anatômica precisa da lesão cutânea observada",
+        "Manchas de Roth resultariam predominantemente de embolização séptica retiniana direta, enquanto os imunocomplexos circulantes explicariam apenas os nódulos de Osler isolados observados",
+        "Lesões de Janeway (máculas indolores palmoplantares) resultam de microembolização séptica direta, enquanto nódulos de Osler (dolorosos, em polpas digitais) e manchas de Roth resultam de depósito de imunocomplexos",
+        "Lesões de Janeway seriam sempre dolorosas e de mecanismo imunológico, enquanto nódulos de Osler seriam sempre indolores e de mecanismo embólico direto característico",
+        "Todos os fenômenos periféricos clássicos (Janeway, Osler, Roth) teriam mecanismo fisiopatológico completamente indeterminado, sem qualquer consenso estabelecido sobre embolização séptica ou imunocomplexos circulantes"
+      ],
+      "correct": 2,
+      "exp": "Lesões de Janeway são embólicas sépticas (indolores, palmoplantares). Nódulos de Osler (dolorosos, polpas digitais) e manchas de Roth (retinianas) são classicamente atribuídos a depósito de imunocomplexos — mecanismo imunológico, distinto do embólico direto.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-39",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento"
+        ]
+      },
+      "q": "Qual é a duração do betalactâmico na endocardite não complicada de valva nativa por estreptococos viridans ou Streptococcus gallolyticus plenamente sensíveis, e quando ela pode ser reduzida?",
+      "options": [
+        "6 semanas de betalactâmico isolado, reduzidas a apenas 4 semanas quando gentamicina é associada logo no início do tratamento",
+        "4 semanas de betalactâmico associado a gentamicina durante todo o período completo de tratamento, sem qualquer possibilidade de esquema encurtado",
+        "2 semanas de betalactâmico isolado, estendidas a 4 semanas apenas se houver embolização documentada durante a evolução",
+        "4 semanas de betalactâmico isolado, podendo ser reduzida a 2 semanas se associado a gentamicina sinérgica nos primeiros dias do tratamento",
+        "6 semanas de betalactâmico associado a gentamicina apenas nas duas primeiras semanas de tratamento, sem redução possível do tempo total"
+      ],
+      "correct": 3,
+      "exp": "Em cepas plenamente sensíveis à penicilina, valva nativa não complicada: 4 semanas de betalactâmico isolado (penicilina/ceftriaxona), ou esquema encurtado de 2 semanas se associado a gentamicina sinérgica nos primeiros dias. Cepas com sensibilidade reduzida ou prótese valvar exigem esquemas mais longos.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-40",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Cirurgia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Cirurgia",
+        "focos": [],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Cirurgia"
+        ]
+      },
+      "q": "Quais são as três categorias de indicação cirúrgica na endocardite infecciosa e quais exemplos caracterizam cada uma?",
+      "options": [
+        "Febre persistente isolada, uma única hemocultura periférica positiva isolada e a presença de qualquer vegetação ao ecocardiograma transtorácico, independentemente do tamanho ou da repercussão hemodinâmica associada ao achado encontrado",
+        "Idade avançada isolada do paciente, comorbidade cardiovascular prévia já estabelecida antes do quadro atual e isolamento de agente etiológico resistente ao antibiótico de primeira linha inicialmente escolhido pela equipe assistente",
+        "Insuficiência renal aguda associada ao quadro, elevação isolada de proteína C-reativa sérica e leucocitose persistente ao longo dos dias, sem qualquer outro achado clínico ou ecocardiográfico associado ao quadro descrito",
+        "Tempo de antibioticoterapia superior a apenas 2 semanas sem qualquer melhora clínica isolada percebida, independentemente de disfunção valvar estrutural ou fenômeno embólico documentado ao ecocardiograma já realizado",
+        "Insuficiência cardíaca refratária por disfunção valvar, infecção não controlada (abscesso, fístula, vegetação em crescimento apesar de antibiótico adequado) e prevenção de embolização (vegetação grande com evento embólico prévio ou fator de risco associado)"
+      ],
+      "correct": 4,
+      "exp": "As três indicações-mãe para cirurgia na EI são: insuficiência cardíaca por disfunção valvar, infecção não controlada localmente (abscesso, fístula, deiscência protética, vegetação persistente apesar de antibiótico adequado) e prevenção de embolização em vegetações grandes/de alto risco, especialmente após evento embólico prévio.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-41",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Tratamento",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Tratamento",
+        "focos": [
+          "microbiologia"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Tratamento",
+          "Microbiologia"
+        ]
+      },
+      "q": "Qual é o tratamento de escolha para endocardite pelo grupo HACEK e por que a produção de betalactamase interfere nessa escolha?",
+      "options": [
+        "Ceftriaxona (cefalosporina de 3ª geração), pela prevalência relevante de cepas produtoras de betalactamase, que compromete a eficácia da ampicilina isolada",
+        "Ampicilina isolada em monoterapia, pois a produção de betalactamase seria infrequente e o teste de sensibilidade permitiria ajuste posterior",
+        "Vancomicina isolada, pela suposta resistência intrínseca dos microrganismos do grupo HACEK às cefalosporinas de terceira geração disponíveis",
+        "Penicilina G associada a gentamicina, esquema clássico que supostamente superaria a produção de betalactamase pelas cepas do grupo HACEK",
+        "Ciprofloxacino associado a aminoglicosídeo, reservando a ceftriaxona apenas às cepas comprovadamente sem qualquer produção de betalactamase"
+      ],
+      "correct": 0,
+      "exp": "Como parte relevante das cepas do grupo HACEK produz betalactamase, comprometendo a ampicilina, o tratamento de escolha é ceftriaxona (ou outra cefalosporina de 3ª geração), geralmente por 4 semanas em valva nativa.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-42",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Quadro clínico",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Quadro clínico",
+        "focos": [],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Quadro clínico"
+        ]
+      },
+      "q": "Como as formas aguda e subaguda da endocardite infecciosa diferem em evolução, toxemia, agente típico e condição prévia da valva?",
+      "options": [
+        "A forma subaguda evoluiria tipicamente em poucos dias com toxemia franca e predominaria em valva previamente normal ao exame; a aguda evoluiria ao longo de semanas sobre valva já lesada",
+        "A forma aguda cursa com toxemia franca e evolução em dias, tipicamente por S. aureus em valva previamente normal; a subaguda evolui em semanas a meses, insidiosa, mais associada a estreptococos viridans em valva já lesada",
+        "A forma aguda seria definida exclusivamente pela etiologia estafilocócica, e a subaguda exclusivamente pela etiologia estreptocócica, ainda que a duração dos sintomas fosse praticamente semelhante entre as duas formas",
+        "A forma aguda e a subaguda diferiram apenas pelo território embólico predominante envolvido, mas apresentariam velocidade de evolução clínica praticamente semelhante entre si ao longo do tempo",
+        "A forma aguda ocorreria preferencialmente sobre valva já previamente lesada, enquanto a subaguda predominaria em valva estruturalmente normal identificada ao ecocardiograma inicial"
+      ],
+      "correct": 1,
+      "exp": "EI aguda: evolução em dias, toxemia franca, tipicamente S. aureus, frequentemente em valva normal. EI subaguda: evolução insidiosa em semanas a meses, mais associada a estreptococos viridans/organismos de baixa virulência, geralmente em valva com lesão estrutural prévia.",
+      "ref": [
+        "fowler2023-duke-iscvid"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-43",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "terapia empírica",
+          "hemoculturas"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "Terapia empírica"
+        ]
+      },
+      "q": "Um paciente hemodinamicamente estável apresenta forte suspeita clínica de endocardite infecciosa e ainda não recebeu antimicrobianos. Qual é a conduta inicial mais apropriada em relação às hemoculturas e à antibioticoterapia?",
+      "options": [
+        "Administrar a primeira dose do esquema empírico imediatamente e colher três pares de hemoculturas apenas quando ocorrer novo pico febril",
+        "Colher três conjuntos de hemoculturas periféricas antes do antibiótico e, em seguida, iniciar terapia empírica conforme o cenário clínico",
+        "Colher uma única hemocultura periférica antes do antibiótico, pois a bacteremia contínua tornaria coletas adicionais desnecessárias e redundantes",
+        "Aguardar o ecocardiograma confirmar a presença de vegetação antes de colher hemoculturas e iniciar o antimicrobiano",
+        "Colher culturas apenas de cateteres intravasculares já presentes e iniciar cobertura empírica dirigida para estafilococos"
+      ],
+      "correct": 1,
+      "exp": "Na suspeita de EI, devem-se colher três conjuntos de hemoculturas periféricas antes do antimicrobiano, sem esperar pico febril, porque a bacteremia costuma ser contínua. Depois da coleta, inicia-se o esquema empírico quando indicado. Em instabilidade grave ou choque, a coleta deve ser rápida e não pode causar atraso clinicamente relevante no tratamento. As demais opções reduzem o rendimento microbiológico ou restringem indevidamente a investigação.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-44",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "terapia dirigida",
+          "descalonamento"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "Terapia dirigida"
+        ]
+      },
+      "q": "Após o início de terapia empírica para endocardite infecciosa, as hemoculturas identificam Streptococcus gallolyticus plenamente sensível à penicilina. Qual princípio deve orientar o ajuste do esquema?",
+      "options": [
+        "Manter toda a cobertura antimicrobiana empírica até completar o curso, pois a vegetação poderia conter microrganismos não recuperados nas culturas",
+        "Acrescentar rifampicina ao esquema empírico para melhorar a penetração na vegetação, mesmo estando em valva nativa",
+        "Substituir prontamente a terapia empírica por um betalactâmico dirigido, ajustado à sensibilidade, ao tipo de valva e às complicações",
+        "Trocar o esquema por vancomicina isolada, pois a atividade bactericida seria mais previsível do que a da penicilina em vegetações",
+        "Suspender totalmente o tratamento intravenoso e completar por via oral assim que o agente for identificado"
+      ],
+      "correct": 2,
+      "exp": "A terapia empírica deve ser convertida para tratamento dirigido assim que agente e sensibilidade estejam definidos. Para estreptococos orais/S. gallolyticus sensíveis, penicilina G, amoxicilina ou ceftriaxona são opções centrais; duração e eventual regime curto dependem de valva, sensibilidade e ausência de complicações. Manter cobertura excessiva aumenta toxicidade e pressão seletiva; identificação isolada do agente não autoriza transição oral. Além do ajuste antimicrobiano, a identificação de S. gallolyticus (subespécie gallolyticus, antigo S. bovis biotipo I) em hemocultura ou endocardite deve sempre motivar investigação de neoplasia colorretal com colonoscopia, dada a associação bem estabelecida entre esse agente e lesões colônicas — conduta independente do esquema antibiótico escolhido.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-45",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "MSSA",
+          "alergia a penicilina"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "MSSA"
+        ]
+      },
+      "q": "Paciente com endocardite em valva nativa por Staphylococcus aureus sensível à meticilina (MSSA) relata exantema remoto, sem anafilaxia, após penicilina. Qual estratégia antimicrobiana é preferível?",
+      "options": [
+        "Vancomicina, porque qualquer antecedente de reação à penicilina contraindicaria totalmente as cefalosporinas",
+        "Cefazolina, após avaliação da alergia, porque betalactâmicos são preferíveis à vancomicina no MSSA quando podem ser usados",
+        "Daptomicina em baixa dose, porque apresentaria superioridade clínica estabelecida sobre betalactâmicos no MSSA",
+        "Linezolida, porque sua boa biodisponibilidade oral permitiria evitar todo o período intravenoso necessário",
+        "Cefazolina associada à gentamicina por duas semanas, apenas para garantir sinergismo bactericida adicional"
+      ],
+      "correct": 1,
+      "exp": "No MSSA, um betalactâmico antiestafilocócico é preferível. Em alergia não imediata, cefazolina costuma ser opção apropriada após avaliação do tipo de reação; em pacientes estáveis com alergia imediata verdadeira, pode-se considerar dessensibilização. Vancomicina é inferior aos betalactâmicos para MSSA, e gentamicina não deve ser adicionada rotineiramente na EI estafilocócica de valva nativa por nefrotoxicidade sem benefício demonstrado.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-46",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "aminoglicosídeo",
+          "nefrotoxicidade"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "Aminoglicosídeo"
+        ]
+      },
+      "q": "Qual é o papel atual dos aminoglicosídeos na antibioticoterapia da endocardite infecciosa?",
+      "options": [
+        "São geralmente associados por seis semanas na EI estafilocócica de valva nativa, com o objetivo de acelerar a esterilização bacteriana",
+        "São evitados na maioria das etiologias da doença, já que o sinergismo raramente compensaria a nefrotoxicidade associada",
+        "Não são recomendados rotineiramente na EI estafilocócica de valva nativa; quando indicados em cenários específicos, procura-se limitar a exposição",
+        "Substituiriam o betalactâmico como base do tratamento na EI enterocócica quando a cepa apresenta resistência de alto nível à gentamicina isolada",
+        "São geralmente necessários durante todo o curso da EI estreptocócica tratada com ceftriaxona, inclusive nos casos com prótese valvar"
+      ],
+      "correct": 2,
+      "exp": "Na EI estafilocócica de valva nativa, aminoglicosídeos não oferecem benefício clínico demonstrado e aumentam a toxicidade renal. Em situações em que o sinergismo ainda é indicado, como alguns esquemas para estreptococos resistentes ou enterococos suscetíveis, a exposição deve ser cuidadosamente selecionada e geralmente limitada. Resistência de alto nível a aminoglicosídeo elimina esse sinergismo, favorecendo, em E. faecalis, ampicilina mais ceftriaxona.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-47",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "prótese valvar",
+          "rifampicina",
+          "biofilme"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "Prótese valvar"
+        ]
+      },
+      "q": "Em endocardite estafilocócica de prótese valvar por cepa suscetível, qual é o uso mais adequado da rifampicina segundo a diretriz ESC?",
+      "options": [
+        "Iniciá-la em monoterapia logo no primeiro dia, antes da depuração da bacteremia, para prevenir a formação do biofilme",
+        "Associá-la ao esquema ativo após alguns dias de terapia efetiva e depuração da bacteremia, visando microrganismos no biofilme protético",
+        "Reservá-la à endocardite estafilocócica de valva nativa, cenário em que tenderia a haver maior massa de vegetação presente",
+        "Usá-la como substituta do agente bactericida principal quando houver disfunção renal no paciente",
+        "Acrescentá-la nas últimas 48 horas do curso de tratamento, com o objetivo de impedir a recaída após a alta hospitalar"
+      ],
+      "correct": 1,
+      "exp": "Na infecção estafilocócica envolvendo material protético, a ESC recomenda rifampicina, se a cepa for suscetível, após 3–5 dias de terapia efetiva e depois da depuração da bacteremia. O objetivo é atuar sobre bactérias dormentes no biofilme e reduzir seleção de resistência; ela nunca substitui o agente bactericida de base. A própria diretriz ressalta que evidências recentes questionam o tamanho do benefício, justificando decisão pela equipe especializada.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-48",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "prótese valvar",
+          "duração"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "Prótese valvar"
+        ]
+      },
+      "q": "Qual é a duração habitual da antibioticoterapia na endocardite de valva protética e o que define o fármaco de base?",
+      "options": [
+        "A EVP receberia o mesmo esquema curto de duas semanas usado na EI estreptocócica de valva nativa não complicada",
+        "O tratamento da EVP geralmente dura pelo menos seis semanas, embora o fármaco de base continue sendo definido pelo agente e pela sensibilidade",
+        "A EVP exigiria de modo geral doze semanas de tratamento antimicrobiano, com pouco peso do agente, da cirurgia realizada ou das culturas",
+        "A duração seria contada a partir da data da cirurgia, mesmo quando as culturas da prótese removida são negativas",
+        "Próteses biológicas poderiam ser tratadas como valvas nativas; apenas próteses mecânicas exigiriam curso de tratamento prolongado"
+      ],
+      "correct": 1,
+      "exp": "A EVP exige curso mais prolongado, em geral ≥6 semanas, por causa do material protético e do biofilme. O agente etiológico e o antibiograma continuam orientando o esquema. A contagem não reinicia automaticamente na cirurgia: considera-se o primeiro dia de terapia efetiva, e um novo curso completo é indicado se a cultura valvar for positiva. Não se diferencia a regra apenas pelo tipo mecânico ou biológico da prótese. Antes da identificação do agente, a terapia empírica para EVP deve cobrir estafilococos (incluindo meticilino-resistentes) e cobertura ampliada para bacilos Gram-negativos, combinando tipicamente vancomicina com gentamicina e rifampicina (esta última geralmente diferida 3 a 5 dias após início dos demais agentes, para reduzir o risco de selecionar resistência), sendo substituída por esquema dirigido assim que o agente e a sensibilidade estiverem definidos.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-49",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "cirurgia",
+          "duração"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "Duração"
+        ]
+      },
+      "q": "Paciente iniciou tratamento efetivo para EI em valva nativa e, dez dias depois, recebeu prótese durante cirurgia indicada por insuficiência valvar. A cultura da valva removida foi negativa. Como deve ser determinada a antibioticoterapia pós-operatória?",
+      "options": [
+        "Reiniciar obrigatoriamente seis semanas de esquema para endocardite protética a partir da cirurgia",
+        "Manter o regime recomendado para EI de valva nativa e contar a duração desde o início da terapia efetiva",
+        "Suspender o antibiótico após a cirurgia, pois a remoção da valva elimina o foco infeccioso",
+        "Trocar para rifampicina em monoterapia até completar seis semanas a partir da cirurgia",
+        "Contar novo curso de quatro semanas apenas se a hemocultura do dia da cirurgia for negativa"
+      ],
+      "correct": 1,
+      "exp": "Quando uma EI de valva nativa requer substituição valvar durante o tratamento, o esquema pós-operatório continua sendo o recomendado para valva nativa, e a duração é contada desde o primeiro dia de terapia efetiva, não automaticamente desde a operação. Um novo curso completo deve ser iniciado se a cultura da valva for positiva. Cirurgia controla o foco, mas não elimina a necessidade de completar a terapia antimicrobiana.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-50",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "Enterococcus faecalis",
+          "HLAR",
+          "sinergismo"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "Enterococcus faecalis"
+        ]
+      },
+      "q": "Por que ampicilina associada à ceftriaxona é bactericida contra Enterococcus faecalis e particularmente útil quando há resistência de alto nível a aminoglicosídeos (HLAR)?",
+      "options": [
+        "A ceftriaxona inibiria as betalactamases enterocócicas e permitiria que a ampicilina atingisse o ribossomo",
+        "Os dois betalactâmicos saturam proteínas ligadoras de penicilina complementares, produzindo sinergismo sem depender do aminoglicosídeo",
+        "A ampicilina romperia o biofilme e a ceftriaxona bloquearia a síntese proteica na subunidade 30S",
+        "A ceftriaxona apresentaria atividade bactericida suficiente em monoterapia, e a ampicilina apenas reduziria a emergência de resistência",
+        "A associação restauraria a entrada intracelular de gentamicina, mesmo quando o aminoglicosídeo não faz parte do esquema"
+      ],
+      "correct": 1,
+      "exp": "Enterococos são tolerantes à morte por um único inibidor de parede. Ampicilina e ceftriaxona ocupam PBPs complementares e, juntas, produzem sinergismo bactericida. Como esse mecanismo independe da entrada de gentamicina, a combinação permanece útil em HLAR e reduz a nefrotoxicidade associada ao aminoglicosídeo. Ceftriaxona isolada não é tratamento adequado para EI enterocócica.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-51",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "MRSA",
+          "daptomicina",
+          "resistência"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "MRSA"
+        ]
+      },
+      "q": "Em EI por estafilococo resistente à meticilina, qual princípio é correto quando se opta por daptomicina?",
+      "options": [
+        "Usar 4 mg/kg/dia em monoterapia, dose suficiente para penetrar vegetações sem selecionar resistência",
+        "Usar dose alta e considerar associação com outro agente ativo para aumentar a atividade e reduzir emergência de resistência",
+        "Associar obrigatoriamente gentamicina durante todo o tratamento, independentemente da função renal",
+        "Reservar a daptomicina apenas para estreptococos resistentes à penicilina, pois estafilococos são intrinsecamente resistentes",
+        "Preferir formulação oral após 48 horas, desde que as hemoculturas tenham negativado"
+      ],
+      "correct": 1,
+      "exp": "Na EI estafilocócica resistente, a daptomicina deve ser usada em dose alta; a ESC recomenda combiná-la com outro fármaco antistafilocócico ativo em cenários apropriados para aumentar a atividade e limitar resistência. Doses baixas e monoterapia favorecem falha/seleção de resistência. Daptomicina é intravenosa, e gentamicina rotineira acrescenta nefrotoxicidade sem ser a associação padrão.",
+      "ref": [
+        "delgado2023-esc-endocardite"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "endocardite-52",
+      "tema": "Endocardite Infecciosa",
+      "cat": "Antibioticoterapia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Infectologia",
+        "disciplinasRelacionadas": [
+          "Cardiologia",
+          "Microbiologia"
+        ],
+        "tema": "Endocardite Infecciosa",
+        "subtema": "Antibioticoterapia",
+        "focos": [
+          "transição oral",
+          "POET"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Infectologia",
+          "Endocardite Infecciosa",
+          "Antibioticoterapia",
+          "Transição oral"
+        ]
+      },
+      "q": "Qual paciente mais se aproxima do perfil em que se pode discutir conclusão oral protocolizada da antibioticoterapia da EI?",
+      "options": [
+        "Paciente com EI esquerda por agente identificado, estável após fase intravenosa efetiva, sem abscesso ou indicação cirúrgica pendente e com possibilidade de seguimento estreito",
+        "Paciente com EI esquerda e hemoculturas ainda persistentemente positivas, mas afebril há 24 horas e já tolerando bem a alimentação por via oral",
+        "Paciente com EI por fungo filamentoso, estável clinicamente após apenas três dias de tratamento intravenoso efetivo e sem sinais de insuficiência cardíaca associada ao quadro",
+        "Paciente com EI de prótese valvar e abscesso perivalvar já identificado, aguardando definição cirúrgica, desde que o agente seja sensível a antibiótico oral disponível",
+        "Paciente com suspeita de EI e hemoculturas negativas, ainda antes da identificação etiológica completa, apenas para reduzir o tempo de internação hospitalar"
+      ],
+      "correct": 0,
+      "exp": "A transição oral não é uma simples troca de via. Ela pode ser considerada após fase intravenosa efetiva em paciente cuidadosamente selecionado, clinicamente estável, com agente e suscetibilidade definidos, sem infecção não controlada ou indicação cirúrgica pendente e com adesão/seguimento assegurados. Bacteremia persistente, abscesso, etiologia fúngica e tratamento ainda empírico afastam o perfil estudado no POET e recomendado para terapia ambulatorial selecionada.",
+      "ref": [
+        "delgado2023-esc-endocardite",
+        "iversen2019-poet"
+      ],
+      "itemVersion": 1,
+      "editorialState": "aprovada"
+    }
+  ],
+  "fontes": {
+    "delgado2023-esc-endocardite": "Delgado V, Ajmone Marsan N, de Waha S, et al. 2023 ESC Guidelines for the management of endocarditis. \u003cem>European Heart Journal\u003c/em>. 2023;44:3948–4042. doi:10.1093/eurheartj/ehad193.",
+    "petersen2024-eco-ei": "Petersen JK, Østergaard L, Fosbøl EL. Role of echocardiography in the diagnosis and clinical management of infective endocarditis. \u003cem>Indian Journal of Thoracic and Cardiovascular Surgery\u003c/em>. 2024;40(Suppl 1):16–28. doi:10.1007/s12055-023-01668-4.",
+    "fowler2023-duke-iscvid": "Fowler VG Jr, Durack DT, Selton-Suty C, et al. The 2023 Duke–International Society for Cardiovascular Infectious Diseases Criteria for Infective Endocarditis. \u003cem>Clinical Infectious Diseases\u003c/em>. 2023;77:518–526. doi:10.1093/cid/ciad271.",
+    "iversen2019-poet": "Iversen K, Ihlemann N, Gill SU, et al. Partial Oral versus Intravenous Antibiotic Treatment of Endocarditis (POET). \u003cem>New England Journal of Medicine\u003c/em>. 2019;380:415–424. doi:10.1056/NEJMoa1808312.",
+    "siquierpadilla2022-timing-cirurgico": "Siquier-Padilla J, et al. Optimal Timing for Cardiac Surgery in Infective Endocarditis with Neurological Complications: A Narrative Review. \u003cem>Journal of Clinical Medicine\u003c/em>. 2022;11(18):5275. doi:10.3390/jcm11185275.",
+    "wilson2021-aha-profilaxia": "Wilson WR, Gewitz M, Lockhart PB, et al. Prevention of Viridans Group Streptococcal Infective Endocarditis: A Scientific Statement From the American Heart Association. \u003cem>Circulation\u003c/em>. 2021;143:e963–e978. doi:10.1161/CIR.0000000000000969."
+  }
+}
+</script>
+
+<script src="../_shared/app.js"></script>
+<script>
+// Dados específicos desta lista — o motor de quiz (renderização, resposta,
+// salvamento) e as preferências de tema/palete/visão vêm de ../_shared/app.js.
+// Não hardcode conteúdo de questão aqui; edite o banco central em vez disso.
+
+const quizData = JSON.parse(document.getElementById("quiz-data").textContent);
+const QUIZ_ID = quizData.quizId;
+const QUIZ_TITLE = quizData.title;
+const questions = quizData.questions; // { id, tema, cat, q, img, imgAlt, options, correct, exp, ref: [slug,...] }
+const fontes = quizData.fontes;       // { slug: citationHtml }
+
+document.getElementById("page-title").textContent = "Questões — " + QUIZ_TITLE;
+document.getElementById("quiz-title").textContent = QUIZ_TITLE;
+document.getElementById("quiz-desc").textContent = quizData.description || "";
+document.getElementById("quiz-footnote").textContent = quizData.footnote || "";
+
+// Reference numbering is assigned once, by first appearance in the ORIGINAL
+// question order (not the shuffled display order), so numbers stay stable
+// across reshuffles/resets within the same file.
+const refOrder = [];
+questions.forEach(item => {
+  (item.ref || []).forEach(slug => {
+    if (!refOrder.includes(slug)) refOrder.push(slug);
+  });
+});
+const refNumberMap = {};
+refOrder.forEach((slug, i) => { refNumberMap[slug] = i + 1; });
+
+document.getElementById("focus-prev").addEventListener("click", () => { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.getElementById("focus-next").addEventListener("click", () => { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.addEventListener("keydown", event => {
+  if (viewMode !== "focus" || settingsOverlay.classList.contains("open")) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if (event.key === "ArrowLeft" && focusPosition > 0) { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  if (event.key === "ArrowRight" && focusPosition < questionOrder.length - 1) { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+});
+setTheme(themeMode);
+setPalette(paletteMode);
+setView(viewMode, true);
+
+renderQuiz();
+renderRefs();
+</script>
+</body>
+</html>

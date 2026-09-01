@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questões — Seletor por tema</title>
+<link rel="stylesheet" href="../_shared/theme.css">
+<style>
+  /* Específico deste template: variáveis de aviso editorial (--notice-*),
+     cabeçalho em faixa com botão de configurações inline, contêiner mais
+     largo, painel de seleção por hierarquia e a área de sessão até ela
+     iniciar. O restante do tema e dos componentes de quiz vem de
+     ../_shared/theme.css — não duplique regras já definidas lá. */
+  :root {
+    --notice-bg: #fff7e6;
+    --notice-text: #5f4300;
+    --notice-border: #a66b00;
+  }
+  header {
+    background: #172554;
+    color: #fff;
+    padding: 1.45rem 1.5rem;
+  }
+  .header-inner { max-width: 920px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .header-copy { min-width: 0; }
+  header h1 { margin: 0 0 0.2rem; font-size: 1.4rem; }
+  header p { margin: 0; opacity: 0.82; font-size: 0.88rem; }
+  .settings-trigger {
+    display: inline-flex; align-items: center; gap: 0.45rem; border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 9px; padding: 0.48rem 0.7rem; background: rgba(255,255,255,0.1);
+    color: #fff; font: inherit; font-size: 0.82rem; font-weight: 650; cursor: pointer;
+  }
+  .settings-trigger:hover { background: rgba(255,255,255,0.18); }
+  .settings-trigger .gear { font-size: 1rem; line-height: 1; }
+  .toolbar .settings-trigger { background: var(--card-bg); border-color: var(--border); color: var(--text-muted); }
+  .toolbar .settings-trigger:hover { color: var(--accent); background: var(--accent-soft); }
+  .container { max-width: 920px; margin: 0 auto; padding: 1.1rem 1rem 4rem; }
+  a.back-link { display: inline-block; margin-bottom: 1rem; color: var(--accent); font-size: 0.85rem; text-decoration: none; }
+  a.back-link:hover { text-decoration: underline; }
+  .editorial-note {
+    margin: 1rem 0; padding: 0.75rem 0.9rem; border-left: 4px solid var(--notice-border);
+    background: var(--notice-bg); color: var(--notice-text); border-radius: 6px; font-size: 0.86rem;
+  }
+  .editorial-note a { color: inherit; font-weight: 700; }
+
+  /* ---- Painel de seleção ---- */
+  .selector-panel {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.15rem; margin-bottom: 1.2rem;
+  }
+  .selector-panel h2 { margin: 0 0 0.3rem; font-size: 1.05rem; }
+  .selector-panel .hint { margin: 0 0 1rem; font-size: 0.83rem; color: var(--text-muted); }
+  .selector-group { margin-bottom: 1.1rem; }
+  .selector-group-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 0.82rem; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 0.5rem;
+  }
+  .selector-group-label button {
+    background: none; border: none; color: var(--accent); font-weight: 600;
+    font-size: 0.76rem; cursor: pointer; text-transform: none; letter-spacing: normal;
+  }
+  .selector-group-label button:hover { text-decoration: underline; }
+  .exclude-completed { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:.2rem 0 1rem; padding:.75rem .85rem; border:1px solid var(--border); border-radius:10px; background:color-mix(in srgb,var(--accent) 4%,var(--card-bg)); }
+  .exclude-completed label { display:flex; align-items:center; gap:.55rem; font-size:.82rem; font-weight:650; cursor:pointer; }
+  .exclude-completed input[type="checkbox"] { width:1rem; height:1rem; accent-color:var(--accent); }
+  .exclude-records { border:0; background:transparent; color:var(--accent); font:inherit; font-size:.72rem; font-weight:700; cursor:pointer; }
+  .exclude-status { display:block; margin-top:.16rem; color:var(--text-muted); font-size:.65rem; font-weight:400; }
+  #completed-records-input { display:none; }
+  .chip-list { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.42rem 0.7rem; border: 1px solid var(--border); border-radius: 999px;
+    background: var(--card-bg); color: var(--text); cursor: pointer; font: inherit;
+    font-size: 0.84rem; user-select: none;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .chip:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .chip:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 38%, transparent); outline-offset: 2px; }
+  .chip.selected { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); font-weight: 600; }
+  .chip .count { opacity: 0.75; font-size: 0.78em; }
+  .hierarchy-breadcrumb { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.6rem; }
+  .hierarchy-breadcrumb button {
+    border: 0; background: var(--accent-soft); color: var(--accent); border-radius: 6px;
+    padding: 0.3rem 0.5rem; cursor: pointer; font-size: 0.78rem;
+  }
+  .hierarchy-breadcrumb button::after { content: " ›"; opacity: 0.6; }
+  .advanced-filters { margin: 0.2rem 0 1rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .advanced-filters > summary { cursor: pointer; list-style: none; padding: 0.8rem 0; color: var(--text-muted); font-size: 0.84rem; font-weight: 650; }
+  .advanced-filters > summary::-webkit-details-marker { display: none; }
+  .advanced-filters > summary::after { content: "+"; float: right; font-size: 1.05rem; }
+  .advanced-filters[open] > summary::after { content: "−"; }
+  .advanced-content { padding: 0.25rem 0 0.1rem; }
+  .selector-footer {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
+    padding-top: 0.9rem; border-top: 1px solid var(--border);
+  }
+  .selector-count { font-size: 0.9rem; color: var(--text-muted); }
+  .selector-count strong { color: var(--text); font-size: 1.1rem; }
+  .generate-btn {
+    background: var(--accent); color: var(--accent-contrast); border: none; border-radius: 8px;
+    padding: 0.65rem 1.2rem; font-size: 0.92rem; font-weight: 650; cursor: pointer;
+  }
+  .generate-btn:hover { background: #1d4ed8; }
+  .generate-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+  @media (max-width: 560px) {
+    .setting-row { align-items: stretch; flex-direction: column; }
+    .setting-row .segmented-control { align-self: stretch; }
+    .setting-row .segmented-control button { flex: 1; }
+    .selector-panel { padding: 1rem; }
+    .selector-footer { align-items: stretch; flex-direction: column; }
+    .generate-btn { width: 100%; }
+  }
+  .change-selection {
+    background: var(--card-bg); border: 1px solid var(--border); color: var(--text-muted);
+    padding: 0.5rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+  }
+  .change-selection:hover { border-color: var(--accent); color: var(--accent); }
+
+  #quiz-area { display: none; }
+
+  .view-controls { display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; }
+  .focus-navigation button:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+  body[data-view="focus"] .editorial-note { display: none; }
+  /* Questão de destino de um link direto (busca global do index.html) */
+  .question-card.search-highlight { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  :root[data-theme="dark"] {
+      --notice-bg: #28220f; --notice-text: #fde68a; --notice-border: #ca8a04;
+  }
+  :root[data-theme="dark"] header { background: #111827; }
+
+  :root[data-palette="presleep"] {
+      --notice-bg: #fdf1de; --notice-text: #6b3f14; --notice-border: #a66b00;
+  }
+  :root[data-theme="dark"][data-palette="presleep"] {
+      --notice-bg: #261f10; --notice-text: #f5d58a; --notice-border: #d59b2d;
+  }
+  @media (max-width: 700px) {
+    .header-inner { align-items: flex-start; }
+    .settings-trigger .settings-label { display: none; }
+    .toolbar { align-items: stretch; }
+    .view-controls { width: 100%; justify-content: space-between; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-copy">
+      <h1>Montar uma sessão</h1>
+      <p>Navegue da área geral até o conteúdo específico que deseja praticar.</p>
+    </div>
+    <button type="button" class="settings-trigger" aria-haspopup="dialog">
+      <span class="gear" aria-hidden="true">⚙</span><span class="settings-label">Configurações</span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <a class="back-link" href="../index.html">&larr; Voltar ao índice</a>
+  <div class="editorial-note" role="note">
+    Banco educacional em auditoria editorial progressiva. Estrutura validada não equivale
+    a aprovação clínica de cada item. Consulte a
+    <a href="../_banco/POLITICA-EDITORIAL.md">política editorial</a>.
+  </div>
+
+  <div class="selector-panel" id="selector-panel">
+    <h2>Escolha pela hierarquia</h2>
+    <p class="hint">Avance nível por nível. Sem seleção, a sessão usa o banco inteiro.</p>
+
+    <div class="selector-group">
+      <div class="selector-group-label">
+        <span>Hierarquia de conteúdo</span>
+        <button type="button" id="hierarquia-clear">Voltar à raiz</button>
+      </div>
+      <div class="hierarchy-breadcrumb" id="hierarquia-breadcrumb"></div>
+      <div class="chip-list" id="hierarquia-list"></div>
+    </div>
+
+    <div class="exclude-completed">
+      <label><input type="checkbox" id="exclude-completed"><span>Remover questões já feitas<span class="exclude-status" id="exclude-status">Carregue a pasta de registros para identificar os itens respondidos.</span></span></label>
+      <button type="button" class="exclude-records" id="load-completed-records">Carregar registros</button>
+      <input type="file" id="completed-records-input" webkitdirectory directory multiple accept=".json">
+    </div>
+
+    <div class="selector-footer">
+      <div class="selector-count"><strong id="match-count">0</strong> <span id="match-label">questões disponíveis</span></div>
+      <button type="button" class="generate-btn" id="generate-btn" disabled>Iniciar sessão</button>
+    </div>
+  </div>
+
+  <div id="quiz-area">
+    <div class="toolbar">
+      <button type="button" class="change-selection" id="change-selection">&larr; Mudar seleção</button>
+      <div class="score">Acertos: <span id="score-correct">0</span> · Parciais: <span id="score-partial">0</span> · <span id="score-total">0</span>/<span id="score-max">0</span> respondidas</div>
+      <div class="toolbar-right">
+        <button type="button" class="settings-trigger" aria-haspopup="dialog" aria-label="Abrir configurações">
+          <span class="gear" aria-hidden="true">⚙</span><span class="settings-label">Configurações</span>
+        </button>
+        <a class="dash-link" href="../_dados/dashboard.html" target="_blank">Ver desempenho</a>
+        <button class="export" id="save-progress" onclick="saveRegistro()" title="Salva respostas e desempenho em _dados/registros">💾 Salvar progresso</button>
+        <button class="export" id="save-quality" onclick="saveQualityReviews()" title="Salva somente sugestões em _dados/melhorias de questões">✎ Enviar sugestões (<span id="quality-pending">0</span>)</button>
+        <button class="reset" onclick="resetQuiz()">Reiniciar</button>
+      </div>
+    </div>
+    <p class="export-hint" id="export-hint">Arquivo baixado. Mova-o para <code>Questões/_dados/registros/</code> para que apareça no painel de desempenho.</p>
+
+    <nav class="focus-navigation" aria-label="Navegação entre questões">
+      <button type="button" id="focus-prev">&larr; Anterior</button>
+      <span class="focus-position" id="focus-position" aria-live="polite"></span>
+      <button type="button" id="focus-next">Próxima &rarr;</button>
+    </nav>
+
+    <div id="quiz"></div>
+
+    <div class="refs">
+      <h2>Referências</h2>
+      <ol id="ref-list"></ol>
+    </div>
+  </div>
+</div>
+
+<div class="settings-overlay" id="settings-overlay" aria-hidden="true">
+  <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-describedby="settings-description">
+    <div class="settings-header">
+      <div>
+        <h2 id="settings-title">Configurações</h2>
+        <p id="settings-description">Personalize a aparência e a forma de navegar pelas questões.</p>
+      </div>
+      <button type="button" class="settings-close" aria-label="Fechar configurações">&times;</button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Tema</strong><span>Escolha a claridade da interface.</span></div>
+        <div class="segmented-control" aria-label="Tema da interface">
+          <button type="button" data-theme-choice="light" aria-pressed="false">Claro</button>
+          <button type="button" data-theme-choice="dark" aria-pressed="false">Escuro</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Paleta de cores</strong><span>Normal ou tons que afetam menos o sono.</span></div>
+        <div class="segmented-control" aria-label="Paleta de cores">
+          <button type="button" data-palette-choice="normal" aria-pressed="false">Normal</button>
+          <button type="button" data-palette-choice="presleep" aria-pressed="false">Pré-sono</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Exibição das questões</strong><span>Veja todas ou concentre-se em uma por tela.</span></div>
+        <div class="segmented-control" aria-label="Formato das questões">
+          <button type="button" data-view-choice="list" aria-pressed="false">Lista</button>
+          <button type="button" data-view-choice="focus" aria-pressed="false">Uma por vez</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-footer"><button type="button" class="settings-done">Concluído</button></div>
+  </section>
+</div>
+
+<script type="application/json" id="banco-data">
+__BANCO_DATA_JSON__
+</script>
+<script type="application/json" id="fontes-data">
+__FONTES_DATA_JSON__
+</script>
+
+<script src="../_shared/app.js"></script>
+<script>
+// Seletor dinâmico por tema/categoria — lê o banco inteiro (embutido acima,
+// produzido por _banco/gerar-seletor.js a partir de _banco/banco-questoes.json)
+// e monta o quiz na hora, reaproveitando o motor de interação/registro de
+// ../_shared/app.js (o mesmo usado pelas listas geradas por
+// _banco/gerar-lista.js). Não deixe conteúdo de questão hardcoded aqui —
+// edite o banco central em vez disso.
+
+const allQuestions = JSON.parse(document.getElementById("banco-data").textContent);
+const fontes = JSON.parse(document.getElementById("fontes-data").textContent);
+
+document.getElementById("focus-prev").addEventListener("click", () => {
+  focusPosition--;
+  updateFocusView();
+  window.scrollTo({ top: document.getElementById("quiz-area").offsetTop, behavior: "smooth" });
+});
+document.getElementById("focus-next").addEventListener("click", () => {
+  focusPosition++;
+  updateFocusView();
+  window.scrollTo({ top: document.getElementById("quiz-area").offsetTop, behavior: "smooth" });
+});
+document.addEventListener("keydown", event => {
+  if (viewMode !== "focus" || settingsOverlay.classList.contains("open")) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if (event.key === "ArrowLeft" && focusPosition > 0) { focusPosition--; updateFocusView(); window.scrollTo({ top: document.getElementById("quiz-area").offsetTop, behavior: "smooth" }); }
+  if (event.key === "ArrowRight" && focusPosition < questionOrder.length - 1) { focusPosition++; updateFocusView(); window.scrollTo({ top: document.getElementById("quiz-area").offsetTop, behavior: "smooth" }); }
+});
+setTheme(themeMode);
+setPalette(paletteMode);
+
+// ---------- Painel de seleção hierárquica ----------
+let selectedHierarchyPath = [];
+const completedQuestionIds = new Set();
+let excludeCompleted = false;
+
+function questionIsAvailable(question) {
+  return !excludeCompleted || !completedQuestionIds.has(question.id);
+}
+
+function pathStartsWith(path, prefix) {
+  return prefix.every((value, index) => path[index] === value);
+}
+
+function renderHierarchy() {
+  const breadcrumb = document.getElementById("hierarquia-breadcrumb");
+  const list = document.getElementById("hierarquia-list");
+  breadcrumb.innerHTML = "";
+  list.innerHTML = "";
+
+  selectedHierarchyPath.forEach((value, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = value;
+    button.addEventListener("click", () => {
+      selectedHierarchyPath = selectedHierarchyPath.slice(0, index + 1);
+      renderHierarchy();
+      updateMatchCount();
+    });
+    breadcrumb.appendChild(button);
+  });
+
+  const depth = selectedHierarchyPath.length;
+  const counts = new Map();
+  allQuestions.forEach(q => {
+    if (!questionIsAvailable(q)) return;
+    const path = (q.classificacao || {}).hierarquia || [];
+    if (!pathStartsWith(path, selectedHierarchyPath) || !path[depth]) return;
+    counts.set(path[depth], (counts.get(path[depth]) || 0) + 1);
+  });
+
+  [...counts.keys()].sort((a, b) => a.localeCompare(b, "pt-BR")).forEach(value => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.innerHTML = `${value} <span class="count">(${counts.get(value)})</span>`;
+    chip.addEventListener("click", () => {
+      selectedHierarchyPath.push(value);
+      renderHierarchy();
+      updateMatchCount();
+    });
+    list.appendChild(chip);
+  });
+
+  if (counts.size === 0) list.innerHTML = '<span class="hint">Nível mais específico alcançado.</span>';
+}
+
+document.getElementById("hierarquia-clear").addEventListener("click", () => {
+  selectedHierarchyPath = [];
+  renderHierarchy();
+  updateMatchCount();
+});
+renderHierarchy();
+
+const excludeCompletedInput = document.getElementById("exclude-completed");
+const completedRecordsInput = document.getElementById("completed-records-input");
+const excludeStatus = document.getElementById("exclude-status");
+
+document.getElementById("load-completed-records").addEventListener("click", () => completedRecordsInput.click());
+excludeCompletedInput.addEventListener("change", () => {
+  excludeCompleted = excludeCompletedInput.checked;
+  if (excludeCompleted && completedQuestionIds.size === 0) completedRecordsInput.click();
+  renderHierarchy();
+  updateMatchCount();
+});
+
+completedRecordsInput.addEventListener("change", async event => {
+  const files = [...event.target.files].filter(file => file.name.toLowerCase().endsWith(".json"));
+  completedQuestionIds.clear();
+  let validRecords = 0;
+  for (const file of files) {
+    try {
+      const record = JSON.parse(await file.text());
+      if (!record || !Array.isArray(record.answers)) continue;
+      validRecords++;
+      record.answers.forEach(answer => { if (answer.qId) completedQuestionIds.add(answer.qId); });
+    } catch (_) { /* arquivo não compatível: ignorado */ }
+  }
+  excludeCompleted = true;
+  excludeCompletedInput.checked = true;
+  excludeStatus.textContent = validRecords
+    ? `${completedQuestionIds.size} questões já feitas removidas a partir de ${validRecords} registro(s).`
+    : "Nenhum registro de desempenho válido foi encontrado na pasta selecionada.";
+  renderHierarchy();
+  updateMatchCount();
+});
+
+function currentMatches() {
+  return allQuestions.filter(q => {
+    const c = q.classificacao || {};
+    if (!questionIsAvailable(q)) return false;
+    if (selectedHierarchyPath.length > 0 && !pathStartsWith(c.hierarquia || [], selectedHierarchyPath)) return false;
+    return true;
+  });
+}
+
+function updateMatchCount() {
+  const n = currentMatches().length;
+  document.getElementById("match-count").textContent = n;
+  document.getElementById("match-label").textContent = n === 1 ? "questão disponível" : "questões disponíveis";
+  document.getElementById("generate-btn").disabled = n === 0;
+}
+
+updateMatchCount();
+
+document.getElementById("generate-btn").addEventListener("click", () => {
+  const matches = currentMatches();
+  if (matches.length === 0) return;
+  startQuiz(matches);
+});
+
+document.getElementById("change-selection").addEventListener("click", () => {
+  document.getElementById("quiz-area").style.display = "none";
+  document.getElementById("selector-panel").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+// ---------- Dados específicos desta sessão (o motor de quiz vem de ../_shared/app.js) ----------
+let QUIZ_ID = "seletor";
+let QUIZ_TITLE = "Sessão por hierarquia";
+let questions = [];
+let refOrder = [];
+let refNumberMap = {};
+
+function slugify(str) {
+  return str.toLowerCase()
+    .normalize("NFD").replace(new RegExp("[\\u0300-\\u036f]", "g"), "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+function startQuiz(matches) {
+  questions = matches;
+  const escopos = selectedHierarchyPath.length > 0 ? [selectedHierarchyPath[selectedHierarchyPath.length - 1]]
+    : ["Banco completo"];
+  QUIZ_TITLE = escopos.join(" + ");
+  QUIZ_ID = "seletor-" + escopos.map(slugify).join("_");
+
+  refOrder = [];
+  questions.forEach(item => {
+    (item.ref || []).forEach(slug => {
+      if (!refOrder.includes(slug)) refOrder.push(slug);
+    });
+  });
+  refNumberMap = {};
+  refOrder.forEach((slug, i) => { refNumberMap[slug] = i + 1; });
+
+  answered = 0; correctCount = 0; partialCount = 0;
+  sessionLog = []; qualityReviews = [];
+  sessionStart = new Date();
+
+  document.getElementById("selector-panel").style.display = "none";
+  document.getElementById("quiz-area").style.display = "block";
+  document.getElementById("export-hint").classList.remove("show");
+  updateScore();
+  updateQualityPendingCount();
+  renderQuiz();
+  focusPosition = 0;
+  setView(viewMode, true);
+  renderRefs();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+setView(viewMode, true);
+
+// ---------- Link direto vindo da busca global do index.html (?hierarquia=&highlight=) ----------
+function parseHierarquiaParam(raw) {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed.map(String);
+  } catch (_) { /* ignorado */ }
+  return [];
+}
+
+function highlightQuestion(qId, attempt = 0) {
+  const idx = questions.findIndex(q => q.id === qId);
+  if (idx < 0) return;
+  const card = document.getElementById("q" + idx);
+  if (!card) {
+    if (attempt < 20) setTimeout(() => highlightQuestion(qId, attempt + 1), 100);
+    return;
+  }
+  card.scrollIntoView({ behavior: "smooth", block: "center" });
+  card.classList.add("search-highlight");
+  setTimeout(() => card.classList.remove("search-highlight"), 2600);
+}
+
+(function applyDeepLinkFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const hierarquiaParam = params.get("hierarquia");
+  const highlightId = params.get("highlight");
+  if (!hierarquiaParam && !highlightId) return;
+  if (hierarquiaParam) {
+    selectedHierarchyPath = parseHierarquiaParam(hierarquiaParam);
+    renderHierarchy();
+    updateMatchCount();
+  }
+  const matches = currentMatches();
+  if (!matches.length) return;
+  startQuiz(matches);
+  if (highlightId) highlightQuestion(highlightId);
+})();
+</script>
+</body>
+</html>

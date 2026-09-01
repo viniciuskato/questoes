@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Questões</title>
+<link rel="stylesheet" href="../_shared/theme.css">
+<style>
+  /* Específico deste template: cabeçalho, contêiner, botão flutuante de
+     configurações e variantes extras de botão (progresso/qualidade). O
+     restante do tema e dos componentes de quiz vem de ../_shared/theme.css —
+     não duplique regras já definidas lá. */
+  header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff;
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 0.4rem; font-size: 1.6rem; }
+  header p { margin: 0 auto; opacity: 0.9; font-size: 0.95rem; max-width: 700px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  button.export-progress { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+  button.export-progress:hover { background: color-mix(in srgb, var(--accent) 84%, #000); color: var(--accent-contrast); }
+  button.export-quality { border-color: #a66b00; color: #8a5900; }
+  button.export-quality:hover { background: #fff7e6; color: #6f4800; }
+  .save-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .save-guidance { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem; margin: -0.6rem 0 1rem; }
+  .save-guidance p { margin: 0; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); color: var(--text-muted); font-size: 0.76rem; }
+  .save-guidance strong { color: var(--text); }
+  .settings-trigger {
+    position: fixed; top: 1rem; right: 1rem; z-index: 50; display: inline-flex; align-items: center; gap: 0.45rem;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: 9px; padding: 0.52rem 0.72rem;
+    background: rgba(15,23,42,0.78); color: #fff; font: inherit; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 5px 18px rgba(0,0,0,0.22); backdrop-filter: blur(8px);
+  }
+  .settings-trigger:hover { background: var(--accent); color: var(--accent-contrast); }
+
+  body[data-view="focus"] .editorial-notice,
+  body[data-view="focus"] .footnote { display: none; }
+
+  .footnote {
+    text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 2rem;
+  }
+  .editorial-notice {
+    margin: 1rem 0; padding: 0.75rem 0.9rem; border-left: 4px solid #a66b00;
+    background: #fff7e6; color: #5f4300; border-radius: 6px; font-size: 0.86rem;
+  }
+  .editorial-notice a { color: inherit; font-weight: 700; }
+
+  :root[data-theme="dark"] button.export-quality { color: #f0b96a; border-color: #b8791f; }
+  :root[data-theme="dark"] button.export-quality:hover { background: #2e2013; color: #ffd28a; }
+  :root[data-palette="presleep"] .editorial-notice { background: #fdf1de; color: #6b3f14; border-left-color: #a66b00; }
+  :root[data-theme="dark"][data-palette="presleep"] .editorial-notice { background: #2e2013; color: #f0b96a; border-left-color: #b8791f; }
+
+  @media (max-width: 560px) {
+    .settings-trigger .settings-label { display: none; }
+    .setting-row { align-items: stretch; flex-direction: column; }
+    .setting-row .segmented-control { align-self: stretch; }
+    .setting-row .segmented-control button { flex: 1; }
+    .save-guidance { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<button type="button" class="settings-trigger" aria-haspopup="dialog" aria-label="Abrir configurações">
+  <span aria-hidden="true">⚙</span><span class="settings-label">Configurações</span>
+</button>
+
+<header>
+  <h1 id="quiz-title"></h1>
+  <p id="quiz-desc"></p>
+</header>
+
+<div class="container">
+  <div class="editorial-notice" role="note">
+    Banco educacional em auditoria editorial progressiva. Estrutura validada não equivale
+    a aprovação clínica de cada item. Consulte a
+    <a href="../_banco/POLITICA-EDITORIAL.md">política editorial</a>.
+  </div>
+  <div class="toolbar">
+    <div class="score">Acertos: <span id="score-correct">0</span> · Parciais: <span id="score-partial">0</span> · <span id="score-total">0</span>/<span id="score-max">0</span> respondidas</div>
+    <div class="toolbar-right">
+      <a class="dash-link" href="../_dados/dashboard.html" target="_blank">Ver desempenho</a>
+      <div class="save-actions" aria-label="Opções de salvamento">
+        <button class="export export-progress" id="save-progress" onclick="saveRegistro()" title="Salva respostas e desempenho em _dados/registros">💾 Salvar progresso</button>
+        <button class="export export-quality" id="save-quality" onclick="saveQualityReviews()" title="Salva avaliações editoriais em _dados/melhorias de questões">✎ Enviar sugestões (<span id="quality-pending">0</span>)</button>
+      </div>
+      <button class="reset" onclick="resetQuiz()">Reiniciar</button>
+    </div>
+  </div>
+  <div class="save-guidance" aria-label="Destino dos arquivos salvos">
+    <p><strong>Progresso:</strong> escolha <code>_dados/registros/</code>. Contém respostas, acertos e confiança.</p>
+    <p><strong>Sugestões:</strong> escolha <code>_dados/melhorias de questões/</code>. Contém somente revisão editorial.</p>
+  </div>
+  <p class="export-hint" id="export-hint">Arquivo baixado. Mova-o para <code>Questões/_dados/registros/</code> para que apareça no painel de desempenho.</p>
+
+  <nav class="focus-navigation" aria-label="Navegação entre questões">
+    <button type="button" id="focus-prev">&larr; Anterior</button>
+    <span class="focus-position" id="focus-position" aria-live="polite"></span>
+    <button type="button" id="focus-next">Próxima &rarr;</button>
+  </nav>
+
+  <div id="quiz"></div>
+
+  <div class="refs">
+    <h2>Referências</h2>
+    <ol id="ref-list"></ol>
+  </div>
+
+  <p class="footnote" id="quiz-footnote"></p>
+</div>
+
+<div class="settings-overlay" id="settings-overlay" aria-hidden="true">
+  <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-describedby="settings-description">
+    <div class="settings-header">
+      <div><h2 id="settings-title">Configurações</h2><p id="settings-description">Personalize a aparência e a forma de navegar pelas questões.</p></div>
+      <button type="button" class="settings-close" aria-label="Fechar configurações">&times;</button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Tema</strong><span>Escolha a claridade da interface.</span></div>
+        <div class="segmented-control" aria-label="Tema da interface">
+          <button type="button" data-theme-choice="light" aria-pressed="false">Claro</button><button type="button" data-theme-choice="dark" aria-pressed="false">Escuro</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Paleta de cores</strong><span>Normal ou tons que afetam menos o sono.</span></div>
+        <div class="segmented-control" aria-label="Paleta de cores">
+          <button type="button" data-palette-choice="normal" aria-pressed="false">Normal</button><button type="button" data-palette-choice="presleep" aria-pressed="false">Pré-sono</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Exibição das questões</strong><span>Veja todas ou concentre-se em uma por tela.</span></div>
+        <div class="segmented-control" aria-label="Formato das questões">
+          <button type="button" data-view-choice="list" aria-pressed="false">Lista</button><button type="button" data-view-choice="focus" aria-pressed="false">Uma por vez</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-footer"><button type="button" class="settings-done">Concluído</button></div>
+  </section>
+</div>
+
+<script type="application/json" id="quiz-data">
+{
+  "quizId": "radiografia-torax-basica",
+  "title": "Radiografia de Tórax Básica",
+  "description": "18 questões da aula de Pneumologia (Dr. Felipe Souza) — técnica, mediastino-coração, hilo, pulmões, pleura, parede torácica e abdome, com radiografias reais para interpretação.",
+  "footnote": "",
+  "questions": [
+    {
+      "id": "rxtorax-01",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Introdução",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Introdução",
+        "focos": [],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Introdução"
+        ]
+      },
+      "q": "Por que a radiografia de tórax é o principal exame inicial na investigação do tórax e quais estruturas ela avalia simultaneamente?",
+      "options": [
+        "É o principal método inicial de investigação do tórax, avaliando simultaneamente pulmões, coração, mediastino, pleura e parede torácica, com baixo custo",
+        "É considerado método de segunda linha para avaliação detalhada do mediastino, permanecendo exame inicial apenas para pulmões e pleura, com contraste limitado",
+        "Avalia pulmões e pleura simultaneamente, mas coração e mediastino exigem obrigatoriamente tomografia computadorizada como exame inicial de investigação",
+        "Seu contraste depende principalmente das diferenças de densidade entre tecidos moles; ossos e ar têm contribuição apenas secundária para a formação da imagem",
+        "É o exame inicial para doenças pulmonares, mas suspeitas cardíacas devem ser investigadas inicialmente por ecocardiograma, não pela radiografia simples"
+      ],
+      "correct": 0,
+      "exp": "A radiografia de tórax é rápida, acessível, de baixo custo e alta disponibilidade, sendo o principal exame inicial de investigação torácica. Ela avalia simultaneamente pulmões, coração, mediastino, pleura e parede torácica, e sua interpretação depende diretamente da atenuação (diferença de densidade) entre essas estruturas — o que permite reconhecer tanto padrões normais quanto lesões.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-02",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Técnica",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Técnica",
+        "focos": [
+          "rotacao"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Técnica",
+          "Rotação"
+        ]
+      },
+      "q": "Qual artefato de posicionamento aparece nas duas radiografias e quais alterações ele pode simular nas incidências PA e AP?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-02-mediastino.png",
+      "imgAlt": "Painel (b): Rx PA com setas junto ao mediastino superior. Painel (c): Rx AP do mesmo tipo de incidência, evidenciando a mesma região mediastinal.",
+      "options": [
+        "Trata-se de radiografia obtida em expiração: nesse caso, os vasos se aglomeram nas bases pulmonares bilateralmente, podendo simular infecção pulmonar basal ou áreas de colapso subsegmentar",
+        "Trata-se de rotação do paciente: à direita em um PA, torna proeminentes a veia cava superior e o arco aórtico à direita, simulando massa; à esquerda em um AP, simula aumento aórtico",
+        "Trata-se de subexposição técnica: exposição insuficiente deixa a imagem muito pálida, impedindo a visualização adequada de zonas apicais, regiões hilares e áreas retrocardíacas",
+        "Trata-se de radiografia obtida em AP por incapacidade de ortostatismo: o mediastino é magnificado de forma global, dificultando a avaliação de massas hilares verdadeiras",
+        "Trata-se de radiografia obtida em inspiração incompleta: menos de seis arcos costais ficam visíveis acima da cúpula diafragmática esquerda, e o coração parece transversalmente aumentado"
+      ],
+      "correct": 1,
+      "exp": "O paciente não está rodado quando uma linha vertical traçada pelo centro dos corpos vertebrais (T1-T5) é equidistante da extremidade medial de cada clavícula. Rotação para a direita em um Rx PA projeta manúbrio, veia cava superior e vasos do arco aórtico de forma mais proeminente à direita, podendo simular massa mediastinal; rotação para a esquerda em um Rx AP pode fazer o arco aórtico parecer aumentado. A rotação também é causa comum de um pulmão parecer mais 'preto' que o outro.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-03",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Mediastino-Coração",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Mediastino-Coração",
+        "focos": [
+          "valvopatia"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Mediastino-Coração",
+          "Valvopatia"
+        ]
+      },
+      "q": "Qual diagnóstico explica o botão aórtico pequeno, a dilatação do tronco e das artérias pulmonares e o aumento do ventrículo direito mostrados nas radiografias?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-03-cardiomediastino.png",
+      "imgAlt": "Rx PA e lateral com setas (azul, vermelha e amarela na PA; amarela na lateral) indicando estruturas do contorno cardiomediastinal a serem interpretadas.",
+      "options": [
+        "Dissecção aguda de aorta ascendente — alargamento do botão aórtico e do mediastino superior, com derrame pericárdico associado e possível hemotórax esquerdo secundário ao extravasamento",
+        "Tromboembolismo pulmonar agudo maciço — oligoemia localizada (sinal de Westermark), abaulamento do tronco pulmonar e elevação transitória do hemidiafragma correspondente",
+        "Doença valvar mitral com hipertensão pulmonar — botão aórtico pequeno, tronco pulmonar dilatado, átrio e ventrículo esquerdos aumentados e, com a progressão, VD dilatado",
+        "Cardiomiopatia dilatada de ventrículo esquerdo — cardiomegalia global, redistribuição vascular e dilatação proporcional do tronco pulmonar, sem alteração do botão aórtico",
+        "Comunicação interatrial com hiperfluxo pulmonar — vascularização pulmonar aumentada e simétrica bilateralmente, com botão aórtico proeminente e átrio esquerdo de tamanho normal"
+      ],
+      "correct": 2,
+      "exp": "Na doença valvar mitral (ex.: estenose mitral), o baixo débito sistêmico crônico associa-se a botão aórtico pequeno, enquanto a hipertensão venocapilar e depois arterial pulmonar dilata o tronco pulmonar e seus ramos (incluindo a artéria interlobar direita) e aumenta átrio e ventrículo esquerdos. Com a progressão da hipertensão pulmonar, o ventrículo direito também dilata, visível na incidência lateral.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-04",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Mediastino-Coração",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Mediastino-Coração",
+        "focos": [
+          "derrame-pericardico"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Mediastino-Coração",
+          "Derrame pericárdico"
+        ]
+      },
+      "q": "Paciente com coração de contorno globular ('em moringa') na radiografia de tórax, sem sinais de congestão pulmonar associada. A tomografia à direita confirma o diagnóstico suspeitado pela radiografia. Qual é esse diagnóstico?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-04-coracao-tc.png",
+      "imgAlt": "Rx de tórax com contorno cardíaco aumentado (esquerda) e corte de TC no mesmo nível, com seta indicando um achado ao redor do coração a ser interpretado (direita).",
+      "options": [
+        "Cardiomegalia por insuficiência cardíaca descompensada — aumento das câmaras associado a cefalização do fluxo, linhas B de Kerley e derrame pleural bilateral",
+        "Tamponamento por hemopericárdio traumático agudo — acúmulo rápido de sangue no saco pericárdico, geralmente com contorno cardíaco normal por falta de tempo de distensão",
+        "Miocardiopatia hipertrófica — espessamento miocárdico difuso sem dilatação de câmaras, geralmente com área cardíaca radiográfica normal ou discretamente aumentada",
+        "Derrame pericárdico — presença de líquido ao redor do coração, que aumenta o contorno cardíaco de forma simétrica e globular, sem dilatação real das câmaras cardíacas",
+        "Massa mediastinal anterior — compressão extrínseca do átrio direito, produzindo abaulamento focal e assimétrico do contorno cardíaco à direita"
+      ],
+      "correct": 3,
+      "exp": "No derrame pericárdico, o líquido se acumula no espaço entre o pericárdio visceral e parietal, aumentando o contorno cardíaco de forma simétrica e globular ('em moringa'), sem os sinais habituais de congestão pulmonar (cefalização, linhas B, derrame pleural) que acompanham a cardiomegalia por insuficiência cardíaca. A tomografia confirma o achado ao mostrar diretamente o líquido perivisceral (seta).",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-05",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Hilo",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Hilo",
+        "focos": [
+          "atelectasia",
+          "sinal-silhueta"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Hilo",
+          "Atelectasia"
+        ]
+      },
+      "q": "Qual é o achado indicado pelas setas na radiografia da direita e quais sinais sustentam esse diagnóstico?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-05-comparativa.png",
+      "imgAlt": "Rx normal (esquerda) e Rx comparativa com setas indicando uma alteração a ser caracterizada (direita).",
+      "options": [
+        "Consolidação do lobo médio direito: apagamento da borda cardíaca direita, mantendo o contorno diafragmático nítido e sem retração volumétrica associada",
+        "Derrame pleural laminar direito: obliteração do seio costofrênico com formação de menisco de borda côncava, sem apagamento do hemidiafragma",
+        "Pneumotórax direito: linha pleural visceral fina e nítida, paralela à parede torácica, sem tramas vasculares periféricas a ela, achado distinto de atelectasia",
+        "Massa hilar direita com linfadenopatia paratraqueal — alargamento hilar e discreto desvio das estruturas adjacentes, simulando perda de volume",
+        "Atelectasia do lobo inferior direito: opacidade retrocardíaca com apagamento da porção medial do hemidiafragma direito, por perda de volume lobar"
+      ],
+      "correct": 4,
+      "exp": "A atelectasia do lobo inferior direito causa perda de volume desse lobo, que se retrai posteriormente contra a coluna e o diafragma, apagando a porção medial do hemidiafragma direito (sinal da silhueta com o diafragma) e produzindo opacidade retrocardíaca. Isso é diferente da atelectasia do lobo médio, que apaga a borda cardíaca direita, e não o diafragma. Também é a razão pela qual a ausência da artéria do lobo inferior direito no hilo deve levantar suspeita desse colapso.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-06",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Pulmões",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Pulmões",
+        "focos": [
+          "padrao-intersticial"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Pulmões",
+          "Padrão intersticial"
+        ]
+      },
+      "q": "A radiografia mostra volumes pulmonares reduzidos com opacidades reticulares de predomínio basal e periférico bilateral, sem consolidação franca. Esse padrão é característico de qual processo?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-06-pulmoes.png",
+      "imgAlt": "Rx de tórax com opacidades pulmonares correspondentes ao padrão descrito no enunciado.",
+      "options": [
+        "Doença intersticial fibrosante (ex.: fibrose pulmonar idiopática), com padrão reticular, volumes reduzidos e faveolamento ('favo de mel')",
+        "Consolidação alveolar por pneumonia bacteriana, com broncograma aéreo, margens mal definidas e volumes pulmonares preservados ou até aumentados",
+        "Sarcoidose em fase avançada, com linfadenopatia hilar bilateral maciça e padrão nodular de predomínio em zonas superiores e médias",
+        "Edema pulmonar cardiogênico agudo, com redistribuição vascular para os ápices, linhas B de Kerley e derrame pleural bilateral associado",
+        "Bronquiectasias císticas difusas, com lucências de paredes espessadas em padrão de 'trilho de trem' e impactação mucoide associada"
+      ],
+      "correct": 0,
+      "exp": "As alterações intersticiais incluem pequenos nódulos, padrão linear/reticular (às vezes com linhas septais), retículo-nodular, redução de volume pulmonar e padrão em favo de mel — achados típicos de doenças fibrosantes como a fibrose pulmonar idiopática, de predomínio basal e periférico. Isso contrasta com o padrão alveolar (opacidades algodonosas, margens mal definidas, confluentes, com broncograma aéreo), típico de consolidação.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-07",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Pulmões",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Pulmões",
+        "focos": [
+          "consolidacao",
+          "broncograma"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Pulmões",
+          "Consolidação"
+        ]
+      },
+      "q": "A seta na imagem aponta para uma via aérea preenchida de ar, visível como estrutura tubular radiotransparente dentro de uma área de opacidade homogênea do parênquima. Como se chama esse sinal e o que ele indica?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-07-pulmao.png",
+      "imgAlt": "Rx de tórax com opacidade pulmonar; a seta indica uma estrutura tubular radiotransparente dentro dessa área.",
+      "options": [
+        "Sinal da silhueta — indica perda do contorno normal entre estruturas adjacentes de densidades diferentes, como o apagamento da borda cardíaca por consolidação do lobo médio",
+        "Broncograma aéreo — indica preenchimento dos espaços alveolares ao redor por material (líquido, pus, sangue), com brônquios aerados; achado típico de consolidação",
+        "Sinal do menisco — indica acúmulo de líquido no espaço pleural, formando borda superior côncava visível no seio costofrênico correspondente, geralmente unilateral",
+        "Sinal da coluna — indica opacidade retrocardíaca que torna a coluna vertebral inferior aparentemente mais radiotransparente do que a porção superior",
+        "Sinal '1-2-3' — indica linfadenopatia hilar bilateral associada a alargamento paratraqueal direito, achado característico e clássico de sarcoidose em atividade"
+      ],
+      "correct": 1,
+      "exp": "O broncograma aéreo ocorre quando os espaços alveolares ao redor de um brônquio se preenchem de material anormal (a via aérea em si permanece aerada), tornando o brônquio visível como uma estrutura tubular radiotransparente em meio à opacidade. É um achado clássico de consolidação/lesão alveolar, como na pneumonia lobar.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-08",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Pulmões",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Pulmões",
+        "focos": [
+          "atelectasia",
+          "sinal-silhueta"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Pulmões",
+          "Atelectasia"
+        ]
+      },
+      "q": "Diferente da atelectasia do lobo inferior direito (que apaga o contorno do hemidiafragma), a atelectasia do lobo médio direito, mostrada na imagem, é reconhecida por qual achado no sinal da silhueta?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-08-pulmao.png",
+      "imgAlt": "Rx PA e lateral do caso descrito no enunciado (atelectasia do lobo médio direito), para avaliação do sinal da silhueta correspondente.",
+      "options": [
+        "Apagamento do hemidiafragma direito com preservação da borda cardíaca, pela posição inferior e basal do lobo médio direito",
+        "Apagamento do botão aórtico com preservação da borda cardíaca direita, pela projeção superior e anterior do lobo médio",
+        "Apagamento da borda cardíaca direita, pois o lobo médio é adjacente ao coração na PA, com o diafragma permanecendo nítido",
+        "Preservação da borda cardíaca e do hemidiafragma, com deslocamento inferior da fissura menor como principal sinal indireto",
+        "Apagamento da borda cardíaca e do hemidiafragma direitos, pois o lobo médio se projetaria sobre ambos na incidência PA"
+      ],
+      "correct": 2,
+      "exp": "O sinal da silhueta depende de qual estrutura de partes moles está em contato direto com a área pulmonar acometida. O lobo médio direito é adjacente à borda cardíaca direita, de modo que sua atelectasia apaga esse contorno mantendo o diafragma nítido — o oposto do que ocorre na atelectasia do lobo inferior direito, que é adjacente ao diafragma.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-09",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Pleura",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Pleura",
+        "focos": [
+          "derrame-pleural"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Pleura",
+          "Derrame Pleural"
+        ]
+      },
+      "q": "Como se chama a borda superior côncava da opacidade que obscurece o seio costofrênico direito, e o que ela representa?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-09-pleura.png",
+      "imgAlt": "Rx de tórax com opacidade no terço inferior do hemitórax direito; as pontas de seta indicam a borda superior dessa opacidade.",
+      "options": [
+        "Sinal da silhueta — perda do contorno entre o derrame e a borda cardíaca direita, sem relação direta com o volume de líquido acumulado",
+        "Sinal '1-2-3' — indicativo de linfadenopatia hilar e paratraqueal bilateral associada, tipicamente descrito na sarcoidose ativa",
+        "Broncograma aéreo — indica preenchimento alveolar por material inflamatório, com os brônquios permanecendo aerados dentro da opacidade",
+        "Sinal do menisco — borda superior côncava formada pelo líquido pleural, identificável quando há mais de cerca de 200 mL na incidência PA",
+        "Sinal da coluna — decorrente de opacidade retrocardíaca que altera a radiotransparência relativa da coluna torácica inferior, sinal indireto"
+      ],
+      "correct": 3,
+      "exp": "O derrame pleural é o acúmulo de líquido no espaço pleural, visto na radiografia como opacidade homogênea que oblitera o seio costofrênico (geralmente detectável com mais de ~200 mL na incidência PA). Sua borda superior côncava é chamada de sinal do menisco. A incidência em decúbito lateral (Laurell) pode confirmar derrames pequenos ou duvidosos.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-10",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Pleura",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Pleura",
+        "focos": [
+          "pneumotorax"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Pleura",
+          "Pneumotorax"
+        ]
+      },
+      "q": "As setas na imagem indicam uma linha fina e nítida, paralela à parede torácica, sem tramas vasculares periféricas a ela — achado clássico de pneumotórax. Por que a radiografia em expiração (mostrada aqui) costuma tornar esse achado mais evidente do que a mesma radiografia em inspiração?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-10-pleura.png",
+      "imgAlt": "Rx em expiração; as setas indicam a linha fina já descrita no enunciado.",
+      "options": [
+        "Porque a expiração aumenta ativamente o volume de ar dentro do espaço pleural, criando mais ar livre disponível para ser detectado na radiografia",
+        "Porque a expiração aproxima a pleura visceral da parede torácica, aumentando a separação aparente entre as duas camadas pleurais",
+        "Porque a expiração corrige artefatos de rotação do paciente que mascaram a linha pleural nas incidências obtidas em inspiração plena",
+        "Porque a expiração aumenta a radiotransparência do pulmão colapsado em relação ao ar pleural adjacente, tornando a linha pleural mais visível",
+        "Porque a expiração reduz o volume pulmonar sem alterar o volume de ar pleural livre, aumentando a densidade relativa do pulmão colapsado"
+      ],
+      "correct": 4,
+      "exp": "Na expiração, o volume pulmonar diminui, mas o volume de ar livre no espaço pleural não se altera na mesma proporção — o pulmão parcialmente colapsado fica relativamente mais denso (menos aerado) em contraste com o ar pleural adjacente, o que acentua o contraste da linha pleural visceral fina e facilita a identificação de pneumotórax sutis.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-11",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Abdome",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Abdome",
+        "focos": [
+          "pneumoperitonio"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Interpretação de imagem",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Abdome",
+          "Pneumoperitonio"
+        ]
+      },
+      "q": "Qual diagnóstico é sugerido pela faixa radiotransparente entre a cúpula diafragmática esquerda e as estruturas abdominais, e qual é sua principal implicação clínica?",
+      "img": "../_banco/imagens/pneumologia/rx-caso-11-abdome.png",
+      "imgAlt": "Rx de tórax com seta indicando uma faixa radiotransparente entre a cúpula diafragmática esquerda e as estruturas abdominais adjacentes.",
+      "options": [
+        "Pneumoperitônio — presença de ar livre intraperitoneal abaixo do diafragma, indicativo de perfuração de víscera oca e urgência cirúrgica",
+        "Interposição do cólon entre o fígado e o diafragma (síndrome de Chilaiditi) — achado benigno, sem indicação de perfuração ou urgência cirúrgica",
+        "Pneumotórax basal esquerdo — ar dissecando o espaço pleural inferior, com linha pleural visceral visível junto à cúpula diafragmática",
+        "Distensão gástrica por aerofagia — acúmulo de ar na câmara gástrica, sem qualquer relação com perfuração de víscera oca ou peritonite",
+        "Eventração do hemidiafragma esquerdo, que produz elevação focal do contorno diafragmático com pulmão aerado interposto inferiormente"
+      ],
+      "correct": 0,
+      "exp": "O achado mais impressionante de pneumoperitônio na radiografia de tórax é a presença de ar livre intraperitoneal abaixo do diafragma, tipicamente indicativo de perfuração intestinal — uma urgência cirúrgica. A síndrome de Chilaiditi (interposição colônica) é um importante diagnóstico diferencial benigno desse achado, mas não costuma formar uma faixa de ar contínua e uniforme sob toda a cúpula diafragmática.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-12",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Técnica",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Técnica",
+        "focos": [
+          "inspiracao"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Técnica",
+          "Inspiração"
+        ]
+      },
+      "q": "Um Rx de tórax mostra menos de seis arcos costais visíveis acima da cúpula diafragmática esquerda. Esse achado técnico está associado a qual problema de aquisição, e qual sua principal consequência na interpretação?",
+      "options": [
+        "Rotação do paciente; simula massa mediastinal por proeminência assimétrica dos vasos que emergem do arco aórtico e da veia cava superior",
+        "Inspiração superficial (subinspiração); simula aumento do diâmetro cardíaco transversal e aglomeração vascular nas bases, mimetizando infecção basal",
+        "Superexposição técnica; impede a visualização de estruturas em zonas apicais, regiões hilares e áreas retrocardíacas por excesso de enegrecimento",
+        "Incidência AP em inspiração adequada; a magnificação cardíaca explica a redução aparente do número de arcos costais",
+        "Expiração forçada; produz hipertransparência pulmonar difusa e reduz o diâmetro transversal aparente do coração na radiografia"
+      ],
+      "correct": 1,
+      "exp": "É necessário visualizar pelo menos seis costelas acima da cúpula diafragmática esquerda para considerar a inspiração adequada. A inspiração superficial é comum em idosos, pacientes com dor, inconscientes ou em radiografia de cabeceira, e pode fazer o diâmetro cardíaco transversal parecer aumentado, além de aglomerar vasos nas bases pulmonares, simulando infecção basal ou colapso subsegmentar.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-13",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Mediastino-Coração",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Mediastino-Coração",
+        "focos": [
+          "hilo"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Mediastino-Coração",
+          "Hilo"
+        ]
+      },
+      "q": "Ao avaliar os hilos pulmonares, você nota que o hilo esquerdo está mais baixo que o direito (inversão da relação habitual). O que deve ser investigado?",
+      "options": [
+        "Derrame pericárdico, cuja expansão simétrica da silhueta cardíaca desloca o hilo esquerdo inferiormente em relação ao direito",
+        "Pneumotórax esquerdo, cujo colapso pulmonar traciona o hilo ipsilateral para uma posição mais inferior que o normal",
+        "Atelectasia do lobo inferior esquerdo ou superior direito, tracionando o hilo correspondente, ou aumento do hilo direito por tumor",
+        "Situs inversus parcial, condição rara na qual a inversão hilar pode ocorrer isoladamente, sem dextrocardia associada",
+        "Rotação para a direita, que projeta o hilo esquerdo abaixo do direito sem alterar outras estruturas mediastinais"
+      ],
+      "correct": 2,
+      "exp": "Normalmente o hilo esquerdo é um pouco mais alto que o direito. Quando essa relação se inverte, deve-se procurar atelectasia do lobo inferior esquerdo ou do lobo superior direito (que tracionam o hilo correspondente) ou aumento do hilo direito por tumor ou linfonodomegalia, que o desloca para baixo em relação ao esquerdo.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-14",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Pulmões",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Pulmões",
+        "focos": [
+          "nomenclatura"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Pulmões",
+          "Nomenclatura"
+        ]
+      },
+      "q": "Quais são os quatro padrões clássicos de opacidades pulmonares e quais termos imprecisos devem ser evitados?",
+      "options": [
+        "Consolidação, cavitação, calcificação e fibrose — sendo o termo 'opacidade' o que deve ser evitado por imprecisão diagnóstica",
+        "Infiltrado alveolar, infiltrado intersticial, massa e derrame pleural — todos considerados sinônimos aceitáveis entre si",
+        "Condensação, atelectasia, pneumotórax e derrame — categorias intercambiáveis conforme a escola radiológica de origem",
+        "Consolidação, intersticial, nódulos/massas e atelectasia — 'condensação' e 'infiltrado' não devem ser usados como sinônimos",
+        "Nódulo, massa, consolidação e derrame pleural — sendo a atelectasia classificada à parte, como padrão de densidade diminuída"
+      ],
+      "correct": 3,
+      "exp": "As opacidades pulmonares (termo preferido) se dividem em quatro padrões: consolidação, intersticial, nódulos ou massas, e atelectasia. Os termos 'condensação' e 'infiltrado' devem ser evitados, por serem imprecisos e não descreverem o mecanismo real da anormalidade.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-15",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Pulmões",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Pulmões",
+        "focos": [
+          "nodulo"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Pulmões",
+          "Nódulo"
+        ]
+      },
+      "q": "Como é definido, radiologicamente, um nódulo pulmonar solitário?",
+      "options": [
+        "Opacidade arredondada única de até 4 cm, admitindo margens parcialmente espiculadas e linfonodo hilar associado",
+        "Opacidade mal definida e confluente, medindo mais de 3 cm de diâmetro, tipicamente associada a broncograma aéreo visível",
+        "Lesão hipodensa de paredes finas e bem definidas, conceito distinto e sem relação direta com nódulo ou massa",
+        "Opacidade linear ou reticular localizada, associada a redução do volume pulmonar na região correspondente",
+        "Opacidade discreta, bem marginada e arredondada, medindo até 3 cm, sem linfadenopatia satélite associada"
+      ],
+      "correct": 4,
+      "exp": "O nódulo pulmonar solitário é definido como uma opacidade discreta, bem marginada e arredondada, medindo até 3 cm de diâmetro. Acima desse limite, o achado passa a ser classificado como massa, mudando o raciocínio diagnóstico (maior probabilidade de malignidade).",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-16",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Pulmões",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Pulmões",
+        "focos": [
+          "lesoes-hipodensas"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Pulmões",
+          "Lesões hipodensas"
+        ]
+      },
+      "q": "Como a espessura da parede diferencia cavidade, cisto e enfisema entre as lucências pulmonares?",
+      "options": [
+        "Cavidade tem parede grossa e espessa, cisto tem parede fina e bem definida, e enfisema não apresenta parede visível",
+        "Cavidade, cisto e enfisema são termos sinônimos, usados de forma intercambiável na prática radiológica cotidiana",
+        "Cisto é definido por parede grossa, e cavidade por parede fina, sendo o enfisema o único desses termos com parede espessada",
+        "Enfisema corresponde a lucência focal sem parede, enquanto cisto e cavidade se diferenciam principalmente pelo diâmetro",
+        "A espessura da parede não é critério útil para diferenciar essas lesões, sendo o tamanho a variável verdadeiramente determinante"
+      ],
+      "correct": 0,
+      "exp": "Radiologistas usam termos distintos para lesões hipodensas (lucências) pulmonares conforme a espessura de sua parede: cavidade tem parede grossa, cisto tem parede fina, e enfisema não apresenta parede visível. Outros termos relacionados incluem pneumatocele, bolha e favo de mel.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-17",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Parede torácica",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Parede torácica",
+        "focos": [
+          "parede-toracica"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Parede torácica"
+        ]
+      },
+      "q": "Qual é a anormalidade da parede torácica mais comumente observada na radiografia de tórax de rotina?",
+      "options": [
+        "Tumores primários de parede torácica, como o condrossarcoma costal, geralmente únicos e de crescimento lento",
+        "Fraturas de costela consolidadas (curadas), reconhecidas por calo ósseo em arcos costais previamente fraturados",
+        "Metástases líticas em arcos costais, geralmente múltiplas, bilaterais e associadas a neoplasia primária conhecida",
+        "Deformidades congênitas, como o pectus excavatum, presentes na maioria absoluta dos exames de rotina",
+        "Osteomielite costal, geralmente associada a empiema pleural concomitante e destruição óssea progressiva"
+      ],
+      "correct": 1,
+      "exp": "As anormalidades de parede torácica mais comumente observadas na radiografia de tórax de rotina são as fraturas de costela já curadas, identificadas pelo calo ósseo — um achado incidental frequente e, em geral, sem relevância clínica aguda.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "rxtorax-18",
+      "tema": "Radiografia de Tórax Básica",
+      "cat": "Técnica",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Radiologia",
+        "disciplinasRelacionadas": [
+          "Pneumologia"
+        ],
+        "tema": "Radiografia de Tórax Básica",
+        "subtema": "Técnica",
+        "focos": [
+          "pa-vs-ap"
+        ],
+        "competencia": "Interpretação diagnóstica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Radiologia",
+          "Radiografia de Tórax Básica",
+          "Técnica",
+          "PA versus AP"
+        ]
+      },
+      "q": "Por que a incidência póstero-anterior (PA) é preferida sobre a ântero-posterior (AP) na radiografia de tórax de rotina?",
+      "options": [
+        "Porque o AP produz menor exposição à radiação para o paciente, tornando-se inadequado para uso rotineiro apenas por motivos de custo institucional",
+        "Porque o PA dispensa a necessidade de o paciente estar em posição ortostática, ao contrário do que ocorre obrigatoriamente no AP",
+        "Porque a técnica padronizada do PA permite comparação precisa entre exames repetidos, além de reduzir a magnificação do coração e do mediastino",
+        "Porque no AP a cúpula diafragmática direita não pode ser visualizada adequadamente, o que inviabiliza a avaliação pulmonar basal",
+        "Porque o PA reduz a magnificação cardíaca, enquanto sua padronização e avaliação do mediastino são equivalentes às do AP"
+      ],
+      "correct": 2,
+      "exp": "O PA é obtido com técnica padronizada (paciente ereto, tórax anterior encostado no chassi), o que permite comparação precisa e válida entre exames repetidos e reduz a magnificação do coração e do mediastino (mais próximos do detector). O AP é reservado a pacientes que não conseguem ficar ereto (deitados ou sentados) e magnifica o mediastino, podendo simular massa hilar quando a inspiração também é incompleta.",
+      "ref": [
+        "souza2026-aula-radiografia-torax-basica"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    }
+  ],
+  "fontes": {
+    "souza2026-aula-radiografia-torax-basica": "Souza, Felipe. \u003cem>Radiografia de Tórax Básica\u003c/em> [material de aula]. Pneumologia, Saúde do Adulto 1, Medicina PUCPR — Londrina, 2026."
+  }
+}
+</script>
+
+<script src="../_shared/app.js"></script>
+<script>
+// Dados específicos desta lista — o motor de quiz (renderização, resposta,
+// salvamento) e as preferências de tema/palete/visão vêm de ../_shared/app.js.
+// Não hardcode conteúdo de questão aqui; edite o banco central em vez disso.
+
+const quizData = JSON.parse(document.getElementById("quiz-data").textContent);
+const QUIZ_ID = quizData.quizId;
+const QUIZ_TITLE = quizData.title;
+const questions = quizData.questions; // { id, tema, cat, q, img, imgAlt, options, correct, exp, ref: [slug,...] }
+const fontes = quizData.fontes;       // { slug: citationHtml }
+
+document.getElementById("page-title").textContent = "Questões — " + QUIZ_TITLE;
+document.getElementById("quiz-title").textContent = QUIZ_TITLE;
+document.getElementById("quiz-desc").textContent = quizData.description || "";
+document.getElementById("quiz-footnote").textContent = quizData.footnote || "";
+
+// Reference numbering is assigned once, by first appearance in the ORIGINAL
+// question order (not the shuffled display order), so numbers stay stable
+// across reshuffles/resets within the same file.
+const refOrder = [];
+questions.forEach(item => {
+  (item.ref || []).forEach(slug => {
+    if (!refOrder.includes(slug)) refOrder.push(slug);
+  });
+});
+const refNumberMap = {};
+refOrder.forEach((slug, i) => { refNumberMap[slug] = i + 1; });
+
+document.getElementById("focus-prev").addEventListener("click", () => { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.getElementById("focus-next").addEventListener("click", () => { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.addEventListener("keydown", event => {
+  if (viewMode !== "focus" || settingsOverlay.classList.contains("open")) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if (event.key === "ArrowLeft" && focusPosition > 0) { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  if (event.key === "ArrowRight" && focusPosition < questionOrder.length - 1) { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+});
+setTheme(themeMode);
+setPalette(paletteMode);
+setView(viewMode, true);
+
+renderQuiz();
+renderRefs();
+</script>
+</body>
+</html>

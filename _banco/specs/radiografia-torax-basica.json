@@ -1,0 +1,8 @@
+{
+  "quizId": "radiografia-torax-basica",
+  "title": "Radiografia de Tórax Básica",
+  "description": "18 questões da aula de Pneumologia (Dr. Felipe Souza) — técnica, mediastino-coração, hilo, pulmões, pleura, parede torácica e abdome, com radiografias reais para interpretação.",
+  "ordem": 2,
+  "resumo": "Pneumologia — técnica, mediastino-coração, hilo, pulmões, pleura, parede torácica e abdome, 10 com radiografias reais para interpretação",
+  "filtro": { "temas": ["Radiografia de Tórax Básica"] }
+}

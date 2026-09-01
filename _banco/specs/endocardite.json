@@ -1,0 +1,10 @@
+{
+  "quizId": "endocardite",
+  "title": "Endocardite Infecciosa",
+  "description": "Banco de questões fechadas (5 alternativas) — cobre epidemiologia, fisiopatologia, microbiologia, quadro clínico, diagnóstico (critérios Duke-ISCVID 2023), tratamento, indicações cirúrgicas e prevenção.",
+  "footnote": "Baseado em \"Endocardite Infecciosa\" (Biblioteca/Medicina/Cardiologia/Clínica, palestra da Liga Acadêmica de Cardiologia + pesquisa ativa) e \"Caso 3 — Endocardite Infecciosa\" (Casos Clínicos/tutorial/Cardiologia, PBL PUC Londrina), complementado por pesquisa ativa pontual para fechar lacunas de cobertura.",
+  "ordem": 3,
+  "tituloCartao": "Endocardite Infecciosa — completa",
+  "resumo": "banco completo atual · mistura questões já respondidas e ainda não respondidas",
+  "filtro": { "temas": ["Endocardite Infecciosa"] }
+}

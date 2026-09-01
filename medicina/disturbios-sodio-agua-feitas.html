@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Questões</title>
+<link rel="stylesheet" href="../_shared/theme.css">
+<style>
+  /* Específico deste template: cabeçalho, contêiner, botão flutuante de
+     configurações e variantes extras de botão (progresso/qualidade). O
+     restante do tema e dos componentes de quiz vem de ../_shared/theme.css —
+     não duplique regras já definidas lá. */
+  header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff;
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 0.4rem; font-size: 1.6rem; }
+  header p { margin: 0 auto; opacity: 0.9; font-size: 0.95rem; max-width: 700px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  button.export-progress { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+  button.export-progress:hover { background: color-mix(in srgb, var(--accent) 84%, #000); color: var(--accent-contrast); }
+  button.export-quality { border-color: #a66b00; color: #8a5900; }
+  button.export-quality:hover { background: #fff7e6; color: #6f4800; }
+  .save-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .save-guidance { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem; margin: -0.6rem 0 1rem; }
+  .save-guidance p { margin: 0; padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); color: var(--text-muted); font-size: 0.76rem; }
+  .save-guidance strong { color: var(--text); }
+  .settings-trigger {
+    position: fixed; top: 1rem; right: 1rem; z-index: 50; display: inline-flex; align-items: center; gap: 0.45rem;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: 9px; padding: 0.52rem 0.72rem;
+    background: rgba(15,23,42,0.78); color: #fff; font: inherit; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 5px 18px rgba(0,0,0,0.22); backdrop-filter: blur(8px);
+  }
+  .settings-trigger:hover { background: var(--accent); color: var(--accent-contrast); }
+
+  body[data-view="focus"] .editorial-notice,
+  body[data-view="focus"] .footnote { display: none; }
+
+  .footnote {
+    text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 2rem;
+  }
+  .editorial-notice {
+    margin: 1rem 0; padding: 0.75rem 0.9rem; border-left: 4px solid #a66b00;
+    background: #fff7e6; color: #5f4300; border-radius: 6px; font-size: 0.86rem;
+  }
+  .editorial-notice a { color: inherit; font-weight: 700; }
+
+  :root[data-theme="dark"] button.export-quality { color: #f0b96a; border-color: #b8791f; }
+  :root[data-theme="dark"] button.export-quality:hover { background: #2e2013; color: #ffd28a; }
+  :root[data-palette="presleep"] .editorial-notice { background: #fdf1de; color: #6b3f14; border-left-color: #a66b00; }
+  :root[data-theme="dark"][data-palette="presleep"] .editorial-notice { background: #2e2013; color: #f0b96a; border-left-color: #b8791f; }
+
+  @media (max-width: 560px) {
+    .settings-trigger .settings-label { display: none; }
+    .setting-row { align-items: stretch; flex-direction: column; }
+    .setting-row .segmented-control { align-self: stretch; }
+    .setting-row .segmented-control button { flex: 1; }
+    .save-guidance { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<button type="button" class="settings-trigger" aria-haspopup="dialog" aria-label="Abrir configurações">
+  <span aria-hidden="true">⚙</span><span class="settings-label">Configurações</span>
+</button>
+
+<header>
+  <h1 id="quiz-title"></h1>
+  <p id="quiz-desc"></p>
+</header>
+
+<div class="container">
+  <div class="editorial-notice" role="note">
+    Banco educacional em auditoria editorial progressiva. Estrutura validada não equivale
+    a aprovação clínica de cada item. Consulte a
+    <a href="../_banco/POLITICA-EDITORIAL.md">política editorial</a>.
+  </div>
+  <div class="toolbar">
+    <div class="score">Acertos: <span id="score-correct">0</span> · Parciais: <span id="score-partial">0</span> · <span id="score-total">0</span>/<span id="score-max">0</span> respondidas</div>
+    <div class="toolbar-right">
+      <a class="dash-link" href="../_dados/dashboard.html" target="_blank">Ver desempenho</a>
+      <div class="save-actions" aria-label="Opções de salvamento">
+        <button class="export export-progress" id="save-progress" onclick="saveRegistro()" title="Salva respostas e desempenho em _dados/registros">💾 Salvar progresso</button>
+        <button class="export export-quality" id="save-quality" onclick="saveQualityReviews()" title="Salva avaliações editoriais em _dados/melhorias de questões">✎ Enviar sugestões (<span id="quality-pending">0</span>)</button>
+      </div>
+      <button class="reset" onclick="resetQuiz()">Reiniciar</button>
+    </div>
+  </div>
+  <div class="save-guidance" aria-label="Destino dos arquivos salvos">
+    <p><strong>Progresso:</strong> escolha <code>_dados/registros/</code>. Contém respostas, acertos e confiança.</p>
+    <p><strong>Sugestões:</strong> escolha <code>_dados/melhorias de questões/</code>. Contém somente revisão editorial.</p>
+  </div>
+  <p class="export-hint" id="export-hint">Arquivo baixado. Mova-o para <code>Questões/_dados/registros/</code> para que apareça no painel de desempenho.</p>
+
+  <nav class="focus-navigation" aria-label="Navegação entre questões">
+    <button type="button" id="focus-prev">&larr; Anterior</button>
+    <span class="focus-position" id="focus-position" aria-live="polite"></span>
+    <button type="button" id="focus-next">Próxima &rarr;</button>
+  </nav>
+
+  <div id="quiz"></div>
+
+  <div class="refs">
+    <h2>Referências</h2>
+    <ol id="ref-list"></ol>
+  </div>
+
+  <p class="footnote" id="quiz-footnote"></p>
+</div>
+
+<div class="settings-overlay" id="settings-overlay" aria-hidden="true">
+  <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-describedby="settings-description">
+    <div class="settings-header">
+      <div><h2 id="settings-title">Configurações</h2><p id="settings-description">Personalize a aparência e a forma de navegar pelas questões.</p></div>
+      <button type="button" class="settings-close" aria-label="Fechar configurações">&times;</button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Tema</strong><span>Escolha a claridade da interface.</span></div>
+        <div class="segmented-control" aria-label="Tema da interface">
+          <button type="button" data-theme-choice="light" aria-pressed="false">Claro</button><button type="button" data-theme-choice="dark" aria-pressed="false">Escuro</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Paleta de cores</strong><span>Normal ou tons que afetam menos o sono.</span></div>
+        <div class="segmented-control" aria-label="Paleta de cores">
+          <button type="button" data-palette-choice="normal" aria-pressed="false">Normal</button><button type="button" data-palette-choice="presleep" aria-pressed="false">Pré-sono</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy"><strong>Exibição das questões</strong><span>Veja todas ou concentre-se em uma por tela.</span></div>
+        <div class="segmented-control" aria-label="Formato das questões">
+          <button type="button" data-view-choice="list" aria-pressed="false">Lista</button><button type="button" data-view-choice="focus" aria-pressed="false">Uma por vez</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-footer"><button type="button" class="settings-done">Concluído</button></div>
+  </section>
+</div>
+
+<script type="application/json" id="quiz-data">
+{
+  "quizId": "disturbios-sodio-agua-feitas",
+  "title": "Nefrologia — Distúrbios de Sódio e Água — Já Feitas",
+  "description": "Questões de Distúrbios de Sódio e Água que já apareceram em pelo menos uma sessão registrada. Útil para repetição e consolidação.",
+  "footnote": "",
+  "questions": [
+    {
+      "id": "sodio-agua-01",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Compartimentos corporais",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Compartimentos corporais",
+        "focos": [
+          "água corporal total",
+          "VEC",
+          "VIC"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Compartimentos corporais",
+          "Água corporal total"
+        ]
+      },
+      "q": "Em um homem adulto de 70 kg, quais valores aproximados representam a água corporal total e o volume do espaço extracelular, respectivamente?",
+      "options": [
+        "28 L e 7 L",
+        "35 L e 14 L",
+        "42 L e 28 L",
+        "49 L e 21 L",
+        "42 L e 14 L"
+      ],
+      "correct": 4,
+      "exp": "A aula adota água corporal total de cerca de 60% do peso (0,6 × 70 = 42 L) e espaço extracelular de cerca de 20% do peso (0,2 × 70 = 14 L). O espaço intracelular corresponde a aproximadamente 40% do peso, ou 28 L; por isso as demais combinações trocam compartimentos ou proporções.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-02",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Compartimentos corporais",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Compartimentos corporais",
+        "focos": [
+          "volume extracelular"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Compartimentos corporais",
+          "Volume extracelular"
+        ]
+      },
+      "q": "Qual relação entre sódio corporal e compartimentos hídricos é central para interpretar o exame físico do paciente?",
+      "options": [
+        "O sódio é o principal determinante do volume intracelular",
+        "A concentração de sódio mede diretamente o estoque corporal total de sódio",
+        "O conteúdo corporal de sódio é determinante importante do volume extracelular",
+        "O sódio permanece restrito ao plasma e não influencia o interstício",
+        "A concentração sérica de sódio define isoladamente se há edema ou hipovolemia"
+      ],
+      "correct": 2,
+      "exp": "O sódio é o cátion predominante do espaço extracelular e seu conteúdo corporal ajuda a determinar o volume extracelular, que inclui plasma e interstício. Já a concentração sérica de sódio expressa sobretudo a relação entre solutos e água, não o estoque absoluto; por isso a volemia deve ser avaliada clinicamente.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-03",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Regulação renal",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Regulação renal",
+        "focos": [
+          "volemia",
+          "natriurese",
+          "antinatriurese"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Regulação renal",
+          "Volemia"
+        ]
+      },
+      "q": "Como o rim responde fisiologicamente às alterações do volume extracelular efetivo?",
+      "options": [
+        "Contração gera natriurese e expansão gera antinatriurese",
+        "Contração favorece antinatriurese e expansão favorece natriurese",
+        "Contração e expansão geram natriurese, diferenciando-se apenas pela excreção de água",
+        "A resposta é determinada principalmente pela concentração sérica de sódio, não pelo volume extracelular",
+        "A expansão reduz a atividade dos sensores de volume, dificultando a resposta natriurética renal"
+      ],
+      "correct": 1,
+      "exp": "Na contração do volume extracelular, sensores de volume ativam mecanismos renais de retenção de sódio (antinatriurese). Na expansão, predominam mecanismos natriuréticos para restaurar o volume. A resposta regula conteúdo corporal de sódio/volemia e não é definida apenas pela natremia.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-04",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Avaliação da volemia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Avaliação da volemia",
+        "focos": [
+          "hipovolemia",
+          "exame físico"
+        ],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Avaliação da volemia",
+          "Hipovolemia"
+        ]
+      },
+      "q": "Paciente apresenta sede, turgor cutâneo diminuído, hipotensão ortostática, oligúria e pulso fino, sem choque. Segundo a classificação apresentada na aula, qual é o grau mais provável de depleção do volume extracelular?",
+      "options": [
+        "Leve, menor que 5% do VEC",
+        "Leve, até 10% do VEC",
+        "Moderada, entre 10% e 30% do VEC",
+        "Grave, maior que 30% do VEC",
+        "Não há depleção, pois a sede indica apenas alteração da osmolalidade, não do volume extracelular"
+      ],
+      "correct": 2,
+      "exp": "A depleção moderada (10–30% do VEC) associa sede, queda do turgor, hipotensão ortostática, redução da diurese e pulso fino. Na depleção leve, o turgor pode estar pouco alterado; a grave manifesta sinais de choque hipovolêmico.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "em_revisao"
+    },
+    {
+      "id": "sodio-agua-05",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Osmolalidade",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Osmolalidade",
+        "focos": [
+          "osmolalidade plasmática",
+          "fórmula"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Osmolalidade",
+          "Osmolalidade plasmática"
+        ]
+      },
+      "q": "Com sódio de 140 mEq/L, glicose de 90 mg/dL e ureia de 30 mg/dL, qual é a osmolalidade plasmática calculada aproximada pela fórmula da aula?",
+      "options": [
+        "275 mOsm/kg",
+        "285 mOsm/kg",
+        "300 mOsm/kg",
+        "290 mOsm/kg",
+        "320 mOsm/kg"
+      ],
+      "correct": 3,
+      "exp": "POsm ≈ 2×Na + glicose/18 + ureia/6 = 280 + 5 + 5 = 290 mOsm/kg. Dividir glicose por 180 e ureia por 60 sem o fator de conversão final produziria erro de unidade; somar os valores brutos também superestimaria a osmolalidade.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-06",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Regulação renal",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Regulação renal",
+        "focos": [
+          "néfron",
+          "ADH",
+          "aquaporina"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Regulação renal",
+          "Néfron"
+        ]
+      },
+      "q": "Qual proporção da água filtrada é reabsorvida no túbulo proximal?",
+      "options": [
+        "Ramo ascendente da alça de Henle: altamente permeável à água",
+        "Ramo descendente: impermeável à água e responsável pela diluição urinária",
+        "Túbulo distal inicial: reabsorve água obrigatoriamente sob ação do ADH",
+        "Ducto coletor: permeabilidade à água independe do ADH",
+        "Túbulo proximal: reabsorve aproximadamente 65% da água filtrada"
+      ],
+      "correct": 4,
+      "exp": "O túbulo proximal reabsorve cerca de 65% da água filtrada. O ramo descendente é permeável à água; o ascendente é impermeável e reabsorve solutos. Nos segmentos distais/coletores, o ADH aumenta a permeabilidade à água por aquaporinas, permitindo concentração urinária.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-07",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Conceitos fundamentais",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Conceitos fundamentais",
+        "focos": [
+          "hiponatremia",
+          "hipernatremia",
+          "água livre"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Conceitos fundamentais",
+          "Hiponatremia"
+        ]
+      },
+      "q": "Qual interpretação conceitual das alterações da natremia foi enfatizada na aula?",
+      "options": [
+        "Hiponatremia indica redução relativa da água livre em comparação com o sódio corporal",
+        "Hipernatremia indica excesso relativo de água livre em comparação com o sódio corporal",
+        "Ambas refletem primariamente deslocamentos de potássio entre os compartimentos corporais",
+        "Hiponatremia sugere excesso relativo de água livre; hipernatremia, déficit relativo de água livre",
+        "A natremia determina diretamente o volume extracelular e torna dispensável o exame físico"
+      ],
+      "correct": 3,
+      "exp": "A natremia é uma concentração. Hiponatremia geralmente traduz excesso de água em relação aos solutos corporais; hipernatremia, déficit relativo de água. O conteúdo corporal de sódio e o estado volêmico podem estar reduzidos, normais ou aumentados, devendo ser avaliados separadamente.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-08",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Hiponatremia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Hiponatremia",
+        "focos": [
+          "hiponatremia hipervolêmica",
+          "edema"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Hiponatremia",
+          "Hiponatremia hipervolêmica"
+        ]
+      },
+      "q": "Paciente com insuficiência cardíaca apresenta edema, congestão e sódio sérico de 128 mEq/L. Como classificar e tratar inicialmente esse distúrbio segundo a aula?",
+      "options": [
+        "Hiponatremia hipovolêmica; reposição com solução salina isotônica",
+        "Hiponatremia euvolêmica; reposição de sal por via oral",
+        "Hipernatremia hipervolêmica; água livre associada a furosemida",
+        "Pseudohiponatremia; tratamento direcionado somente à causa laboratorial",
+        "Hiponatremia hipervolêmica; restrição de água livre e furosemida"
+      ],
+      "correct": 4,
+      "exp": "Na insuficiência cardíaca, há aumento de sódio corporal, mas retenção proporcionalmente maior de água, produzindo hiponatremia hipervolêmica e edema. A aula propõe restrição de água livre e diurético de alça. Soro fisiológico é o tratamento do padrão hipovolêmico, não do congestionado.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "requer_atualizacao"
+    },
+    {
+      "id": "sodio-agua-09",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Hiponatremia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Hiponatremia",
+        "focos": [
+          "hiponatremia hipovolêmica",
+          "tiazídico",
+          "diarreia"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Hiponatremia",
+          "Hiponatremia hipovolêmica"
+        ]
+      },
+      "q": "Idosa em uso de hidroclorotiazida apresenta diarreia, hipotensão ortostática e Na de 126 mEq/L. Qual mecanismo e tratamento inicial são mais coerentes?",
+      "options": [
+        "Excesso de água e sódio com VEC aumentado; furosemida",
+        "Perda de sódio e água com VEC reduzido; solução salina 0,9%",
+        "Retenção isolada de água com VEC normal; restrição hídrica exclusiva",
+        "Ganho de sódio hipertônico; água livre",
+        "Diabetes insípido; desmopressina"
+      ],
+      "correct": 1,
+      "exp": "Tiazídico e diarreia são causas renal e extrarrenal de perda de sódio/água. Os sinais de hipovolemia confirmam VEC reduzido; o tratamento apresentado é reposição com SF 0,9%, além de interromper/corrigir a causa. Restrição hídrica isolada agravaria a depleção.",
+      "ref": [
+        "soares2026-sodio-agua",
+        "spasovski2024-hiponatremia-tratamento-padrao"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-10",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Hiponatremia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Hiponatremia",
+        "focos": [
+          "hiponatremia euvolêmica",
+          "diagnóstico diferencial"
+        ],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Hiponatremia",
+          "Hiponatremia euvolêmica"
+        ]
+      },
+      "q": "Em paciente sem edema nem sinais de depleção, com hiponatremia hipotônica, quais diagnósticos devem ser lembrados antes de atribuir o quadro à SIHAD?",
+      "options": [
+        "Insuficiência cardíaca, cirrose e síndrome nefrótica",
+        "Diarreia, tiazídico e terceiro espaço",
+        "Hipotireoidismo e deficiência de glicocorticoide",
+        "Diabetes insípido central e nefrogênico",
+        "Hiperaldosteronismo primário e infusão de bicarbonato"
+      ],
+      "correct": 2,
+      "exp": "SIHAD, hipotireoidismo e deficiência de glicocorticoide integram o diferencial da hiponatremia aparentemente euvolêmica. Insuficiência cardíaca/cirrose são padrões hipervolêmicos; diarreia/tiazídico, hipovolêmicos; diabetes insípido produz água urinária diluída e tende à hipernatremia.",
+      "ref": [
+        "soares2026-sodio-agua",
+        "spasovski2014-hiponatremia"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-11",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Hipernatremia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Hipernatremia",
+        "focos": [
+          "hipernatremia hipervolêmica",
+          "ganho de sódio"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Hipernatremia",
+          "Hipernatremia hipervolêmica"
+        ]
+      },
+      "q": "Paciente recebe grande carga de bicarbonato de sódio e desenvolve hipernatremia com expansão do volume extracelular. Qual tratamento geral corresponde ao padrão apresentado na aula?",
+      "options": [
+        "SF 0,9% isoladamente",
+        "Restrição absoluta de líquidos sem diurético",
+        "Desmopressina como tratamento etiológico",
+        "Reposição de água livre associada a furosemida",
+        "Solução salina hipertônica associada a tiazídico"
+      ],
+      "correct": 3,
+      "exp": "No ganho hipertônico de sódio há hipernatremia com expansão volêmica. Repõe-se água livre para corrigir a hipertonicidade e usa-se furosemida para remover o excesso de sódio/volume. SF 0,9% acrescentaria sódio; desmopressina é dirigida ao diabetes insípido central.",
+      "ref": [
+        "soares2026-sodio-agua",
+        "statpearls2023-hipernatremia"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-12",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Hipernatremia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Hipernatremia",
+        "focos": [
+          "hipernatremia hipovolêmica",
+          "perdas hipotônicas"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Hipernatremia",
+          "Hipernatremia hipovolêmica"
+        ]
+      },
+      "q": "Grande queimado apresenta hipotensão, taquicardia e hipernatremia após perdas cutâneas importantes. Qual é a prioridade terapêutica inicial segundo a classificação da aula?",
+      "options": [
+        "Restaurar a volemia com solução salina 0,9%",
+        "Administrar solução salina hipertônica",
+        "Restringir água livre",
+        "Administrar furosemida antes de qualquer reposição",
+        "Administrar desmopressina independentemente da diurese"
+      ],
+      "correct": 0,
+      "exp": "Queimaduras podem causar perda de água e sódio, com perda proporcionalmente maior de água e hipernatremia hipovolêmica. A prioridade é restaurar perfusão/volemia com solução isotônica; depois, a água livre remanescente é corrigida de forma controlada. Diurético ou restrição agravariam a hipovolemia.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-13",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Hipernatremia",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Hipernatremia",
+        "focos": [
+          "perda de água livre",
+          "diabetes insípido"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Hipernatremia",
+          "Perda de água livre"
+        ]
+      },
+      "q": "Qual cenário representa hipernatremia causada predominantemente por perda de água, com conteúdo corporal de sódio inicialmente preservado?",
+      "options": [
+        "Infusão de sódio hipertônico",
+        "Hiperaldosteronismo primário",
+        "Uso de tiazídico com perda de sal",
+        "Insuficiência cardíaca congestiva",
+        "Diabetes insípido"
+      ],
+      "correct": 4,
+      "exp": "Diabetes insípido causa perda renal de água livre por deficiência de ADH ou resistência renal ao hormônio, mantendo inicialmente o sódio corporal. Sódio hipertônico/hiperaldosteronismo representam ganho de sódio; tiazídico causa perda salina; insuficiência cardíaca associa retenção de água e sódio.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-14",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "SIHAD",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "SIHAD",
+        "focos": [
+          "ADH",
+          "urina concentrada",
+          "hiponatremia"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "SIHAD",
+          "ADH"
+        ]
+      },
+      "q": "Por que a secreção de ADH é considerada “inapropriada” na SIHAD?",
+      "options": [
+        "Porque sua ação persiste apesar da hipo-osmolalidade e impede a excreção adequada de água livre",
+        "Porque sua secreção diminui apesar da hipovolemia e provoca perda renal contínua de água livre",
+        "Porque sua ação aumenta a excreção renal de sódio sem modificar a permeabilidade tubular à água",
+        "Porque sua presença torna o ducto coletor impermeável à água e impede a concentração urinária",
+        "Porque sua liberação bloqueia a reabsorção de ureia e água nos segmentos distais do néfron"
+      ],
+      "correct": 0,
+      "exp": "Na SIHAD, a ação de ADH persiste quando a baixa osmolalidade deveria suprimi-la. O ducto coletor continua permeável à água, a urina permanece inadequadamente concentrada e ocorre retenção de água com hiponatremia. ADH baixo com poliúria diluída aponta para diabetes insípido.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-15",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "SIHAD",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "SIHAD",
+        "focos": [
+          "etiologia",
+          "medicamentos"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "SIHAD",
+          "Etiologia"
+        ]
+      },
+      "q": "Qual conjunto contém apenas causas ou associações de SIHAD apresentadas na aula?",
+      "options": [
+        "Diarreia, queimadura e furosemida",
+        "Hiperaldosteronismo, bicarbonato e sódio hipertônico",
+        "Diabetes insípido, hipodipsia e sudorese",
+        "Traumatismo craniano, pneumonia e carbamazepina",
+        "Tiazídico, terceiro espaço e diurese osmótica"
+      ],
+      "correct": 3,
+      "exp": "A aula agrupa causas de SIHAD em doenças do SNC (como TCE/AVE/infecção), pulmonares (pneumonia, abscesso, neoplasia) e medicamentos (carbamazepina, opioides, AINEs, antidepressivos, entre outros). As demais opções reúnem causas de perdas volêmicas, ganho de sódio ou perda de água livre.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-16",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "SIHAD",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "SIHAD",
+        "focos": [
+          "laboratório",
+          "osmolalidade urinária",
+          "sódio urinário"
+        ],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "SIHAD",
+          "Osmolalidade urinária"
+        ]
+      },
+      "q": "Paciente euvolêmico tem Na 124 mEq/L, osmolalidade plasmática 260 mOsm/kg, osmolalidade urinária 420 mOsm/kg, Na urinário 52 mEq/L, creatinina normal e funções tireoidiana/adrenal preservadas. Qual diagnóstico é mais provável?",
+      "options": [
+        "Diabetes insípido central",
+        "Hipernatremia por ganho de sódio",
+        "Hiponatremia hipovolêmica por diarreia",
+        "Polidipsia primária com supressão completa do ADH",
+        "SIHAD"
+      ],
+      "correct": 4,
+      "exp": "O padrão é hiponatremia hipotônica com urina inadequadamente concentrada e sódio urinário elevado em paciente sem hipovolemia, compatível com SIHAD após excluir tireoide, adrenal e insuficiência renal. DI causa hiperosmolalidade com urina diluída; polidipsia primária tende a urina muito diluída.",
+      "ref": [
+        "soares2026-sodio-agua",
+        "spasovski2014-hiponatremia"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-17",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "SIHAD",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "SIHAD",
+        "focos": [
+          "tratamento",
+          "restrição hídrica",
+          "salina hipertônica"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "SIHAD",
+          "Restrição hídrica"
+        ]
+      },
+      "q": "Quais são as medidas terapêuticas para SIHAD e como a gravidade orienta o uso de furosemida ou salina hipertônica?",
+      "options": [
+        "Repor volume com solução salina isotônica até normalizar a natremia e a osmolalidade urinária",
+        "Administrar desmopressina para diminuir a natriurese e aumentar a eliminação renal de água",
+        "Tratar a causa e restringir água; selecionar furosemida ou salina hipertônica conforme a gravidade",
+        "Aumentar a ingestão de água livre e reduzir o sal para suprimir a secreção endógena de ADH",
+        "Usar fludrocortisona para promover retenção renal de sódio como tratamento inicial de rotina"
+      ],
+      "correct": 2,
+      "exp": "A aula lista tratamento da causa, restrição hídrica, furosemida e solução salina hipertônica. A escolha depende da gravidade e dos sintomas; diretrizes enfatizam monitorização e prevenção de correção excessiva. SF 0,9% é típico da hipovolemia; desmopressina trata DI central; fludrocortisona aparece na síndrome cerebral perdedora de sal. A diretriz europeia citada é de 2014 (Spasovski et al.) e não teve atualização formal publicada até esta auditoria; os princípios gerais (tratar a causa, restringir água, escalonar para furosemida ou salina hipertônica conforme gravidade) permanecem consistentes com a prática atual, mas doses e protocolos específicos devem ser conferidos em fonte vigente antes de aplicação clínica.",
+      "ref": [
+        "soares2026-sodio-agua",
+        "spasovski2014-hiponatremia"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-18",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Síndrome cerebral perdedora de sal",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Síndrome cerebral perdedora de sal",
+        "focos": [
+          "SCPS",
+          "BNP",
+          "natriurese"
+        ],
+        "competencia": "Compreensão de mecanismo",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Síndrome cerebral perdedora de sal",
+          "SCPS"
+        ]
+      },
+      "q": "Qual mecanismo foi apresentado para a hiponatremia da síndrome cerebral perdedora de sal?",
+      "options": [
+        "Persistência da ação do ADH, com retenção de água e expansão discreta do volume extracelular",
+        "Ação natriurética, com menor reabsorção de sódio e menor atividade do sistema renina-angiotensina",
+        "Deficiência de ADH, com perda renal de água livre e preservação inicial do conteúdo de sódio",
+        "Excesso de aldosterona, com retenção renal de sódio e aumento progressivo do volume extracelular",
+        "Redução da filtração glomerular, com retenção proporcional de água e sódio no compartimento vascular"
+      ],
+      "correct": 1,
+      "exp": "A síndrome cerebral perdedora de sal envolve incapacidade renal de conservar sódio, relacionada na aula ao BNP, à redução da reabsorção de Na e à menor atividade do SRAA. Isso causa natriurese, poliúria e contração volêmica, diferentemente da retenção de água da SIHAD. O mecanismo natriurético (via BNP/peptídeos natriuréticos e supressão do SRAA) é a explicação mais aceita, mas a fisiopatologia da síndrome cerebral perdedora de sal ainda é debatida na literatura, inclusive quanto à sua distinção como entidade separada da SIHAD.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-19",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Síndrome cerebral perdedora de sal",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Síndrome cerebral perdedora de sal",
+        "focos": [
+          "SCPS",
+          "diagnóstico",
+          "volemia"
+        ],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Síndrome cerebral perdedora de sal",
+          "SCPS"
+        ]
+      },
+      "q": "Após hemorragia subaracnoide, paciente desenvolve hiponatremia, poliúria, hipotensão ortostática, Na urinário de 70 mEq/L e urina concentrada. Qual achado favorece síndrome cerebral perdedora de sal em vez de SIHAD?",
+      "options": [
+        "Osmolalidade plasmática inferior ao intervalo de referência",
+        "Osmolalidade urinária inadequadamente elevada para a hipo-osmolalidade",
+        "Concentração urinária de sódio acima do valor esperado na hipovolemia",
+        "Redução clínica do volume extracelular acompanhada de poliúria",
+        "Concentração sérica de ácido úrico abaixo do intervalo de referência"
+      ],
+      "correct": 3,
+      "exp": "SIHAD e SCPS podem compartilhar hiponatremia hipotônica, urina concentrada, sódio urinário alto e hipouricemia. A distinção central na aula é a volemia: SCPS causa depleção evidente e poliúria; SIHAD apresenta volume normal ou discretamente aumentado. O contexto neurológico isolado não resolve o diferencial. Na prática, essa distinção pela volemia é frequentemente difícil e controversa — a avaliação clínica do VEC tem baixa reprodutibilidade, e parte da literatura de nefrologia questiona se SCPS e SIHAD são de fato entidades distintas após hemorragia subaracnóidea.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-20",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Síndrome cerebral perdedora de sal",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Síndrome cerebral perdedora de sal",
+        "focos": [
+          "SCPS",
+          "tratamento",
+          "fludrocortisona"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Síndrome cerebral perdedora de sal",
+          "SCPS"
+        ]
+      },
+      "q": "Qual tratamento é coerente com a fisiopatologia da síndrome cerebral perdedora de sal?",
+      "options": [
+        "Restrição de água livre até a normalização do sódio e da osmolalidade plasmática",
+        "Reposição com SF 0,9%, aumento da oferta de sal e possível uso de fludrocortisona",
+        "Desmopressina para reduzir a diurese e corrigir diretamente a perda renal de sódio",
+        "Furosemida para diminuir a natriurese e restaurar o volume extracelular efetivo",
+        "Solução glicosada para corrigir a hiponatremia sem aumentar a oferta corporal de sódio"
+      ],
+      "correct": 1,
+      "exp": "Como há perda renal de sal com hipovolemia, deve-se repor volume e sódio; cápsulas de sal e fludrocortisona podem ajudar a reduzir a perda. Restrição hídrica, útil em SIHAD, tende a agravar a hipovolemia; desmopressina é dirigida à deficiência central de ADH. A evidência para fludrocortisona nesse contexto vem de ensaios pequenos, sobretudo em hemorragia subaracnóidea; não é uma recomendação de primeira linha universalmente estabelecida, e sim um coadjuvante possível quando a perda salina persiste apesar da reposição volêmica.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-21",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Diabetes insípido",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Diabetes insípido",
+        "focos": [
+          "DI central",
+          "DI nefrogênico",
+          "ADH"
+        ],
+        "competencia": "Conhecimento fundamental",
+        "complexidade": "Fundamental",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Diabetes insípido",
+          "DI central"
+        ]
+      },
+      "q": "Qual é a diferença fisiopatológica entre diabetes insípido central e nefrogênico?",
+      "options": [
+        "No central há excesso de ADH; no nefrogênico, secreção insuficiente",
+        "No central há deficiência de ADH; no nefrogênico, menor resposta renal ao ADH",
+        "No central há perda renal de sódio; no nefrogênico, ganho de sódio",
+        "No central a urina é concentrada; no nefrogênico, isotônica",
+        "No central há SIHAD associada; no nefrogênico, síndrome cerebral perdedora de sal"
+      ],
+      "correct": 1,
+      "exp": "DI central decorre de deficiência de produção/liberação de ADH por lesão hipotálamo-hipofisária. No DI nefrogênico, há ADH, mas o rim responde inadequadamente. Ambos causam perda de água livre, poliúria de urina diluída e risco de hipernatremia.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-22",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Diabetes insípido",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Diabetes insípido",
+        "focos": [
+          "laboratório",
+          "poliúria",
+          "urina diluída"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Integração",
+        "contexto": "Caso clínico",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Diabetes insípido",
+          "Poliúria"
+        ]
+      },
+      "q": "Paciente após cirurgia hipofisária apresenta diurese de 5 mL/kg/h, Na 151 mEq/L, osmolalidade plasmática 305 mOsm/kg, osmolalidade urinária 160 mOsm/kg e densidade urinária 1,003. Qual diagnóstico é mais provável?",
+      "options": [
+        "SIHAD",
+        "Síndrome cerebral perdedora de sal",
+        "Hiponatremia hipervolêmica",
+        "Diabetes insípido",
+        "Insuficiência renal oligúrica"
+      ],
+      "correct": 3,
+      "exp": "Hipernatremia/hiperosmolalidade acompanhada de poliúria com urina muito diluída caracteriza falha de ação do ADH e sugere DI. O contexto pós-hipofisário favorece a forma central. SIHAD produz hiponatremia e urina concentrada; SCPS cursa com hiponatremia, natriurese e hipovolemia.",
+      "ref": [
+        "soares2026-sodio-agua",
+        "statpearls2024-avp-disorder-di"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-23",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Diabetes insípido",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Diabetes insípido",
+        "focos": [
+          "tratamento",
+          "desmopressina",
+          "DDAVP"
+        ],
+        "competencia": "Decisão terapêutica",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Diabetes insípido",
+          "Desmopressina"
+        ]
+      },
+      "q": "Como são corrigidas a água e a volemia no diabetes insípido e quando a desmopressina está indicada?",
+      "options": [
+        "Desmopressina corrige a perda de água tanto no diabetes insípido central quanto no nefrogênico",
+        "Corrige-se água e volemia de forma controlada; desmopressina é indicada na deficiência central de ADH",
+        "Restrição hídrica reduz a poliúria e constitui a primeira medida nas duas formas de diabetes insípido",
+        "Furosemida substitui o efeito tubular do ADH e constitui tratamento específico da forma central",
+        "Solução salina hipertônica restaura a tonicidade plasmática e corrige a hipernatremia sintomática"
+      ],
+      "correct": 1,
+      "exp": "O paciente precisa de reposição hídrica/volêmica e correção controlada da hipernatremia. DDAVP substitui a ação do ADH no DI central, mas é ineficaz na resistência renal do DI nefrogênico. Restringir água ou administrar salina hipertônica agrava a hipertonicidade.",
+      "ref": [
+        "soares2026-sodio-agua",
+        "statpearls2024-avp-disorder-di"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    },
+    {
+      "id": "sodio-agua-24",
+      "tema": "Distúrbios de Sódio e Água",
+      "cat": "Integração clínica",
+      "classificacao": {
+        "area": "Medicina",
+        "disciplina": "Fisiologia e fisiopatologia",
+        "disciplinasRelacionadas": [
+          "Nefrologia",
+          "Endocrinologia"
+        ],
+        "tema": "Distúrbios de Sódio e Água",
+        "subtema": "Integração clínica",
+        "focos": [
+          "SIHAD",
+          "SCPS",
+          "DI",
+          "diagnóstico diferencial"
+        ],
+        "competencia": "Raciocínio diagnóstico",
+        "complexidade": "Aplicação",
+        "contexto": "Pergunta direta",
+        "hierarquia": [
+          "Medicina",
+          "Fisiologia e fisiopatologia",
+          "Distúrbios de Sódio e Água",
+          "Integração clínica",
+          "SIHAD"
+        ]
+      },
+      "q": "Como natremia, concentração urinária e volume extracelular diferenciam SIHAD, síndrome cerebral perdedora de sal e diabetes insípido?",
+      "options": [
+        "SIHAD: hipernatremia e urina diluída; SCPS: hiponatremia com VEC normal; DI: hiponatremia e edema",
+        "SIHAD: Na baixo, urina concentrada e VEC normal; SCPS: Na baixo, urina concentrada e VEC reduzido; DI: Na alto e urina diluída",
+        "SIHAD: hiponatremia e poliúria; SCPS: hipernatremia e oligúria; DI: hiponatremia e urina concentrada",
+        "SIHAD: VEC reduzido e urina diluída; SCPS: VEC aumentado e urina concentrada; DI: VEC aumentado e oligúria",
+        "SIHAD, SCPS e DI apresentam o mesmo padrão de natremia e osmolalidade, sendo diferenciados apenas pela causa"
+      ],
+      "correct": 1,
+      "exp": "SIHAD retém água: hiponatremia hipotônica, urina inadequadamente concentrada e VEC clinicamente normal/discretamente aumentado. SCPS perde sal: hiponatremia, urina concentrada/natriurese, poliúria e VEC reduzido. DI perde água: hipernatremia/hiperosmolalidade com poliúria de urina diluída.",
+      "ref": [
+        "soares2026-sodio-agua"
+      ],
+      "itemVersion": 2,
+      "editorialState": "aprovada"
+    }
+  ],
+  "fontes": {
+    "soares2026-sodio-agua": "Soares AE. \u003cem>Distúrbios dos metabolismos de sódio e água\u003c/em> [material de aula]. Disciplina de Nefrologia, Medicina PUC Londrina; 2026.",
+    "spasovski2024-hiponatremia-tratamento-padrao": "Spasovski G. Hyponatraemia—treatment standard 2024. \u003cem>Nephrology Dialysis Transplantation\u003c/em>. 2024;39(10):1583–1592. doi:10.1093/ndt/gfae162.",
+    "spasovski2014-hiponatremia": "Spasovski G, Vanholder R, Allolio B, et al. Clinical practice guideline on diagnosis and treatment of hyponatraemia. \u003cem>European Journal of Endocrinology\u003c/em>. 2014;170:G1–G47. doi:10.1530/EJE-13-1020.",
+    "statpearls2023-hipernatremia": "Sonani B, Al-Dhahir MA. Hypernatremia. In: \u003cem>StatPearls\u003c/em> [Internet]. Treasure Island (FL): StatPearls Publishing; atualizado 24 ago. 2023.",
+    "statpearls2024-avp-disorder-di": "Hui C, Khan M, Khan Suheb MZ, Radbel JM. Arginine Vasopressin Disorder (Diabetes Insipidus). In: \u003cem>StatPearls\u003c/em> [Internet]. Treasure Island (FL): StatPearls Publishing; atualizado 11 jan. 2024."
+  }
+}
+</script>
+
+<script src="../_shared/app.js"></script>
+<script>
+// Dados específicos desta lista — o motor de quiz (renderização, resposta,
+// salvamento) e as preferências de tema/palete/visão vêm de ../_shared/app.js.
+// Não hardcode conteúdo de questão aqui; edite o banco central em vez disso.
+
+const quizData = JSON.parse(document.getElementById("quiz-data").textContent);
+const QUIZ_ID = quizData.quizId;
+const QUIZ_TITLE = quizData.title;
+const questions = quizData.questions; // { id, tema, cat, q, img, imgAlt, options, correct, exp, ref: [slug,...] }
+const fontes = quizData.fontes;       // { slug: citationHtml }
+
+document.getElementById("page-title").textContent = "Questões — " + QUIZ_TITLE;
+document.getElementById("quiz-title").textContent = QUIZ_TITLE;
+document.getElementById("quiz-desc").textContent = quizData.description || "";
+document.getElementById("quiz-footnote").textContent = quizData.footnote || "";
+
+// Reference numbering is assigned once, by first appearance in the ORIGINAL
+// question order (not the shuffled display order), so numbers stay stable
+// across reshuffles/resets within the same file.
+const refOrder = [];
+questions.forEach(item => {
+  (item.ref || []).forEach(slug => {
+    if (!refOrder.includes(slug)) refOrder.push(slug);
+  });
+});
+const refNumberMap = {};
+refOrder.forEach((slug, i) => { refNumberMap[slug] = i + 1; });
+
+document.getElementById("focus-prev").addEventListener("click", () => { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.getElementById("focus-next").addEventListener("click", () => { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+document.addEventListener("keydown", event => {
+  if (viewMode !== "focus" || settingsOverlay.classList.contains("open")) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if (event.key === "ArrowLeft" && focusPosition > 0) { focusPosition--; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  if (event.key === "ArrowRight" && focusPosition < questionOrder.length - 1) { focusPosition++; updateFocusView(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+});
+setTheme(themeMode);
+setPalette(paletteMode);
+setView(viewMode, true);
+
+renderQuiz();
+renderRefs();
+</script>
+</body>
+</html>

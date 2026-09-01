@@ -1,0 +1,13 @@
+{
+  "quizId": "antimicrobianos-fundamentos",
+  "title": "Antimicrobianos - fundamentos e classes antibacterianas",
+  "description": "76 questões de base sobre PK/PD, mecanismos, espectro, resistência, toxicidade e uso racional das classes estudadas em Antimicrobianos I-III.",
+  "footnote": "Material educacional. Doses, indicações e escolhas terapêuticas reais dependem do foco, hospedeiro, epidemiologia, cultura, antibiograma e protocolo local.",
+  "ordem": 8,
+  "resumo": "PK/PD, betalactâmicos, parede/membrana, síntese proteica, antifolatos, DNA, agentes urinários e resistência",
+  "filtro": {
+    "temas": [
+      "Antimicrobianos - fundamentos"
+    ]
+  }
+}

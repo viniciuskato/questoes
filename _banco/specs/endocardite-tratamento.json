@@ -1,0 +1,9 @@
+{
+  "quizId": "endocardite-tratamento",
+  "title": "Endocardite — Tratamento e Cirurgia",
+  "description": "Recorte do banco só com a parte terapêutica: princípios empíricos, esquemas dirigidos por agente, transição para via oral (POET) e indicações/timing cirúrgico.",
+  "footnote": "Recorte gerado a partir do banco central (Questões/_banco/banco-questoes.json) — mesmas fontes do banco completo de Endocardite Infecciosa.",
+  "ordem": 4,
+  "resumo": "recorte temático: esquemas por agente, POET, indicações e timing cirúrgico · pode conter questões já feitas",
+  "filtro": { "temas": ["Endocardite Infecciosa"], "categorias": ["Tratamento", "Cirurgia"] }
+}

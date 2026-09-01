@@ -1,0 +1,2 @@
+export function normalizeSearchText(value) { return String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
+export function searchQuestions(questions, term) { const needle=normalizeSearchText(term).trim(); if (!needle) return []; return questions.filter(q => normalizeSearchText([q.pergunta,q.tema,q.categoria,...(q.tags||[]),...((q.classificacao||{}).hierarquia||[])].join(" ")).includes(needle)); }

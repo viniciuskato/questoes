@@ -1,0 +1,22 @@
+{
+  "quizId": "endocardite-revisao-desempenho",
+  "title": "Endocardite — Revisão por Desempenho",
+  "description": "Lista montada a partir da sessão de 27/08/2026 (23/30, 76%): reúne as questões erradas e as acertadas só por eliminação/chute, cada uma seguida de uma questão nova sobre o mesmo ponto para reforço. Prioridade: Microbiologia (S. gallolyticus, errado sabendo), Quadro clínico, Tratamento (Enterococcus, estreptococos orais, HACEK), Cirurgia — depois os itens de menor certeza (POET, prótese valvar, CIED, profilaxia, imagem multimodal).",
+  "footnote": "Baseado no registro _dados/registros/endocardite_20260827_0929.json. Regenerar esta lista se novas sessões mudarem o quadro de pontos fracos.",
+  "ordem": 6,
+  "resumo": "montada a partir da sessão de 27/08/2026: erros e acertos por chute/eliminação, cada um seguido de uma questão nova de reforço no mesmo ponto",
+  "ids": [
+    "endocardite-10", "endocardite-36",
+    "endocardite-12", "endocardite-38",
+    "endocardite-11", "endocardite-42",
+    "endocardite-22", "endocardite-37",
+    "endocardite-20", "endocardite-39",
+    "endocardite-23", "endocardite-41",
+    "endocardite-25", "endocardite-40",
+    "endocardite-24",
+    "endocardite-27",
+    "endocardite-28",
+    "endocardite-30",
+    "endocardite-15"
+  ]
+}

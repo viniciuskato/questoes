@@ -1,0 +1,1118 @@
+{
+  "versao": 2,
+  "fontes": {
+    "delgado2023-esc-endocardite": "Delgado V, Ajmone Marsan N, de Waha S, et al. 2023 ESC Guidelines for the management of endocarditis. <em>European Heart Journal</em>. 2023;44:3948–4042. doi:10.1093/eurheartj/ehad193.",
+    "fowler2023-duke-iscvid": "Fowler VG Jr, Durack DT, Selton-Suty C, et al. The 2023 Duke–International Society for Cardiovascular Infectious Diseases Criteria for Infective Endocarditis. <em>Clinical Infectious Diseases</em>. 2023;77:518–526. doi:10.1093/cid/ciad271.",
+    "iversen2019-poet": "Iversen K, Ihlemann N, Gill SU, et al. Partial Oral versus Intravenous Antibiotic Treatment of Endocarditis (POET). <em>New England Journal of Medicine</em>. 2019;380:415–424. doi:10.1056/NEJMoa1808312.",
+    "wilson2021-aha-profilaxia": "Wilson WR, Gewitz M, Lockhart PB, et al. Prevention of Viridans Group Streptococcal Infective Endocarditis: A Scientific Statement From the American Heart Association. <em>Circulation</em>. 2021;143:e963–e978. doi:10.1161/CIR.0000000000000969.",
+    "sonneville2011-complicacoes-neuro": "Sonneville R, Mourvillier B, Bouadma L, Wolff M. Management of neurological complications of infective endocarditis in ICU patients. <em>Annals of Intensive Care</em>. 2011;1:10. doi:10.1186/2110-5820-1-10.",
+    "petersen2024-eco-ei": "Petersen JK, Østergaard L, Fosbøl EL. Role of echocardiography in the diagnosis and clinical management of infective endocarditis. <em>Indian Journal of Thoracic and Cardiovascular Surgery</em>. 2024;40(Suppl 1):16–28. doi:10.1007/s12055-023-01668-4.",
+    "kumar2016-robbins-patologia": "Kumar V, Abbas AK, Aster JC. <em>Robbins &amp; Cotran: Patologia — Bases Patológicas das Doenças</em>. 9ª ed. Rio de Janeiro: Elsevier; 2016.",
+    "siquierpadilla2022-timing-cirurgico": "Siquier-Padilla J, et al. Optimal Timing for Cardiac Surgery in Infective Endocarditis with Neurological Complications: A Narrative Review. <em>Journal of Clinical Medicine</em>. 2022;11(18):5275. doi:10.3390/jcm11185275.",
+    "souza2026-aula-radiografia-torax-basica": "Souza, Felipe. <em>Radiografia de Tórax Básica</em> [material de aula]. Pneumologia, Saúde do Adulto 1, Medicina PUCPR — Londrina, 2026.",
+    "hansell2008-fleischner-glossario": "Hansell DM, Bankier AA, MacMahon H, McLoud TC, Müller NL, Remy J. Fleischner Society: glossary of terms for thoracic imaging. <em>Radiology</em>. 2008;246(3):697–722. doi:10.1148/radiol.2462070712.",
+    "delacey2008-chest-xray-survival-guide": "De Lacey G, Morley S, Berman L. <em>The Chest X-Ray: A Survival Guide</em>. 1ª ed. Edinburgh: Saunders Ltd; 2008.",
+    "soares2026-sodio-agua": "Soares AE. <em>Distúrbios dos metabolismos de sódio e água</em> [material de aula]. Disciplina de Nefrologia, Medicina PUC Londrina; 2026.",
+    "spasovski2014-hiponatremia": "Spasovski G, Vanholder R, Allolio B, et al. Clinical practice guideline on diagnosis and treatment of hyponatraemia. <em>European Journal of Endocrinology</em>. 2014;170:G1–G47. doi:10.1530/EJE-13-1020.",
+    "spasovski2024-hiponatremia-tratamento-padrao": "Spasovski G. Hyponatraemia—treatment standard 2024. <em>Nephrology Dialysis Transplantation</em>. 2024;39(10):1583–1592. doi:10.1093/ndt/gfae162.",
+    "statpearls2023-hipernatremia": "Sonani B, Al-Dhahir MA. Hypernatremia. In: <em>StatPearls</em> [Internet]. Treasure Island (FL): StatPearls Publishing; atualizado 24 ago. 2023.",
+    "statpearls2024-avp-disorder-di": "Hui C, Khan M, Khan Suheb MZ, Radbel JM. Arginine Vasopressin Disorder (Diabetes Insipidus). In: <em>StatPearls</em> [Internet]. Treasure Island (FL): StatPearls Publishing; atualizado 11 jan. 2024.",
+    "aulas2026-antimicrobianos": "PUCPR. <em>Antimicrobianos I, II e III</em> [materiais de aula]. Disciplina Agressão e Defesa 2, Medicina, 2026.2.",
+    "guia2026-antimicrobianos": "<em>Antimicrobianos: fundamentos, classes farmacológicas e aplicação clínica</em> [guia integrado do usuário]. Infectologia; revisão de 26 ago. 2026.",
+    "who2022-aware": "World Health Organization. <em>The WHO AWaRe (Access, Watch, Reserve) antibiotic book</em>. Geneva: WHO; 2022. https://www.who.int/publications/i/item/9789240062382",
+    "anvisa2023-stewardship": "Agência Nacional de Vigilância Sanitária. <em>Diretriz Nacional para Elaboração de Programa de Gerenciamento de Antimicrobianos em Serviços de Saúde</em>. Brasília: Anvisa; 2023.",
+    "eucast2026-definitions": "EUCAST. <em>Definitions of S, I and R</em> (documento explicativo, sem numeração de versão própria); e <em>Breakpoint tables for interpretation of MICs and zone diameters</em>, versão 16.1, vigente 24 jun.-31 dez. 2026.",
+    "idsa2024-gramnegativos": "Tamma PD, et al. IDSA 2024 Guidance on the Treatment of Antimicrobial-Resistant Gram-Negative Infections. <em>Clinical Infectious Diseases</em>. 2024.",
+    "sbc2025-diretriz-brasileira-has": "Sociedade Brasileira de Cardiologia, Sociedade Brasileira de Hipertensão, Sociedade Brasileira de Nefrologia. <em>Diretriz Brasileira de Hipertensão Arterial — 2025</em>. <em>Arquivos Brasileiros de Cardiologia</em>. 2025;122(9):e20250624. doi:10.36660/abc.20250624.",
+    "accaha2025-hipertensao": "Jones DW, Ferdinand KC, Taler SJ, et al.; ACC/AHA Joint Committee on Clinical Practice Guidelines. 2025 AHA/ACC/AANP/AAPA/ABC/ACCP/ACPM/AGS/AMA/ASPC/NMA/PCNA/SGIM Guideline for the Prevention, Detection, Evaluation and Management of High Blood Pressure in Adults. <em>Circulation</em>. 2025;152(11):e114–e218. doi:10.1161/CIR.0000000000001356. (Publicado simultaneamente em <em>Hypertension</em>. 2025;82(10):e212–e316, doi:10.1161/HYP.0000000000000249; e <em>Journal of the American College of Cardiology</em>. 2025;86(18):1567–1678, doi:10.1016/j.jacc.2025.05.007.)",
+    "mcevoy2024-esc-hipertensao": "McEvoy JW, McCarthy CP, Bruno RM, et al. 2024 ESC Guidelines for the management of elevated blood pressure and hypertension. <em>European Heart Journal</em>. 2024;45:3912–4018. doi:10.1093/eurheartj/ehae178.",
+    "guytonhall-fisiologia-medica": "Hall JE, Hall ME. <em>Guyton &amp; Hall — Tratado de Fisiologia Médica</em>. [Edição não confirmada nesta auditoria — candidatas identificadas: 14ª ed., Rio de Janeiro: Elsevier, ISBN 978-85-9515-861-0; possível 15ª ed. em português, GEN Guanabara Koogan, ainda não confirmada]. Rio de Janeiro: Elsevier/GEN.",
+    "katzung-farmacologia-basica-clinica": "Katzung BG, et al. (eds.). <em>Katzung — Farmacologia Básica e Clínica</em>. [Edição não confirmada nesta auditoria — candidata identificada: 15ª ed., Porto Alegre: AMGH/McGraw-Hill, 2022–2023; 16ª ed. já publicada em inglês/espanhol, tradução em português não localizada nesta auditoria]. Porto Alegre: AMGH/McGraw-Hill.",
+    "allhat2002-jama": "ALLHAT Officers and Coordinators for the ALLHAT Collaborative Research Group. Major outcomes in high-risk hypertensive patients randomized to angiotensin-converting enzyme inhibitor or calcium channel blocker vs diuretic: the Antihypertensive and Lipid-Lowering Treatment to Prevent Heart Attack Trial (ALLHAT). <em>JAMA</em>. 2002;288:2981–2997.",
+    "ishani2022-dcp-clortalidona": "Ishani A, Cushman WC, Leatherman SM, et al. Chlorthalidone vs. hydrochlorothiazide for hypertension–cardiovascular events (Diuretic Comparison Project). <em>New England Journal of Medicine</em>. 2022;387:2401–2410. doi:10.1056/NEJMoa2212270.",
+    "pfeffer1992-save": "Pfeffer MA, Braunwald E, Moyé LA, et al. Effect of captopril on mortality and morbidity in patients with left ventricular dysfunction after myocardial infarction: results of the Survival and Ventricular Enlargement trial (SAVE). <em>New England Journal of Medicine</em>. 1992;327:669–677.",
+    "lewis1993-captopril-nefropatia-diabetica": "Lewis EJ, Hunsicker LG, Bain RP, Rohde RD. The effect of angiotensin-converting-enzyme inhibition on diabetic nephropathy. <em>New England Journal of Medicine</em>. 1993;329:1456–1462.",
+    "lindholm2005-betabloqueadores-metanalise": "Lindholm LH, Carlberg B, Samuelsson O. Should beta blockers remain first choice in the treatment of primary hypertension? A meta-analysis. <em>Lancet</em>. 2005;366:1545–1553.",
+    "irwin2018-chest-cough-guideline": "Irwin RS, French CL, Chang AB, Altman KW; CHEST Expert Cough Panel. Classification of Cough as a Symptom in Adults and Management Algorithms: CHEST Guideline and Expert Panel Report. <em>Chest</em>. 2018;153(1):196–209. doi:10.1016/j.chest.2017.10.016. PMID:29080708.",
+    "ittrich2017-hemoptysis-review": "Ittrich H, Bockhorn M, Klose H, Simon M. The Diagnosis and Treatment of Hemoptysis. <em>Deutsches Ärzteblatt International</em>. 2017;114(21):371–381. doi:10.3238/arztebl.2017.0371. PMID:28625277.",
+    "sakr2010-massive-hemoptysis-bronchoscopy": "Sakr L, Dutau H. Massive Hemoptysis: An Update on the Role of Bronchoscopy in Diagnosis and Management. <em>Respiration</em>. 2010;80(1):38–58. doi:10.1159/000274492. PMID:20090288.",
+    "goldman-cecil-pneumologia": "Goldman L, Cooney KA, editors. <em>Goldman-Cecil Medicine</em>. 27th ed. Elsevier; 2024. Chapter: Approach to the Patient with Respiratory Disease.",
+    "zicarelli2026-aula-tumores-snc": "Zicarelli, Carlos Alexandre Martins. <em>Tumores do Sistema Nervoso Central: Abordagem Simplificada para Estudantes de Medicina — Clínica, Radiologia, Histologia e Condutas</em> [material de aula]. Disciplina de Neurocirurgia, LANCCILO, Medicina PUCPR — Londrina; 2026.",
+    "alberg2013-accp-epidemiologia-cancer-pulmao": "Alberg AJ, Brock MV, Ford JG, Samet JM, Spivack SD. Epidemiology of Lung Cancer: Diagnosis and Management of Lung Cancer, 3rd ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. <em>Chest</em>. 2013;143(5 Suppl):e1S–e29S. doi:10.1378/chest.12-2345. PMID:23649439.",
+    "rivera2013-accp-diagnostico-cancer-pulmao": "Rivera MP, Mehta AC, Wahidi MM. Establishing the Diagnosis of Lung Cancer: Diagnosis and Management of Lung Cancer, 3rd ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. <em>Chest</em>. 2013;143(5 Suppl):e142S–e165S. doi:10.1378/chest.12-2353. PMID:23649436.",
+    "silvestri2013-accp-estadiamento-cancer-pulmao": "Silvestri GA, Gonzalez AV, Jantz MA, et al. Methods for Staging Non-small Cell Lung Cancer: Diagnosis and Management of Lung Cancer, 3rd ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. <em>Chest</em>. 2013;143(5 Suppl):e211S–e250S. doi:10.1378/chest.12-2355. PMID:23649440.",
+    "ost2013-accp-avaliacao-inicial-cancer-pulmao": "Ost DE, Yeung SJ, Tanoue LT, Gould MK. Clinical and Organizational Factors in the Initial Evaluation of Patients with Lung Cancer: Diagnosis and Management of Lung Cancer, 3rd ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. <em>Chest</em>. 2013;143(5 Suppl):e121S–e141S. doi:10.1378/chest.12-2352. PMID:23649435.",
+    "olsen2020-acr-hemoptise": "Olsen KM, Manouchehr-Pour S, Bandyopadhyay S, et al; Expert Panel on Thoracic Imaging. ACR Appropriateness Criteria® Hemoptysis. <em>J Am Coll Radiol</em>. 2020;17(5S):S148–S159. doi:10.1016/j.jacr.2020.01.043. PMID:32370959.",
+    "konstantinides2019-esc-tep": "Konstantinides SV, Meyer G, Becattini C, et al; The Task Force for the diagnosis and management of acute pulmonary embolism of the European Society of Cardiology (ESC). 2019 ESC Guidelines for the diagnosis and management of acute pulmonary embolism developed in collaboration with the European Respiratory Society (ERS). <em>Eur Heart J</em>. 2020;41(4):543–603. doi:10.1093/eurheartj/ehz405. PMID:31473594.",
+    "ehrlich2021-silicose-tuberculose": "Ehrlich R, Akugizibwe P, Siegfried N, Rees D. The association between silica exposure, silicosis and tuberculosis: a systematic review and meta-analysis. <em>BMC Public Health</em>. 2021;21:953. doi:10.1186/s12889-021-10711-1. PMID:34016067.",
+    "weiss2005-anemia-doenca-cronica": "Weiss G, Goodnough LT. Anemia of Chronic Disease. <em>N Engl J Med</em>. 2005;352(10):1011–1023. doi:10.1056/NEJMra041809. PMID:15758012.",
+    "caso4-cardiologia": "PUCPR. <em>Caso 4</em> [fechamento de tutorial]. Cardiologia, Casos Clínicos, 2026.",
+    "paterson2005-esbl-clinical-update": "Paterson DL, Bonomo RA. Extended-Spectrum β-Lactamases: A Clinical Update. <em>Clinical Microbiology Reviews</em>. 2005;18(4):657–686. doi:10.1128/CMR.18.4.657-686.2005. PMID:16223952.",
+    "mcdonagh2021-esc-heart-failure": "McDonagh TA, Metra M, Adamo M, et al. 2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure. <em>European Heart Journal</em>. 2021;42(36):3599–3726. doi:10.1093/eurheartj/ehab368.",
+    "heidenreich2022-aha-acc-hfsa-heart-failure": "Heidenreich PA, Bozkurt B, Aguilar D, et al. 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure. <em>Circulation</em>. 2022;145(18):e895–e1032. doi:10.1161/CIR.0000000000001063.",
+    "joglar2023-acc-aha-accp-hrs-fibrilacao-atrial": "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. <em>Circulation</em>. 2024;149(1):e1–e156. doi:10.1161/CIR.0000000000001193.",
+    "braunwald2022-heart-disease": "Libby P, Bonow RO, Mann DL, Tomaselli GF, Bhatt DL, Solomon SD, eds. <em>Braunwald's Heart Disease: A Textbook of Cardiovascular Medicine</em>. 12ª ed. Philadelphia: Elsevier; 2022.",
+    "louis2021-who-cns5": "Louis DN, Perry A, Wesseling P, et al. The 2021 WHO Classification of Tumors of the Central Nervous System: A Summary. <em>Neuro-Oncology</em>. 2021;23(8):1231-1251. doi:10.1093/neuonc/noab106.",
+    "ostrom2023-cbtrus-epidemiology": "Ostrom QT, Price M, Neff C, Cioffi G, Waite KA, Kruchko C, Barnholtz-Sloan JS. CBTRUS Statistical Report: Primary Brain and Other Central Nervous System Tumors Diagnosed in the United States in 2016-2020. <em>Neuro-Oncology</em>. 2023;25(Suppl 4):iv1-iv99. doi:10.1093/neuonc/noad149.",
+    "stupp2005-nejm-temozolomide-glioblastoma": "Stupp R, Mason WP, van den Bent MJ, et al. Radiotherapy plus Concomitant and Adjuvant Temozolomide for Glioblastoma. <em>New England Journal of Medicine</em>. 2005;352(10):987-996. doi:10.1056/NEJMoa043330.",
+    "simpson1957-meningioma-recurrence": "Simpson D. The Recurrence of Intracranial Meningiomas after Surgical Treatment. <em>Journal of Neurology, Neurosurgery, and Psychiatry</em>. 1957;20(1):22-39. doi:10.1136/jnnp.20.1.22.",
+    "deangelis2001-nejm-brain-tumors": "DeAngelis LM. Brain Tumors. <em>New England Journal of Medicine</em>. 2001;344(2):114-123. doi:10.1056/NEJM200101113440207.",
+    "goldbrunner2020-eano-vestibular-schwannoma": "Goldbrunner R, Weller M, Regis J, et al. EANO Guideline on the Diagnosis and Treatment of Vestibular Schwannoma. <em>Neuro-Oncology</em>. 2020;22(1):31-45. doi:10.1093/neuonc/noz153.",
+    "muller2019-craniopharyngioma-nrdp": "Müller HL, Merchant TE, Warmuth-Metz M, Martinez-Barbera JP, Puget S. Craniopharyngioma. <em>Nature Reviews Disease Primers</em>. 2019;5:75. doi:10.1038/s41572-019-0125-9.",
+    "puc2026-aula-funcao-pulmonar": "PUCPR. <em>Prova de função pulmonar: da teoria à prática</em> [material de aula]. Pneumologia, Habilidades Profissionais 4, Medicina PUCPR; 2026.",
+    "albuquerque2024-sbpt-espirometria": "Albuquerque ALP, Berton DC, et al. Novas recomendações de espirometria da Sociedade Brasileira de Pneumologia e Tisiologia - atualização 2024. <em>J Bras Pneumol</em>. 2024;50(6):e20240169. doi:10.36416/1806-3756/e20240169.",
+    "graham2019-ats-ers-espirometria": "Graham BL, Steenbruggen I, Miller MR, et al. Standardization of Spirometry 2019 Update: An Official ATS/ERS Technical Statement. <em>Am J Respir Crit Care Med</em>. 2019;200(8):e70-e88. doi:10.1164/rccm.201908-1590ST.",
+    "wanger2005-ats-ers-volumes-pulmonares": "Wanger J, Clausen JL, Coates A, et al. Standardisation of the measurement of lung volumes. <em>Eur Respir J</em>. 2005;26(3):511-522. doi:10.1183/09031936.05.00035005.",
+    "graham2017-ats-ers-dlco": "Graham BL, Brusasco V, Burgos F, et al. 2017 ERS/ATS standards for single-breath carbon monoxide uptake in the lung. <em>Eur Respir J</em>. 2017;49(1):1600016. doi:10.1183/13993003.00016-2016.",
+    "cotton2014-practical-gi-endoscopy": "Cotton PB, Williams CB, Hawes RH, Saunders BP. <em>Practical Gastrointestinal Endoscopy: The Fundamentals</em>. 7ª ed. Wiley-Blackwell; 2014.",
+    "rex2015-quality-indicators-colonoscopy": "Rex DK, Schoenfeld PS, Cohen J, et al. Quality indicators for colonoscopy. <em>Gastrointestinal Endoscopy</em>. 2015;81(1):31-53. doi:10.1016/j.gie.2014.07.058.",
+    "asge2016-antithrombotics": "ASGE Standards of Practice Committee, Acosta RD, Abraham NS, et al. The management of antithrombotic agents for patients undergoing GI endoscopy. <em>Gastrointestinal Endoscopy</em>. 2016;83(1):3-16. doi:10.1016/j.gie.2015.09.035.",
+    "asge2015-profilaxia-antibiotica": "ASGE Standards of Practice Committee, Khashab MA, Chithadi KV, Acosta RD, et al. Antibiotic prophylaxis for GI endoscopy. <em>Gastrointestinal Endoscopy</em>. 2015;81(1):81-89. doi:10.1016/j.gie.2014.08.008.",
+    "baveno2022-vii": "de Franchis R, Bosch J, Garcia-Tsao G, Reiberger T, Ripoll C; Baveno VII Faculty. Baveno VII – Renewing consensus in portal hypertension. <em>Journal of Hepatology</em>. 2022;76(4):959-974. doi:10.1016/j.jhep.2021.12.022.",
+    "lai2009-bbps": "Lai EJ, Calderwood AH, Doros G, Fix OK, Jacobson BC. The Boston Bowel Preparation Scale: a valid and reliable instrument for colonoscopy-oriented research. <em>Gastrointestinal Endoscopy</em>. 2009;69(3 Pt 2):620-625. doi:10.1016/j.gie.2008.05.057.",
+    "asge2018-sedacao-anestesia": "ASGE Standards of Practice Committee, Early DS, Lightdale JR, Vargo JJ 2nd, et al. Guidelines for sedation and anesthesia in GI endoscopy. <em>Gastrointestinal Endoscopy</em>. 2018;87(2):327-337. doi:10.1016/j.gie.2017.07.018.",
+    "sharma2006-prague-cm": "Sharma P, Dent J, Armstrong D, et al. The development and validation of an endoscopic grading system for Barrett's esophagus: the Prague C & M criteria. <em>Gastroenterology</em>. 2006;131(5):1392-1399. doi:10.1053/j.gastro.2006.08.032.",
+    "shaheen2016-acg-barrett": "Shaheen NJ, Falk GW, Iyer PG, Gerson LB; American College of Gastroenterology. ACG Clinical Guideline: Diagnosis and Management of Barrett's Esophagus. <em>American Journal of Gastroenterology</em>. 2016;111(1):30-50. doi:10.1038/ajg.2015.322.",
+    "lundell1999-la-classification": "Lundell LR, Dent J, Bennett JR, et al. Endoscopic assessment of oesophagitis: clinical and functional correlates and further validation of the Los Angeles classification. <em>Gut</em>. 1999;45(2):172-180. doi:10.1136/gut.45.2.172.",
+    "katz2022-acg-gerd": "Katz PO, Dunbar KB, Schnoll-Sussman FH, Greer KB, Yadlapati R, Spechler SJ. ACG Clinical Guideline for the Diagnosis and Management of Gastroesophageal Reflux Disease. <em>American Journal of Gastroenterology</em>. 2022;117(1):27-56. doi:10.14309/ajg.0000000000001538.",
+    "kramer2015-naspghan-corpo-estranho": "Kramer RE, Lerner DG, Lin T, et al; NASPGHAN Endoscopy Committee. Management of ingested foreign bodies in children: a clinical report of the NASPGHAN Endoscopy Committee. <em>Journal of Pediatric Gastroenterology and Nutrition</em>. 2015;60(4):562-574. doi:10.1097/MPG.0000000000000729.",
+    "asge2011-foreign-body": "ASGE Standards of Practice Committee, Ikenberry SO, Jue TL, Anderson MA, et al. Management of ingested foreign bodies and food impactions. <em>Gastrointestinal Endoscopy</em>. 2011;73(6):1085-1091. doi:10.1016/j.gie.2010.11.010.",
+    "acg2021-ugib": "Laine L, Barkun AN, Saltzman JR, Martel M, Leontiadis GI. ACG Clinical Guideline: Upper Gastrointestinal and Ulcer Bleeding. <em>American Journal of Gastroenterology</em>. 2021;116(5):899-917. doi:10.14309/ajg.0000000000001245.",
+    "forrest1974-classification": "Forrest JA, Finlayson ND, Shearman DJ. Endoscopy in gastrointestinal bleeding. <em>Lancet</em>. 1974;2(7877):394-397. doi:10.1016/s0140-6736(74)91770-x.",
+    "uspstf2021-crc": "US Preventive Services Task Force, Davidson KW, Barry MJ, Mangione CM, et al. Screening for Colorectal Cancer: US Preventive Services Task Force Recommendation Statement. <em>JAMA</em>. 2021;325(19):1965-1977. doi:10.1001/jama.2021.6238.",
+    "shaukat2021-acg-rastreamento-crc": "Shaukat A, Kahi CJ, Burke CA, Rabeneck L, Sauer BG, Rex DK. ACG Clinical Guideline: Colorectal Cancer Screening 2021. <em>American Journal of Gastroenterology</em>. 2021;116(3):458-479. doi:10.14309/ajg.0000000000001122.",
+    "ko2020-aga-anemia-ferropriva": "Ko CW, Siddique SM, Patel A, et al. AGA Clinical Practice Guidelines on the Gastrointestinal Evaluation of Iron Deficiency Anemia. <em>Gastroenterology</em>. 2020;159(3):1085-1094. doi:10.1053/j.gastro.2020.06.046.",
+    "lambert2003-paris-classification": "The Paris endoscopic classification of superficial neoplastic lesions: esophagus, stomach, and colon. <em>Gastrointestinal Endoscopy</em>. 2003;58(6 Suppl):S3-43. doi:10.1016/s0016-5107(03)02159-x.",
+    "gupta2020-ustf-vigilancia-polipectomia": "Gupta S, Lieberman D, Anderson JC, et al. Recommendations for Follow-Up After Colonoscopy and Polypectomy: A Consensus Update by the US Multi-Society Task Force on Colorectal Cancer. <em>Gastroenterology</em>. 2020;158(4):1131-1153. doi:10.1053/j.gastro.2019.10.026.",
+    "rubin2019-acg-uc": "Rubin DT, Ananthakrishnan AN, Siegel CA, Sauer BG, Long MD. ACG Clinical Guideline: Ulcerative Colitis in Adults. <em>American Journal of Gastroenterology</em>. 2019;114(3):384-413. doi:10.14309/ajg.0000000000000152.",
+    "lichtenstein2018-acg-crohn": "Lichtenstein GR, Loftus EV, Isaacs KL, Regueiro MD, Gerson LB, Sands BE. ACG Clinical Guideline: Management of Crohn's Disease in Adults. <em>American Journal of Gastroenterology</em>. 2018;113(4):481-517. doi:10.1038/ajg.2018.27.",
+    "kothari2019-asge-eventos-adversos-colonoscopia": "Kothari ST, Huang RJ, Shaukat A, et al. ASGE review of adverse events in colonoscopy. <em>Gastrointestinal Endoscopy</em>. 2019;90(6):863-876.e33. doi:10.1016/j.gie.2019.07.033.",
+    "hirasawa2015-sindrome-pos-polipectomia": "Hirasawa K, Sato C, Makazu M, et al. Coagulation syndrome: Delayed perforation after colorectal endoscopic treatments. <em>World Journal of Gastrointestinal Endoscopy</em>. 2015;7(12):1055-1061. doi:10.4253/wjge.v7.i12.1055."
+  },
+  "atualizadoEm": "2026-08-31",
+  "fontesMeta": {
+    "delgado2023-esc-endocardite": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1093/eurheartj/ehad193"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "DOI e conteúdo (incidência global 13,8/100.000 pessoas-ano, ~66.300 mortes em 2019) conferidos junto ao registro em Oxford Academic/European Heart Journal."
+    },
+    "fowler2023-duke-iscvid": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1093/cid/ciad271",
+        "pmid": "37138445"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "DOI, PMID e o critério PET/CT >3 meses (maior) vs. ≤3 meses (menor) conferidos junto ao artigo original em Clinical Infectious Diseases."
+    },
+    "iversen2019-poet": {
+      "tipo": "ensaio_clinico_randomizado",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1056/NEJMoa1808312",
+        "pmid": "30152252"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Critérios de inclusão (EI esquerda por estreptococos/E. faecalis/S. aureus/estafilococo coagulase-negativo, ≥10 dias de IV efetiva antes da randomização) conferidos no NEJM."
+    },
+    "wilson2021-aha-profilaxia": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1161/CIR.0000000000000969"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Confirmado que a AHA deixou de recomendar clindamicina como alternativa em alergia à penicilina/amoxicilina para profilaxia, citando maior risco de reação grave e de infecção por C. difficile."
+    },
+    "sonneville2011-complicacoes-neuro": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1186/2110-5820-1-10",
+        "pmid": "21906336",
+        "pmcid": "PMC3224466"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/Annals of Intensive Care (acesso aberto). Artigo de 2011: tratar como revisão narrativa desatualizada frente às diretrizes ESC 2023/Duke-ISCVID 2023 mais recentes para qualquer conduta quantitativa.",
+      "tipo": "revisao_narrativa",
+      "verificacao": "verificada"
+    },
+    "petersen2024-eco-ei": {
+      "tipo": "revisao_narrativa",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1007/s12055-023-01668-4"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Revisão sobre papel da ecocardiografia (ETT/ETE) no diagnóstico e manejo da EI; dados bibliográficos conferidos no registro da Indian Journal of Thoracic and Cardiovascular Surgery."
+    },
+    "kumar2016-robbins-patologia": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "isbn": "978-85-352-8163-7"
+      },
+      "jurisdicao": "tradução brasileira (obra original EUA)",
+      "vigente": false,
+      "substituidaPor": "Robbins & Cotran: Patologia — Bases Patológicas das Doenças, 10ª ed., GEN Guanabara Koogan, 2023 (ISBN 978-85-9515-915-0)",
+      "observacoes": "Edição e ISBN da 9ª ed. (2016) conferidos no catálogo oficial Elsevier. Existe 10ª edição em português já publicada (fev/2023, GEN/Guanabara Koogan) — citação está desatualizada; recomenda-se migrar para a 10ª ed. em revisão de conteúdo, sem alterar questões nesta sessão.",
+      "tipo": "livro_texto",
+      "verificacao": "verificada"
+    },
+    "siquierpadilla2022-timing-cirurgico": {
+      "tipo": "revisao_narrativa",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.3390/jcm11185275",
+        "pmid": "36142922",
+        "pmcid": "PMC9501443"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Revisão narrativa (J Clin Med 2022;11(18):5275) sobre timing cirúrgico após complicação neurológica isquêmica, hemorrágica, infecciosa e assintomática na EI; dados bibliográficos conferidos."
+    },
+    "souza2026-aula-radiografia-torax-basica": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {},
+      "jurisdicao": "PUCPR Londrina (uso interno)",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "Material de aula sem publicação/URL institucional externa acessível; não há como conferir contra fonte primária pública. Uso permitido apenas para definir escopo pedagógico (Política Editorial, princípio 2) — não sustenta sozinho afirmação clínica quantitativa ou terapêutica. Registrado como dívida editorial: pendente confirmação do professor responsável (Felipe Souza) sobre versão/data exatas do material.",
+      "tipo": "material_interno",
+      "verificacao": "nao_verificavel_externamente"
+    },
+    "hansell2008-fleischner-glossario": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1148/radiol.2462070712",
+        "pmid": "18195376"
+      },
+      "jurisdicao": "internacional (Fleischner Society)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/Radiology. Volume 246(3):697-722 confere. Glossário de 2008 permanece referência padrão, mas terminologia pode ter sido complementada por publicações posteriores da Fleischner Society sobre temas específicos (ex. COVID-19, nódulos) — verificar se a questão trata de tópico coberto por atualização setorial.",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "delacey2008-chest-xray-survival-guide": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "isbn": "978-0-7020-3046-8"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Título, autores, editora (Saunders/Elsevier) e ISBN conferidos no catálogo oficial Elsevier. Edição única (não houve 2ª edição publicada).",
+      "tipo": "livro_texto",
+      "verificacao": "verificada"
+    },
+    "soares2026-sodio-agua": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {},
+      "jurisdicao": "PUC Londrina, Disciplina de Nefrologia (uso interno)",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "Material de aula sem publicação/URL institucional externa acessível. Mesma ressalva de souza2026: define escopo pedagógico, não sustenta sozinho afirmação clínica controversa (Política Editorial, princípio 2). Dívida editorial: confirmar com a professora (Soares AE) versão/data do material.",
+      "tipo": "material_interno",
+      "verificacao": "nao_verificavel_externamente"
+    },
+    "spasovski2014-hiponatremia": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1530/EJE-13-1020",
+        "pmid": "24569125"
+      },
+      "jurisdicao": "Europa (ESICM/ESE/ERA-EDTA)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/European Journal of Endocrinology. Volume 170:G1-47 confere. Diretriz de 2014 (12 anos) — sem atualização formal publicada até a data desta auditoria; considerar sinalizar antiguidade em questões quantitativas de conduta. ATUALIZAÇÃO (2026-08-29): existe atualização de fato do mesmo autor principal — ver spasovski2024-hiponatremia-tratamento-padrao.",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "spasovski2024-hiponatremia-tratamento-padrao": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1093/ndt/gfae162"
+      },
+      "jurisdicao": "Europa (ERA)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Localizada e lida diretamente (WebFetch bem-sucedido) em MATRIZ-EVIDENCIA-SODIO-AGUA.md, Etapa 2 (auditoria de 2026-08-29). Descrita como \"treatment standard\" mais recente do mesmo autor principal de spasovski2014-hiponatremia, na linha editorial da European Renal Association (ERA); o texto lido não afirma explicitamente que revoga/substitui a versão 2014 — tratada como atualização de fato, não como substituição formal confirmada. Há erratas publicadas em NDT 40(6), 2025, não lidas em detalhe (fora do escopo desta verificação). PMID não confirmado nesta auditoria — omitido para não inventar identificador. Data de acesso: 2026-08-29.",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "statpearls2023-hipernatremia": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "url": "https://www.ncbi.nlm.nih.gov/books/NBK441960/",
+        "bookshelfId": "NBK441960"
+      },
+      "jurisdicao": "internacional (NIH/StatPearls Publishing)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Localizado e lido diretamente (WebFetch bem-sucedido) em MATRIZ-EVIDENCIA-SODIO-AGUA.md, Etapa 3 (auditoria de 2026-08-29). Capítulo StatPearls (revisão narrativa continuamente atualizada, com processo editorial/peer review próprio), não uma diretriz formal de sociedade. Sem DOI/PMID próprios — identificado pelo NCBI Bookshelf ID. Data de acesso: 2026-08-29.",
+      "tipo": "revisao_narrativa",
+      "verificacao": "verificada"
+    },
+    "statpearls2024-avp-disorder-di": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "url": "https://www.ncbi.nlm.nih.gov/books/NBK470458/",
+        "bookshelfId": "NBK470458"
+      },
+      "jurisdicao": "internacional (NIH/StatPearls Publishing)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Localizado e lido diretamente (WebFetch bem-sucedido) em MATRIZ-EVIDENCIA-SODIO-AGUA.md, Etapa 3 (auditoria de 2026-08-29). Capítulo StatPearls (revisão narrativa continuamente atualizada). Sem DOI/PMID próprios — identificado pelo NCBI Bookshelf ID. Cobre nomenclatura em transição (AVP-D/AVP-R vs. diabetes insípido central/nefrogênico clássico) — ver nota terminológica no backlog editorial. Data de acesso: 2026-08-29.",
+      "tipo": "revisao_narrativa",
+      "verificacao": "verificada"
+    },
+    "aulas2026-antimicrobianos": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {},
+      "jurisdicao": "PUCPR, Disciplina Agressão e Defesa 2 (uso interno)",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "Material de aula institucional (2026.2), sem URL pública. Não verificável contra fonte primária externa. Deve ser complementado por fontes clínicas fortes (WHO AWaRe, EUCAST, IDSA) para qualquer afirmação de dose, espectro ou conduta terapêutica.",
+      "tipo": "material_interno",
+      "verificacao": "nao_verificavel_externamente"
+    },
+    "guia2026-antimicrobianos": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {},
+      "jurisdicao": "uso interno (Infectologia)",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "Descrito como 'guia integrado do usuário', revisão de 26 ago. 2026 — é material de compilação interna, não publicação institucional externa. Não verificável contra fonte primária pública; funciona como índice/guia de estudo, não como referência clínica primária.",
+      "tipo": "material_interno",
+      "verificacao": "nao_verificavel_externamente"
+    },
+    "who2022-aware": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "isbn": "978-92-4-006238-2"
+      },
+      "jurisdicao": "internacional (OMS)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Título, editora (WHO, Geneva), ano (2022) e URL conferidos diretamente em who.int/publications. ISBN eletrônico 978-92-4-006238-2 (mesmo número presente na URL cadastrada).",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "anvisa2023-stewardship": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "url": "https://www.gov.br/anvisa/pt-br/centraisdeconteudo/publicacoes/servicosdesaude/publicacoes/DiretrizGerenciamentoAntimicrobianosANVISA2023FINAL.pdf"
+      },
+      "jurisdicao": "Brasil (Anvisa)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Documento localizado e conferido no domínio oficial gov.br/anvisa; título e ano (2023) conferem com o cadastro. URL ausente no texto da citação — registrada apenas em fontesMeta.identificadores; recomenda-se incluir a URL no texto exibido em revisão futura.",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "eucast2026-definitions": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "url": "https://www.eucast.org/clinical_breakpoints"
+      },
+      "jurisdicao": "Europa (EUCAST)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Citação corrigida em 2026-08-29 para separar os dois documentos EUCAST distintos (definições de categoria S/I/R vs. tabelas de breakpoint versionadas v16.1), evitando fusão indevida sinalizada em auditoria anterior.",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "idsa2024-gramnegativos": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1093/cid/ciae403",
+        "pmid": "39108079",
+        "elocation": "ciae403"
+      },
+      "jurisdicao": "EUA (IDSA)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/Oxford Academic. ATENÇÃO: o próprio documento se declara 'current as of December 31, 2023' e living guidance atualizada periodicamente em www.idsociety.org/practice-guideline/amr-guidance/ — a versão on-line pode já divergir da versão de 2024 publicada em Clinical Infectious Diseases. Citação no banco carecia de volume/página/DOI, agora completados.",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "sbc2025-diretriz-brasileira-has": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.36660/abc.20250624"
+      },
+      "jurisdicao": "Brasil (SBC/SBH/SBN)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Dados bibliográficos completos localizados e conferidos (Arq Bras Cardiol 2025;122(9):e20250624, doi:10.36660/abc.20250624), substituindo a ressalva anterior de 'dados não conferidos'. Texto da citação atualizado nesta auditoria.",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "accaha2025-hipertensao": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1161/CIR.0000000000001356",
+        "pmid": "40811497",
+        "doi_hypertension": "10.1161/HYP.0000000000000249",
+        "doi_jacc": "10.1016/j.jacc.2025.05.007"
+      },
+      "jurisdicao": "EUA (ACC/AHA + 11 sociedades)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Publicada simultaneamente em três periódicos (Circulation, Hypertension, JACC) em 14/ago/2025; dados completos conferidos em PubMed. Substitui a diretriz ACC/AHA de 2017. Texto da citação atualizado nesta auditoria (retirada a ressalva de 'dados não conferidos').",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "mcevoy2024-esc-hipertensao": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1093/eurheartj/ehae178",
+        "pmid": "39210715"
+      },
+      "jurisdicao": "Europa (ESC)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/Oxford Academic. Volume/páginas (45:3912-4018) conferem; DOI ausente no cadastro original, agora completado.",
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada"
+    },
+    "guytonhall-fisiologia-medica": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {},
+      "jurisdicao": "tradução brasileira (obra original EUA)",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "CITAÇÃO VAGA identificada: 'edição mais recente disponível' não permite conferência bibliográfica exata. Busca externa encontrou candidatas conflitantes: 14ª ed. (Elsevier, ISBN 978-85-9515-861-0, mais citada em livrarias) e possível 15ª ed. (GEN Guanabara Koogan, achado isolado, não confirmado em catálogo oficial). Não foi possível confirmar com segurança qual edição está de fato em uso nas questões. Registrado como dívida editorial: usuário deve informar a edição exata em mãos para conferência definitiva.",
+      "tipo": "livro_texto",
+      "verificacao": "vaga_pendente"
+    },
+    "katzung-farmacologia-basica-clinica": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {},
+      "jurisdicao": "tradução brasileira (obra original EUA)",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "CITAÇÃO VAGA identificada: 'edição mais recente disponível' não permite conferência bibliográfica exata. A 15ª ed. em português (AMGH/McGraw-Hill, 2022/2023) foi localizada; a 16ª ed. (McGraw Hill, 2023/2024) já existe em inglês e espanhol, mas não foi localizada tradução em português até a data desta auditoria. Registrado como dívida editorial: usuário deve informar a edição exata em mãos para conferência definitiva, e revisar periodicamente se surgiu tradução da 16ª ed.",
+      "tipo": "livro_texto",
+      "verificacao": "vaga_pendente"
+    },
+    "allhat2002-jama": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1001/jama.288.23.2981",
+        "pmid": "12479763"
+      },
+      "jurisdicao": "EUA (multicêntrico)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/JAMA. Volume 288:2981-2997 confere (páginas exatas 2981-97).",
+      "tipo": "ensaio",
+      "verificacao": "verificada"
+    },
+    "ishani2022-dcp-clortalidona": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1056/NEJMoa2212270",
+        "pmid": "36516076"
+      },
+      "jurisdicao": "EUA (Diuretic Comparison Project / VA)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/NEJM. Volume 387:2401-2410 confere; DOI ausente no cadastro original, agora completado.",
+      "tipo": "ensaio",
+      "verificacao": "verificada"
+    },
+    "pfeffer1992-save": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1056/NEJM199209033271001",
+        "pmid": "1386652"
+      },
+      "jurisdicao": "internacional (multicêntrico, SAVE Investigators)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/NEJM. Volume 327:669-677 confere.",
+      "tipo": "ensaio",
+      "verificacao": "verificada"
+    },
+    "lewis1993-captopril-nefropatia-diabetica": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1056/NEJM199311113292004",
+        "pmid": "8413456"
+      },
+      "jurisdicao": "EUA (Collaborative Study Group)",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/NEJM. Volume 329:1456-1462 confere.",
+      "tipo": "ensaio",
+      "verificacao": "verificada"
+    },
+    "lindholm2005-betabloqueadores-metanalise": {
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1016/S0140-6736(05)67573-3",
+        "pmid": "16257341"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido em PubMed/Lancet. Volume 366:1545-1553 confere. É metanálise (não ensaio individual) — tipo corrigido de eventual classificação genérica.",
+      "tipo": "revisao_sistematica",
+      "verificacao": "verificada"
+    },
+    "irwin2018-chest-cough-guideline": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1016/j.chest.2017.10.016",
+        "pmid": "29080708",
+        "pmcid": "PMC6689094"
+      },
+      "jurisdicao": "internacional",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "Metadados conferidos em PubMed/PMC."
+    },
+    "ittrich2017-hemoptysis-review": {
+      "tipo": "revisao_narrativa",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.3238/arztebl.2017.0371",
+        "pmid": "28625277",
+        "pmcid": "PMC5478790"
+      },
+      "jurisdicao": "internacional",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "Metadados conferidos em PubMed/PMC."
+    },
+    "sakr2010-massive-hemoptysis-bronchoscopy": {
+      "tipo": "revisao_narrativa",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {
+        "doi": "10.1159/000274492",
+        "pmid": "20090288"
+      },
+      "jurisdicao": "internacional",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "Metadados conferidos no artigo e índice bibliográfico."
+    },
+    "goldman-cecil-pneumologia": {
+      "tipo": "livro_texto",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-29",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Edição e capítulo conferidos em registro bibliográfico da obra."
+    },
+    "zicarelli2026-aula-tumores-snc": {
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "PUCPR Londrina / LANCCILO (uso interno)",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "Material de aula (slides fotografados em HEIC, sem PDF/URL institucional), transcrito e consolidado no documento de extração próprio Extracao_e_Consolidacao_LANCCILO_Tumores_SNC.md (Educação/PUC/Ligas/LANCCILO/). Vários trechos foram marcados nessa extração como leitura parcial ou de fonte muito pequena (ex.: nota de rodapé de IMG_7465, rótulos de IMG_7476, texto de aquisição em IMG_7482) e as questões correspondentes foram sinalizadas individualmente. Não sustenta sozinho afirmação clínica quantitativa/terapêutica além do que o próprio slide declara (Política Editorial, princípio 2). Registrado como dívida editorial: pendente confirmação do professor responsável (Carlos Zicarelli) sobre trechos parcialmente legíveis e sobre o slide Intraoperative Awareness (fora de escopo, não usado).",
+      "tipo": "material_interno",
+      "verificacao": "nao_verificavel_externamente"
+    },
+    "alberg2013-accp-epidemiologia-cancer-pulmao": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1378/chest.12-2345",
+        "pmid": "23649439"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Capítulo de epidemiologia/fatores de risco da 3ª edição das diretrizes ACCP; identificadores conferidos em PubMed."
+    },
+    "rivera2013-accp-diagnostico-cancer-pulmao": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1378/chest.12-2353",
+        "pmid": "23649436"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Capítulo sobre estabelecimento do diagnóstico histológico (biópsia/broncoscopia) da 3ª edição das diretrizes ACCP; identificadores conferidos em PubMed."
+    },
+    "silvestri2013-accp-estadiamento-cancer-pulmao": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1378/chest.12-2355",
+        "pmid": "23649440"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Capítulo sobre métodos de estadiamento (incluindo PET-CT e avaliação mediastinal) da 3ª edição das diretrizes ACCP; identificadores conferidos em PubMed."
+    },
+    "ost2013-accp-avaliacao-inicial-cancer-pulmao": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1378/chest.12-2352",
+        "pmid": "23649435"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Capítulo sobre avaliação clínica inicial (anamnese, exame físico, sinais de doença locorregional/metastática) da 3ª edição das diretrizes ACCP; identificadores conferidos em PubMed."
+    },
+    "olsen2020-acr-hemoptise": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1016/j.jacr.2020.01.043",
+        "pmid": "32370959"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Critério de adequação de imagem do American College of Radiology para investigação de hemoptise; identificadores conferidos em PubMed/MEDLINE."
+    },
+    "konstantinides2019-esc-tep": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1093/eurheartj/ehz405",
+        "pmid": "31473594"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Diretriz de referência para probabilidade clínica pré-teste, uso de dímero-D e ajuste por idade no diagnóstico de TEP; identificadores conferidos em PubMed."
+    },
+    "ehrlich2021-silicose-tuberculose": {
+      "tipo": "revisao_sistematica_com_metanalise",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1186/s12889-021-10711-1",
+        "pmid": "34016067"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Revisão sistemática com metanálise sobre risco de tuberculose associado à exposição à sílica/silicose; identificadores conferidos em PMC."
+    },
+    "weiss2005-anemia-doenca-cronica": {
+      "tipo": "revisao_narrativa",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1056/NEJMra041809",
+        "pmid": "15758012"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Revisão de referência sobre fisiopatologia e investigação da anemia de doença crônica/inflamação; identificadores conferidos em PubMed."
+    },
+    "caso4-cardiologia": {
+      "tipo": "material_interno",
+      "verificacao": "nao_verificavel_externamente",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "PUCPR (uso interno)",
+      "vigente": null,
+      "substituidaPor": null,
+      "observacoes": "Cadastro criado para restaurar a integridade referencial dos 40 itens importados por sessão concorrente. O DOCX define escopo pedagógico, mas não basta sozinho para aprovar afirmações clínicas, quantitativas ou terapêuticas."
+    },
+    "paterson2005-esbl-clinical-update": {
+      "tipo": "revisao_narrativa",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1128/CMR.18.4.657-686.2005",
+        "pmid": "16223952"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Revisão de referência sobre definição, mecanismo e implicações clínicas das ESBL; identificadores conferidos por busca (título, DOI e PMID), sem leitura do texto integral nesta sessão — o conteúdo do item reflete definição consensual de betalactamase de espectro estendido, não um achado específico do artigo."
+    },
+    "mcdonagh2021-esc-heart-failure": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1093/eurheartj/ehab368"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Título, volume/páginas e DOI conferidos por busca (PubMed/Oxford Academic); conteúdo clínico usado corresponde a conhecimento consolidado sobre diagnóstico e tratamento de IC (classificação por FE, GDMT, TRC), não à leitura integral do texto completo nesta sessão. Há atualização focada de 2023 (doi:10.1093/eurheartj/ehad195) não cadastrada separadamente."
+    },
+    "heidenreich2022-aha-acc-hfsa-heart-failure": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1161/CIR.0000000000001063"
+      },
+      "jurisdicao": "Estados Unidos",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Título, volume/páginas e DOI conferidos por busca (PubMed/AHA Journals); conteúdo clínico usado corresponde a conhecimento consolidado sobre estágios ACC/AHA, GDMT e manejo de IC, não à leitura integral do texto completo nesta sessão."
+    },
+    "joglar2023-acc-aha-accp-hrs-fibrilacao-atrial": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1161/CIR.0000000000001193"
+      },
+      "jurisdicao": "Estados Unidos",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Título, volume/páginas e DOI conferidos por busca (PubMed/AHA Journals); conteúdo clínico usado corresponde a conhecimento consolidado sobre CHA2DS2-VASc, ECG da FA e anticoagulação, não à leitura integral do texto completo nesta sessão."
+    },
+    "braunwald2022-heart-disease": {
+      "tipo": "livro_texto",
+      "verificacao": "verificada",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "isbn": "9780323722193"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Edição, editores e editora conferidos por busca (Elsevier/VitalSource). Referência usada para fundamentar fatos de fisiopatologia e semiologia cardiovascular de conhecimento consolidado (B3, remodelamento ventricular, insuficiência mitral funcional); não houve leitura integral do capítulo específico nesta sessão."
+    },
+    "louis2021-who-cns5": {
+      "tipo": "artigo_revisao",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1093/neuonc/noab106"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Publicação-resumo oficial da classificação WHO CNS5, usada como referência para os critérios de grau e diagnóstico molecular (gliomas, meningioma, meduloblastoma, PitNETs) citados na aula. Verificação feita via busca web nesta sessão (título, autores, periódico, ano e DOI conferidos contra o resultado da busca) — não houve leitura do texto completo do artigo nesta sessão; tratar como confirmação de metadados/resumo, não como leitura integral."
+    },
+    "ostrom2023-cbtrus-epidemiology": {
+      "tipo": "artigo_revisao",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1093/neuonc/noad149"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Relatório estatístico CBTRUS (EUA), fonte populacional típica para dados de incidência/idade média por tipo histológico do tipo apresentado na aula. Verificação feita via busca web nesta sessão (título, autores, periódico, ano e DOI conferidos contra o resultado da busca) — não houve leitura do texto completo do artigo nesta sessão; tratar como confirmação de metadados/resumo, não como leitura integral."
+    },
+    "stupp2005-nejm-temozolomide-glioblastoma": {
+      "tipo": "artigo_revisao",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1056/NEJMoa043330"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Ensaio clínico original que define o regime de tratamento citado na aula (radioterapia + temozolomida concomitante/adjuvante, sobrevida em 5 anos, benefício por status de MGMT). Verificação feita via busca web nesta sessão (título, autores, periódico, ano e DOI conferidos contra o resultado da busca) — não houve leitura do texto completo do artigo nesta sessão; tratar como confirmação de metadados/resumo, não como leitura integral."
+    },
+    "simpson1957-meningioma-recurrence": {
+      "tipo": "artigo_revisao",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1136/jnnp.20.1.22"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Publicação original da Escala de Simpson de graus de ressecção de meningioma, citada na aula. Verificação feita via busca web nesta sessão (título, autores, periódico, ano e DOI conferidos contra o resultado da busca) — não houve leitura do texto completo do artigo nesta sessão; tratar como confirmação de metadados/resumo, não como leitura integral."
+    },
+    "deangelis2001-nejm-brain-tumors": {
+      "tipo": "artigo_revisao",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1056/NEJM200101113440207"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Revisão clássica de apresentação clínica, diagnóstico e conduta geral em tumores cerebrais, usada como referência de literatura para a semiologia geral e por lobo apresentada na aula. Verificação feita via busca web nesta sessão (título, autores, periódico, ano e DOI conferidos contra o resultado da busca) — não houve leitura do texto completo do artigo nesta sessão; tratar como confirmação de metadados/resumo, não como leitura integral."
+    },
+    "goldbrunner2020-eano-vestibular-schwannoma": {
+      "tipo": "artigo_revisao",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1093/neuonc/noz153"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Diretriz EANO de diagnóstico e tratamento do schwannoma vestibular, cobrindo tríade clínica, histologia e opções de conduta (vigilância, cirurgia, radiocirurgia) citadas na aula. Verificação feita via busca web nesta sessão (título, autores, periódico, ano e DOI conferidos contra o resultado da busca) — não houve leitura do texto completo do artigo nesta sessão; tratar como confirmação de metadados/resumo, não como leitura integral."
+    },
+    "muller2019-craniopharyngioma-nrdp": {
+      "tipo": "artigo_revisao",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1038/s41572-019-0125-9"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Revisão de referência (Nature Reviews Disease Primers) sobre craniofaringioma, cobrindo os subtipos adamantinomatoso e papilar citados na aula. Verificação feita via busca web nesta sessão (título, autores, periódico, ano e DOI conferidos contra o resultado da busca) — não houve leitura do texto completo do artigo nesta sessão; tratar como confirmação de metadados/resumo, não como leitura integral."
+    },
+    "puc2026-aula-funcao-pulmonar": {
+      "tipo": "material_de_aula",
+      "verificacao": "verificada_texto_integral_e_inspecao_visual",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "institucional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "PDF de 64 páginas do acervo do usuário, usado para delimitar o escopo pedagógico e os laudos práticos."
+    },
+    "albuquerque2024-sbpt-espirometria": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_texto_integral",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.36416/1806-3756/e20240169",
+        "pmid": "39841775"
+      },
+      "jurisdicao": "Brasil",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Documento oficial SBPT/Jornal Brasileiro de Pneumologia conferido em texto integral na pesquisa ativa."
+    },
+    "graham2019-ats-ers-espirometria": {
+      "tipo": "padrao_tecnico",
+      "verificacao": "verificada_texto_integral",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1164/rccm.201908-1590ST",
+        "pmid": "31613151"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Declaração técnica oficial ATS/ERS conferida em texto integral na pesquisa ativa."
+    },
+    "wanger2005-ats-ers-volumes-pulmonares": {
+      "tipo": "padrao_tecnico",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1183/09031936.05.00035005"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Declaração técnica oficial ATS/ERS sobre padronização da medida de volumes pulmonares (pletismografia, diluição de gases). A SBPT 2024 (albuquerque2024-sbpt-espirometria) declara explicitamente que volumes pulmonares ficaram para documento subsequente, por isso este padrão internacional preenche a lacuna. Verificação feita via busca web nesta sessão (metadados, DOI e conteúdo resumido conferidos) — não houve leitura do texto completo do artigo original; tratar como confirmação de metadados/resumo, não como leitura integral."
+    },
+    "graham2017-ats-ers-dlco": {
+      "tipo": "padrao_tecnico",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1183/13993003.00016-2016"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Declaração técnica oficial ATS/ERS sobre padronização da DLCO (correção por hemoglobina, volume alveolar, KCO). A SBPT 2024 também deixou DLCO para documento subsequente; este padrão internacional é a referência primária adotada para os itens de difusão pulmonar do banco. Verificação feita via busca web nesta sessão (metadados, DOI e pontos-chave de interpretação conferidos) — não houve leitura do texto completo do artigo original; tratar como confirmação de metadados/resumo, não como leitura integral."
+    },
+    "cotton2014-practical-gi-endoscopy": {
+      "tipo": "livro_texto",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "rex2015-quality-indicators-colonoscopy": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "asge2016-antithrombotics": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_texto_integral",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1016/j.gie.2015.09.035"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Texto integral lido (PDF oficial ASGE). Confirmado: Tabela 11 recomenda ponte com heparina para prótese valvar mitral mecânica; Tabela 13 recomenda suspender anticoagulante + ponte + reinício no mesmo dia do procedimento para alto risco hemorrágico associado a alto risco tromboembólico; declaração explícita de que o ensaio PERIOP-2 (bridging aumenta sangramento sem reduzir eventos) não deve ser extrapolado para prótese valvar mecânica."
+    },
+    "asge2015-profilaxia-antibiotica": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_texto_integral",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Recomendações oficiais lidas na página de diretrizes da ASGE (texto das recomendações, não o PDF completo do artigo): antibioticoprofilaxia 'required for all patients regardless of endoscopic procedures... on admission' para cirróticos com HDA; profilaxia rotineira não indicada para prevenir endocardite/infecção em EDA e colonoscopia eletivas padrão."
+    },
+    "baveno2022-vii": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "lai2009-bbps": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "asge2018-sedacao-anestesia": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "sharma2006-prague-cm": {
+      "tipo": "padrao_tecnico",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "shaheen2016-acg-barrett": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "lundell1999-la-classification": {
+      "tipo": "padrao_tecnico",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "katz2022-acg-gerd": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "kramer2015-naspghan-corpo-estranho": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "asge2011-foreign-body": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "acg2021-ugib": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_texto_integral",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.14309/ajg.0000000000001245"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Texto integral lido (PDF, Am J Gastroenterol 2021;116:899-917). Confirmado: Statement 5 (endoscopia em até 24h, recomendação condicional, evidência muito baixa); Statement 6 (terapia endoscópica recomendada para sangramento ativo e vaso visível não sangrante, recomendação forte); Statements 8-10 (terapia combinada recomendada, epinefrina isolada não deve ser usada); Statements 13-14 (IBP em dose alta por 3 dias, depois dose dobrada até 2 semanas em pacientes de alto risco). O documento NÃO trata da indicação de biópsia de úlcera gástrica vs. duodenal (esse tópico foi removido das referências de endoscopia-12, que não é sustentado por este guideline)."
+    },
+    "forrest1974-classification": {
+      "tipo": "padrao_tecnico",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "uspstf2021-crc": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_texto_integral",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1001/jama.2021.6238"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Recomendação oficial lida na página da USPSTF: rastreamento recomendado dos 45 aos 49 anos (grau B) e dos 50 aos 75 anos (grau A); colonoscopia com achado negativo permite intervalo de 10 anos."
+    },
+    "shaukat2021-acg-rastreamento-crc": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "ko2020-aga-anemia-ferropriva": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "lambert2003-paris-classification": {
+      "tipo": "padrao_tecnico",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "gupta2020-ustf-vigilancia-polipectomia": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_texto_integral",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.1053/j.gastro.2019.10.026"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Texto integral lido (PDF oficial ASGE/AGA/ACG, publicado simultaneamente em Gastrointestinal Endoscopy, Gastroenterology e Am J Gastroenterol). Tabela 4 confirma exatamente: normal 10 anos; 1-2 adenomas tubulares <10mm = 7-10 anos (forte, moderada); 3-4 adenomas <10mm = 3-5 anos (fraca, muito baixa); 5-10 adenomas <10mm = 3 anos (forte, moderada). Também confirma os parâmetros de qualidade do exame (ADR >30%/>20%, preparo adequado >85%, intubação cecal >95%) citados por referência cruzada em endoscopia-03 e endoscopia-19."
+    },
+    "rubin2019-acg-uc": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "lichtenstein2018-acg-crohn": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "kothari2019-asge-eventos-adversos-colonoscopia": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_por_busca_resumo",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {},
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Conferido por busca ativa (título, periódico, ano, DOI/identificador e resumo dos achados) durante a criação do lote de questões de Endoscopia Digestiva; texto integral não foi lido nesta auditoria."
+    },
+    "hirasawa2015-sindrome-pos-polipectomia": {
+      "tipo": "diretriz_consenso",
+      "verificacao": "verificada_texto_integral",
+      "verificadoEm": "2026-08-31",
+      "identificadores": {
+        "doi": "10.4253/wjge.v7.i12.1055"
+      },
+      "jurisdicao": "internacional",
+      "vigente": true,
+      "substituidaPor": null,
+      "observacoes": "Texto integral lido (artigo de acesso aberto, World J Gastrointest Endosc). Confirma definição da síndrome pós-polipectomia (dor abdominal localizada, febre, sinais peritoneais localizados, de horas até 7 dias após o procedimento, na ausência de ar livre à radiografia/TC) e conduta conservadora (jejum, hidratação, antibióticos de amplo espectro, ou antibiótico oral e dieta líquida em casos leves), reservando cirurgia para sinais peritoneais difusos."
+    }
+  }
+}

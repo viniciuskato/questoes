@@ -1,0 +1,11 @@
+# Dados pessoais de desempenho/estudo — não publicar em repositório público.
+_dados/registros/
+_dados/melhorias de questões/
+
+# Backups locais de edição — não usados pelo site publicado, só bloat.
+_banco/_archive/
+
+# Ambiente
+node_modules/
+Thumbs.db
+.DS_Store

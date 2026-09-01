@@ -1,0 +1,10 @@
+{
+  "quizId": "disturbios-sodio-agua",
+  "title": "Nefrologia — Distúrbios de Sódio e Água",
+  "description": "24 questões baseadas na aula do Prof. Dr. Abel Esteves Soares: compartimentos corporais, volemia, osmolalidade, néfron, hiponatremia, hipernatremia, SIHAD, síndrome cerebral perdedora de sal e diabetes insípido.",
+  "footnote": "Conteúdo delimitado pela aula DISTÚRBIO DE SÓDIO E ÁGUA.pdf. Material educacional; condutas clínicas reais exigem avaliação individual e monitorização da velocidade de correção do sódio.",
+  "strictOptionBalance": true,
+  "ordem": 1,
+  "resumo": "compartimentos, volemia, osmolalidade, hiponatremia, hipernatremia, SIHAD, síndrome cerebral perdedora de sal e diabetes insípido",
+  "filtro": { "temas": ["Distúrbios de Sódio e Água"] }
+}

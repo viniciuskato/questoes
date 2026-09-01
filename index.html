@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Questões — Central de estudo</title>
+  <link rel="stylesheet" href="_shared/theme.css">
+  <link rel="stylesheet" href="styles/app.css">
+</head>
+<body class="spa-shell">
+  <header class="app-header">
+    <a class="brand" href="#/inicio" aria-label="Questões — início"><span class="brand-mark">Q</span><span><strong>Questões</strong><small>Central de estudo</small></span></a>
+    <nav class="app-nav" aria-label="Navegação principal">
+      <a href="#/inicio" data-route-link="inicio">Início</a>
+      <a href="#/seletor" data-route-link="seletor">Estudar</a>
+      <a href="#/desempenho" data-route-link="desempenho">Desempenho</a>
+      <a href="#/revisao" data-route-link="revisao">Revisão</a>
+      <a href="#/preferencias" data-route-link="preferencias">Preferências</a>
+    </nav>
+  </header>
+  <div id="protocol-warning" class="protocol-warning" hidden role="alert"></div>
+  <main id="app" class="app-main" tabindex="-1" aria-live="polite">
+    <div class="route-state"><span class="spinner" aria-hidden="true"></span>Carregando…</div>
+  </main>
+
+  <div class="settings-overlay" id="settings-overlay" aria-hidden="true">
+    <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="settings-header"><h2 id="settings-title">Configurações</h2><button type="button" class="settings-close" aria-label="Fechar configurações">×</button></div>
+      <div class="settings-body">
+        <div class="setting-row"><div class="setting-copy"><strong>Tema</strong><span>Claridade da interface.</span></div><div class="segmented-control"><button type="button" data-theme-choice="light">Claro</button><button type="button" data-theme-choice="dark">Escuro</button></div></div>
+        <div class="setting-row"><div class="setting-copy"><strong>Paleta</strong><span>Normal ou pré-sono.</span></div><div class="segmented-control"><button type="button" data-palette-choice="normal">Normal</button><button type="button" data-palette-choice="presleep">Pré-sono</button></div></div>
+        <div class="setting-row"><div class="setting-copy"><strong>Questões</strong><span>Lista ou uma por vez.</span></div><div class="segmented-control"><button type="button" data-view-choice="list">Lista</button><button type="button" data-view-choice="focus">Uma por vez</button></div></div>
+      </div>
+      <div class="settings-footer"><button type="button" class="settings-done">Concluído</button></div>
+    </section>
+  </div>
+  <script src="_shared/app.js"></script>
+  <script type="module" src="app/main.mjs"></script>
+</body>
+</html>

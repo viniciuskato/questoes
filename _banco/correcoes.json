@@ -1,0 +1,2161 @@
+{
+  "schemaVersion": 2,
+  "versao": 2,
+  "atualizadoEm": "2026-08-31",
+  "correcoes": [
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[1]",
+        "alternativas[2]",
+        "alternativas[3]",
+        "alternativas[4]"
+      ],
+      "motivo": "Auditoria editorial integrada (ESC 2023 + Duke-ISCVID 2023, NBME Item-Writing Guide 2024): os 4 distratores empilhavam linguagem absoluta (\"sempre\", \"exatamente\", \"plenamente\", \"exclusivamente\", \"em nenhuma medida\") enquanto o gabarito usava linguagem sempre ressalvada — falha no teste de ocultação (pista formal independente do conteúdo). Reescritos para manter o mesmo erro clínico (atraso cirúrgico rígido pós-AVC/HIC, equivalência indevida entre trombólise/trombectomia no êmbolo séptico, anticoagulação rotineira sem evidência, e desconsideração do dano neurológico no coma) sem a marca absolutista. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "delgado2023-esc-endocardite",
+        "siquierpadilla2022-timing-cirurgico"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "endocardite-26"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[0]",
+        "alternativas[1]",
+        "alternativas[3]",
+        "alternativas[4]"
+      ],
+      "motivo": "Mesmo padrão de pista por linguagem absoluta identificado nos 4 distratores (\"sempre\", \"nunca\", \"completamente\", \"qualquer etiologia\"), com gabarito em linguagem ressalvada. Distratores reescritos preservando o erro clínico (uso rotineiro de aminoglicosídeo na EI estafilocócica de valva nativa, substituição do betalactâmico na EI enterocócica por HLAR, uso obrigatório durante todo o curso com ceftriaxona). Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "delgado2023-esc-endocardite"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "endocardite-46"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[0]",
+        "alternativas[2]",
+        "alternativas[3]",
+        "alternativas[4]"
+      ],
+      "motivo": "Mesmo padrão de pista por linguagem absoluta identificado nos 4 distratores (\"sempre\", \"exclusivamente\", \"qualquer grau\"), com gabarito em linguagem ressalvada. Distratores reescritos preservando o erro clínico sobre o momento de introdução da rifampicina na EI estafilocócica de prótese valvar. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "delgado2023-esc-endocardite"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "endocardite-47"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[0]",
+        "alternativas[2]",
+        "alternativas[3]",
+        "alternativas[4]"
+      ],
+      "motivo": "Mesmo padrão de pista por linguagem absoluta identificado nos 4 distratores (\"sempre\", \"fixas\", \"obrigatoriamente\"), com gabarito em linguagem ressalvada. Distratores reescritos preservando o erro clínico sobre duração e contagem do tratamento na EI de prótese valvar. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "delgado2023-esc-endocardite"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "endocardite-48"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[0]",
+        "alternativas[1]",
+        "alternativas[4]"
+      ],
+      "motivo": "Teste de comprimento das alternativas: o gabarito estava ~43% mais longo que a média dos distratores (combinava três fatos: valva, fatores de risco e manifestação embólica) enquanto os distratores eram frases isoladas mais curtas, criando pista de extensão. Distratores reescritos com nível de detalhe comparável, sem alterar o erro clínico neles descrito. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "delgado2023-esc-endocardite"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "endocardite-29"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_fonte",
+      "camposAlterados": [
+        "fontes.json:eucast2026-definitions (texto da citação)"
+      ],
+      "motivo": "Auditoria integral das 76 questões de 'Antimicrobianos - fundamentos' (ICMJE 2026, NBME Item-Writing Guide 2024, EUCAST, IDSA, WHO AWaRe, Anvisa). A observação de fontesMeta já sinalizava que a citação cadastrada fundia dois documentos EUCAST distintos ('Definitions of S, I and R', sem numeração de versão própria, e 'Breakpoint tables for interpretation of MICs and zone diameters' v16.1). Texto da citação separado para refletir corretamente os dois documentos; usado como referência de antimicrobianos-007 (categoria EUCAST I). Não houve alteração de gabarito ou de conteúdo clínico de nenhuma questão.",
+      "referencias": [
+        "eucast2026-definitions"
+      ],
+      "responsavel": null,
+      "usoDeIA": "auditoria_de_conteudo_e_fontes_conduzida_por_ia_sob_solicitacao_do_usuario_pendente_validacao_humana_final",
+      "questaoId": "antimicrobianos-007"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[3]",
+        "alternativas[4]"
+      ],
+      "motivo": "Auditoria editorial integrada (NBME Item-Writing Guide 2024): auditar-qualidade-itens.js sinalizou 2 distratores com linguagem absoluta (\"depende exclusivamente\", \"impede qualquer ajuste renal\"), possibilitando eliminação por teste de ocultação sem domínio do conteúdo. Reescritos para preservar o mesmo erro conceitual (confundir concentração sérica com volume corporal de sódio; inverter o sentido da resposta dos sensores de volume à expansão) sem a marca absolutista. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "soares2026-sodio-agua"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "sodio-agua-03",
+      "de": [
+        "Contração gera natriurese e expansão gera antinatriurese",
+        "Contração favorece antinatriurese e expansão favorece natriurese",
+        "Contração e expansão geram natriurese, diferenciando-se apenas pela excreção de água",
+        "A resposta depende exclusivamente da concentração sérica de sódio",
+        "A expansão inibe os sensores de volume e impede qualquer ajuste renal"
+      ],
+      "para": [
+        "Contração gera natriurese e expansão gera antinatriurese",
+        "Contração favorece antinatriurese e expansão favorece natriurese",
+        "Contração e expansão geram natriurese, diferenciando-se apenas pela excreção de água",
+        "A resposta é determinada principalmente pela concentração sérica de sódio, não pelo volume extracelular",
+        "A expansão reduz a atividade dos sensores de volume, dificultando a resposta natriurética renal"
+      ]
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[0]",
+        "alternativas[1]",
+        "alternativas[2]",
+        "alternativas[3]",
+        "alternativas[4]"
+      ],
+      "motivo": "Auditoria editorial: os percentuais de gravidade não declaravam o referente (% de quê — peso corporal, VEC, água corporal total?), uma ambiguidade estrutural independente da fonte. Adicionado \"do VEC\" a cada alternativa numérica para casar com o enunciado (\"grau ... de depleção do volume extracelular\"). Alternativa 4 reescrita para maior clareza sem alterar o erro testado. NÃO foi possível conferir os limiares numéricos (10%/30%) contra o slide 11 original — o PDF-fonte não está disponível neste ambiente; os valores foram mantidos como estavam, e o item permanece em revisão até confirmação humana com a fonte primária.",
+      "referencias": [
+        "soares2026-sodio-agua"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "sodio-agua-04",
+      "de": [
+        "Leve, menor que 5%",
+        "Leve, até 10%",
+        "Moderada, entre 10% e 30%",
+        "Grave, maior que 30%",
+        "Não há depleção, pois a sede indica osmolalidade isolada"
+      ],
+      "para": [
+        "Leve, menor que 5% do VEC",
+        "Leve, até 10% do VEC",
+        "Moderada, entre 10% e 30% do VEC",
+        "Grave, maior que 30% do VEC",
+        "Não há depleção, pois a sede indica apenas alteração da osmolalidade, não do volume extracelular"
+      ]
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_factual",
+      "camposAlterados": [
+        "alternativas[0..4]",
+        "explicacao"
+      ],
+      "motivo": "Erro de unidade: a questão pergunta \"osmolalidade\" (grandeza expressa por kg de solvente), mas as alternativas usavam mOsm/L (unidade de osmolaridade, por litro de solução). Corrigido para mOsm/kg em todas as alternativas e na explicação, alinhando com o uso correto já empregado em sodio-agua-16 e sodio-agua-22 do mesmo banco. Valores numéricos e gabarito não mudaram.",
+      "referencias": [
+        "soares2026-sodio-agua"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "sodio-agua-05",
+      "de": {
+        "alternativas": [
+          "275 mOsm/L",
+          "285 mOsm/L",
+          "300 mOsm/L",
+          "290 mOsm/L",
+          "320 mOsm/L"
+        ],
+        "explicacao": "POsm ≈ 2×Na + glicose/18 + ureia/6 = 280 + 5 + 5 = 290 mOsm/L. Dividir glicose por 180 e ureia por 60 sem o fator de conversão final produziria erro de unidade; somar os valores brutos também superestimaria a osmolalidade."
+      },
+      "para": {
+        "alternativas": [
+          "275 mOsm/kg",
+          "285 mOsm/kg",
+          "300 mOsm/kg",
+          "290 mOsm/kg",
+          "320 mOsm/kg"
+        ],
+        "explicacao": "POsm ≈ 2×Na + glicose/18 + ureia/6 = 280 + 5 + 5 = 290 mOsm/kg. Dividir glicose por 180 e ureia por 60 sem o fator de conversão final produziria erro de unidade; somar os valores brutos também superestimaria a osmolalidade."
+      }
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Calibração de evidência (Política Editorial, princípio 3): fontesMeta de spasovski2014-hiponatremia já registrava a ressalva \"considerar sinalizar antiguidade em questões quantitativas de conduta\". Como sodio-agua-17 é item de conduta terapêutica, foi adicionada nota explícita sobre a idade da diretriz (12 anos, sem atualização formal) e sobre a necessidade de conferir protocolos vigentes antes de uso clínico.",
+      "referencias": [
+        "spasovski2014-hiponatremia"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "sodio-agua-17",
+      "de": "A aula lista tratamento da causa, restrição hídrica, furosemida e solução salina hipertônica. A escolha depende da gravidade e dos sintomas; diretrizes enfatizam monitorização e prevenção de correção excessiva. SF 0,9% é típico da hipovolemia; desmopressina trata DI central; fludrocortisona aparece na síndrome cerebral perdedora de sal.",
+      "para": "A aula lista tratamento da causa, restrição hídrica, furosemida e solução salina hipertônica. A escolha depende da gravidade e dos sintomas; diretrizes enfatizam monitorização e prevenção de correção excessiva. SF 0,9% é típico da hipovolemia; desmopressina trata DI central; fludrocortisona aparece na síndrome cerebral perdedora de sal. A diretriz europeia citada é de 2014 (Spasovski et al.) e não teve atualização formal publicada até esta auditoria; os princípios gerais (tratar a causa, restringir água, escalonar para furosemida ou salina hipertônica conforme gravidade) permanecem consistentes com a prática atual, mas doses e protocolos específicos devem ser conferidos em fonte vigente antes de aplicação clínica."
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Calibração de evidência (Política Editorial, princípio 3): a fisiopatologia da SCPS é hipótese mecanística amplamente aceita, mas não é consenso fechado — parte da literatura de nefrologia questiona a própria distinção da SCPS como entidade separada da SIHAD. Adicionada ressalva explícita para não apresentar o mecanismo como fato estável incontroverso.",
+      "referencias": [
+        "soares2026-sodio-agua"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "sodio-agua-18",
+      "de": "A síndrome cerebral perdedora de sal envolve incapacidade renal de conservar sódio, relacionada na aula ao BNP, à redução da reabsorção de Na e à menor atividade do SRAA. Isso causa natriurese, poliúria e contração volêmica, diferentemente da retenção de água da SIHAD.",
+      "para": "A síndrome cerebral perdedora de sal envolve incapacidade renal de conservar sódio, relacionada na aula ao BNP, à redução da reabsorção de Na e à menor atividade do SRAA. Isso causa natriurese, poliúria e contração volêmica, diferentemente da retenção de água da SIHAD. O mecanismo natriurético (via BNP/peptídeos natriuréticos e supressão do SRAA) é a explicação mais aceita, mas a fisiopatologia da síndrome cerebral perdedora de sal ainda é debatida na literatura, inclusive quanto à sua distinção como entidade separada da SIHAD."
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Calibração de evidência: mesmo racional de sodio-agua-18. O item mantém a resposta didaticamente correta (distinção clássica por volemia), mas evita apresentá-la como um corte diagnóstico livre de controvérsia.",
+      "referencias": [
+        "soares2026-sodio-agua"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "sodio-agua-19",
+      "de": "SIHAD e SCPS podem compartilhar hiponatremia hipotônica, urina concentrada, sódio urinário alto e hipouricemia. A distinção central na aula é a volemia: SCPS causa depleção evidente e poliúria; SIHAD apresenta volume normal ou discretamente aumentado. O contexto neurológico isolado não resolve o diferencial.",
+      "para": "SIHAD e SCPS podem compartilhar hiponatremia hipotônica, urina concentrada, sódio urinário alto e hipouricemia. A distinção central na aula é a volemia: SCPS causa depleção evidente e poliúria; SIHAD apresenta volume normal ou discretamente aumentado. O contexto neurológico isolado não resolve o diferencial. Na prática, essa distinção pela volemia é frequentemente difícil e controversa — a avaliação clínica do VEC tem baixa reprodutibilidade, e parte da literatura de nefrologia questiona se SCPS e SIHAD são de fato entidades distintas após hemorragia subaracnóidea."
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Calibração de evidência: a recomendação de fludrocortisona é respaldada por ensaios de pequeno porte, não por diretriz robusta de alta certeza. Adicionada ressalva para não apresentar como conduta padrão consolidada.",
+      "referencias": [
+        "soares2026-sodio-agua"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "sodio-agua-20",
+      "de": "Como há perda renal de sal com hipovolemia, deve-se repor volume e sódio; cápsulas de sal e fludrocortisona podem ajudar a reduzir a perda. Restrição hídrica, útil em SIHAD, tende a agravar a hipovolemia; desmopressina é dirigida à deficiência central de ADH.",
+      "para": "Como há perda renal de sal com hipovolemia, deve-se repor volume e sódio; cápsulas de sal e fludrocortisona podem ajudar a reduzir a perda. Restrição hídrica, útil em SIHAD, tende a agravar a hipovolemia; desmopressina é dirigida à deficiência central de ADH. A evidência para fludrocortisona nesse contexto vem de ensaios pequenos, sobretudo em hemorragia subaracnóidea; não é uma recomendação de primeira linha universalmente estabelecida, e sim um coadjuvante possível quando a perda salina persiste apesar da reposição volêmica."
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-rotacao-pa-ap.png -> rx-caso-02-mediastino.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-02"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-valvopatia-mitral-pa-lateral.png -> rx-caso-03-cardiomediastino.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-03"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-derrame-pericardico-ct.png -> rx-caso-04-coracao-tc.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-04"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-atelectasia-lobo-inferior-direito.png -> rx-caso-05-comparativa.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-05"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-padrao-intersticial-fpi.png -> rx-caso-06-pulmoes.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-06"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-pneumonia-lobar-broncograma.png -> rx-caso-07-pulmao.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-07"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-atelectasia-lobo-medio.png -> rx-caso-08-pulmao.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-08"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-derrame-pleural-menisco.png -> rx-caso-09-pleura.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-09"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-pneumotorax-expiracao.png -> rx-caso-10-pleura.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-10"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "imagem",
+        "imagemLegenda"
+      ],
+      "motivo": "Auditoria de qualidade (NBME/teste de ocultação): a legenda da imagem (renderizada como legenda visível no HTML, cf. template-quiz.html) e/ou o nome do arquivo declaravam o diagnóstico ou o nome do sinal radiológico pedido como resposta, permitindo acertar o item sem interpretar a imagem. Legenda reescrita para descrever apenas a localização/orientação da seta, sem nomear o achado; arquivo renomeado para um identificador neutro (rx-pneumoperitonio.png -> rx-caso-11-abdome.png).",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_ocultacao_de_resposta_com_validacao_humana",
+      "questaoId": "rxtorax-11"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "correcao_construcao_item",
+      "camposAlterados": [
+        "alternativas[3]"
+      ],
+      "motivo": "Auditoria de qualidade e equidade: o distrator de tuberculose introduzia um dado não fornecido no enunciado do caso (\"exposição ocupacional como pedreiro\"), permitindo eliminação do item por pista formal (fato inventado, não por raciocínio clínico) e associando tuberculose a uma ocupação sem base no caso descrito (associação demográfica/ocupacional sem pertinência clínica estabelecida, cf. Política Editorial, princípio 7). Distrator reescrito mantendo-o clinicamente plausível e igualmente incorreto sem depender de informação externa ao enunciado.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_construcao_do_item_e_equidade_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-06"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "nota_editorial",
+      "camposAlterados": [],
+      "motivo": "Fechamento da auditoria de maior risco clínico (Sódio e Água), etapa 3.3: MATRIZ-EVIDENCIA-SODIO-AGUA.md (Etapa 4) identificou conflito não resolvido entre os cortes percentuais de gravidade da depleção do VEC apresentados pela aula/questão (leve <5%, leve até 10%, moderada 10–30%, grave >30%) e os cortes do Manual MSD — Depleção de Volume (leve <5%, moderada 5–10%, grave >10%): mesmos rótulos de gravidade, limiares numéricos incompatíveis. Esta sessão não decide qual convenção está correta e não altera enunciado, alternativas, gabarito ou explicação. Estado editorial preservado como `em_revisao`. A aprovação desta questão depende de confirmação humana, junto à disciplina de Nefrologia (material soares2026-sodio-agua), de qual convenção percentual é de fato a adotada pela aula/prova.",
+      "referencias": [
+        "soares2026-sodio-agua"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "registro_de_conflito_de_fonte_identificado_em_auditoria_anterior_sem_alteracao_de_conteudo",
+      "questaoId": "sodio-agua-04"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "atualizacao_estado_editorial",
+      "camposAlterados": [
+        "estadoEditorial"
+      ],
+      "motivo": "Fechamento da auditoria de maior risco clínico (Sódio e Água), etapa 3.3: MATRIZ-EVIDENCIA-SODIO-AGUA.md (Etapa 4) classificou esta questão como `possivel_desatualizacao`. A conduta descrita (restrição de água livre + furosemida na hiponatremia hipervolêmica por insuficiência cardíaca) é válida e sustentada por Spasovski 2024 (NDT, doi:10.1093/ndt/gfae162) como conduta de segunda linha, mas o mesmo padrão de tratamento de 2024 aponta tolvaptano como \"treatment of choice\" nesse cenário — conduta que a questão não menciona. Estado editorial alterado de `aprovada` para `requer_atualizacao` (estado já previsto em POLITICA-EDITORIAL.md e aceito pelo validador estrutural, sem necessidade de alteração de schema). Não foi acrescentado tolvaptano ao texto, nem alterada resposta, explicação ou alternativas — a decisão sobre incorporar essa conduta mais recente ao item é editorial e humana, e permanece pendente.",
+      "referencias": [
+        "soares2026-sodio-agua"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "registro_de_decisao_editorial_delimitada_pelo_usuario_sem_alteracao_de_conteudo_clinico",
+      "questaoId": "sodio-agua-08",
+      "de": {
+        "estadoEditorial": "aprovada"
+      },
+      "para": {
+        "estadoEditorial": "requer_atualizacao"
+      }
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "fonte_complementar",
+      "camposAlterados": [
+        "referencias[]"
+      ],
+      "motivo": "Fechamento da auditoria de maior risco clínico (Sódio e Água), etapa 3.3: MATRIZ-EVIDENCIA-SODIO-AGUA.md registrou correspondência DIRETA entre a conduta descrita (SF 0,9% na hiponatremia hipovolêmica por tiazídico/diarreia) e Spasovski 2024 (NDT), que recomenda \"isotonic NaCl fluid\" como tratamento primário desse padrão. Fonte complementar cadastrada em fontes.json (spasovski2024-hiponatremia-tratamento-padrao, com DOI confirmado) e acrescentada a referencias[], preservando soares2026-sodio-agua como fonte de aula. Nenhuma alteração de enunciado, alternativas, gabarito ou explicação.",
+      "referencias": [
+        "soares2026-sodio-agua",
+        "spasovski2024-hiponatremia-tratamento-padrao"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "adicao_de_fonte_bibliografica_complementar_com_correspondencia_direta_confirmada_em_auditoria_anterior",
+      "questaoId": "sodio-agua-09",
+      "de": {
+        "referencias": [
+          "soares2026-sodio-agua"
+        ]
+      },
+      "para": {
+        "referencias": [
+          "soares2026-sodio-agua",
+          "spasovski2024-hiponatremia-tratamento-padrao"
+        ]
+      }
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "fonte_complementar",
+      "camposAlterados": [
+        "referencias[]"
+      ],
+      "motivo": "Fechamento da auditoria de maior risco clínico (Sódio e Água), etapa 3.3: MATRIZ-EVIDENCIA-SODIO-AGUA.md registrou correspondência DIRETA entre a conduta descrita (água livre + furosemida na hipernatremia hipervolêmica por sobrecarga de sódio) e StatPearls — Hypernatremia (Sonani/Al-Dhahir, atualizado 24 ago. 2023): \"sodium intoxication... requiring the use of loop diuretics... to remove excess sodium\", combinado a reposição de água livre. Fonte complementar cadastrada em fontes.json (statpearls2023-hipernatremia, com NCBI Bookshelf ID confirmado) e acrescentada a referencias[], preservando soares2026-sodio-agua como fonte de aula. Nenhuma alteração de enunciado, alternativas, gabarito ou explicação.",
+      "referencias": [
+        "soares2026-sodio-agua",
+        "statpearls2023-hipernatremia"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "adicao_de_fonte_bibliografica_complementar_com_correspondencia_direta_confirmada_em_auditoria_anterior",
+      "questaoId": "sodio-agua-11",
+      "de": {
+        "referencias": [
+          "soares2026-sodio-agua"
+        ]
+      },
+      "para": {
+        "referencias": [
+          "soares2026-sodio-agua",
+          "statpearls2023-hipernatremia"
+        ]
+      }
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "nota_editorial",
+      "camposAlterados": [],
+      "motivo": "Fechamento da auditoria de maior risco clínico (Sódio e Água), etapa 3.3: MATRIZ-EVIDENCIA-SODIO-AGUA.md classificou a correspondência entre esta questão e a fonte complementar candidata (StatPearls — Burn Fluid Resuscitation, NBK534227) como INDIRETA — o texto lido confirma cristaloide isotônico/Ringer lactato como prioridade de reposição volêmica no grande queimado em geral, mas não discute hipernatremia especificamente. Por instrução explícita de só adicionar fonte complementar quando houver correspondência direta entre fonte e afirmação, nenhuma referência foi acrescentada a esta questão nesta sessão. Nenhuma alteração de conteúdo, alternativas, gabarito ou explicação.",
+      "referencias": [
+        "soares2026-sodio-agua"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "registro_de_decisao_editorial_de_nao_adicionar_fonte_por_correspondencia_indireta",
+      "questaoId": "sodio-agua-12"
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "fonte_complementar",
+      "camposAlterados": [
+        "referencias[]"
+      ],
+      "motivo": "Fechamento da auditoria de maior risco clínico (Sódio e Água), etapa 3.3: MATRIZ-EVIDENCIA-SODIO-AGUA.md registrou correspondência DIRETA entre o diagnóstico de diabetes insípido pós-cirurgia hipofisária (Na alto, osmolalidade plasmática alta, osmolalidade urinária baixa, densidade urinária baixa) e StatPearls — Arginine Vasopressin Disorder (Diabetes Insipidus) (Hui et al., atualizado 11 jan. 2024), que descreve a fisiopatologia central (déficit de AVP) sustentando esse quadro laboratorial. Fonte complementar cadastrada em fontes.json (statpearls2024-avp-disorder-di, com NCBI Bookshelf ID confirmado) e acrescentada a referencias[], preservando soares2026-sodio-agua como fonte de aula. Nenhuma alteração de enunciado, alternativas, gabarito ou explicação. Nota terminológica (AVP-D/AVP-R vs. nomenclatura clássica) registrada apenas como melhoria opcional no backlog editorial, não como erro.",
+      "referencias": [
+        "soares2026-sodio-agua",
+        "statpearls2024-avp-disorder-di"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "adicao_de_fonte_bibliografica_complementar_com_correspondencia_direta_confirmada_em_auditoria_anterior",
+      "questaoId": "sodio-agua-22",
+      "de": {
+        "referencias": [
+          "soares2026-sodio-agua"
+        ]
+      },
+      "para": {
+        "referencias": [
+          "soares2026-sodio-agua",
+          "statpearls2024-avp-disorder-di"
+        ]
+      }
+    },
+    {
+      "data": "2026-08-29",
+      "tipo": "fonte_complementar",
+      "camposAlterados": [
+        "referencias[]"
+      ],
+      "motivo": "Fechamento da auditoria de maior risco clínico (Sódio e Água), etapa 3.3: MATRIZ-EVIDENCIA-SODIO-AGUA.md registrou correspondência DIRETA entre a resposta à desmopressina (indicada na deficiência central de ADH, ineficaz na resistência renal) e StatPearls — Arginine Vasopressin Disorder (Diabetes Insipidus) (Hui et al., atualizado 11 jan. 2024): aumento >100% da osmolalidade urinária no DI central completo, resposta mínima/nula no DI nefrogênico completo. Fonte complementar cadastrada em fontes.json (statpearls2024-avp-disorder-di) e acrescentada a referencias[], preservando soares2026-sodio-agua como fonte de aula. Nenhuma alteração de enunciado, alternativas, gabarito ou explicação. Mesma nota terminológica de sodio-agua-22 (backlog editorial, não erro).",
+      "referencias": [
+        "soares2026-sodio-agua",
+        "statpearls2024-avp-disorder-di"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "adicao_de_fonte_bibliografica_complementar_com_correspondencia_direta_confirmada_em_auditoria_anterior",
+      "questaoId": "sodio-agua-23",
+      "de": {
+        "referencias": [
+          "soares2026-sodio-agua"
+        ]
+      },
+      "para": {
+        "referencias": [
+          "soares2026-sodio-agua",
+          "statpearls2024-avp-disorder-di"
+        ]
+      }
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-07"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-08"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-09"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-11"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-13"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-14"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-16"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-19"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-20"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-22"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-23"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Bug editorial sistêmico: o motor de quiz embaralha a ordem de exibição das alternativas por sessão/usuário, mas a explicação referenciava alternativas por letra fixa (A/B/C/D/E) como se a ordem do array no banco fosse a ordem de exibição. Reescrita para citar cada distrator pelo conteúdo (paráfrase da ideia central) em vez da letra/posição. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-24"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[0]",
+        "explicacao"
+      ],
+      "motivo": "Além do bug de referência por letra fixa (ver demais itens desta rodada), a alternativa correta introduzia um dado (uso de captopril pelo paciente) não presente no enunciado desta questão específica, gerando confusão relatada pelo usuário (\"em nenhum momento foi comentado de captopril\"). O distrator foi reescrito para uma hipótese de bronquite crônica simples por tabagismo prévio, sem inventar dado de medicação não fornecido no enunciado. Gabarito, tema e referências não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-06"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[1]",
+        "alternativas[2]",
+        "alternativas[3]",
+        "alternativas[4]",
+        "explicacao"
+      ],
+      "motivo": "Usuário reportou ter respondido \"usei exclusão\" nesta questão, sinal de que os distratores eram descartáveis por categoria óbvia (doença infecciosa dermatológica, síndrome nefrótica isolada, infecção cutânea) sem exigir conhecimento específico do achado correto. Distratores reescritos para achados clinicamente relacionados e plausíveis — glomerulopatia membranosa paraneoplásica, síndrome de Trousseau (tromboflebite migratória) e linfadenopatia cervical reativa/infecciosa, além de baqueteamento digital isolado sem os demais achados — exigindo do estudante discriminar o padrão específico (nódulo de Virchow + síndrome de VCS + baqueteamento) em vez de eliminar categorias obviamente estranhas ao tema. Corrigido também o bug de referência por letra fixa na explicação. Gabarito (alternativa 0) não mudou.",
+      "referencias": [
+        "ost2013-accp-avaliacao-inicial-cancer-pulmao"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-12"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[3]",
+        "explicacao"
+      ],
+      "motivo": "Usuário reportou ter identificado a alternativa correta apenas por ser a mais longa/detalhada (\"li a alternativa maior e já era a correta\"). Alternativa correta reescrita de forma mais concisa (de 147 para 118 caracteres), deixando de ser a mais extensa do conjunto (agora abaixo da média). Corrigido também o bug de referência por letra fixa na explicação. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-15"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[0]",
+        "explicacao"
+      ],
+      "motivo": "Usuário questionou a base da afirmação de que a lesão expansiva seria necessariamente hilar/perihilar (\"de onde você tirou isso?\"), dado que o enunciado apenas menciona lesão \"única e localizada\", sem especificar topografia. Alternativa correta e explicação reescritas para deixar explícito que a localização mais central é uma inferência a partir do padrão de pneumonias recorrentes restritas ao mesmo território (sugestivo de obstrução brônquica fixa) e da associação entre tabagismo intenso e tumores histologicamente mais centrais (ex.: carcinoma epidermoide) — não uma afirmação de achado radiológico já estabelecido e não fornecido no enunciado. Corrigido também o bug de referência por letra fixa na explicação. Gabarito não mudou.",
+      "referencias": [
+        "rivera2013-accp-diagnostico-cancer-pulmao"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-17"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Usuário reportou que a questão dependia de conhecimento de outro material (\"a questão depende de conhecimento de outros materiais\"): a explicação mencionava \"o paciente\" e exposição ocupacional como pedreiro, dados de um caso clínico de outra questão do mesmo tema, não presentes no enunciado desta questão (que é uma pergunta genérica sobre fatores de risco, sem paciente específico). Sentença removida e substituída por explicação genérica autocontida, sem referência a paciente ou caso não descrito no próprio enunciado. Corrigido também o bug de referência por letra fixa. Gabarito não mudou.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-18"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas[4]",
+        "explicacao"
+      ],
+      "motivo": "Usuário reportou ter acertado \"chutando na maior\" (\"chutei na maior e acertei, isso não deveria ser comum de ocorrer\"). Alternativa correta reescrita de forma mais concisa (de 174 para 123 caracteres), deixando de se destacar como a mais longa do conjunto (agora a mais curta). Corrigido também o bug de referência por letra fixa na explicação. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_de_conteudo_e_correcao_de_explicacoes_com_validacao_humana",
+      "questaoId": "tosse-hemoptise-21"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a expressão 'efeito líquido' no enunciado estava confusa. Reescrito o enunciado para explicitar que se pede o resultado predominante (balanço final) dos efeitos do SRAA, e os distratores foram redistribuídos para descrever mecanismos fisiológicos específicos e plausíveis (em vez de apenas negações genéricas), reduzindo a diferença de extensão entre gabarito e distratores.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-003"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por exclusão dos distratores absurdos, e o enunciado dependia implicitamente do 'paciente do caso'. Reescrito o enunciado com os dados clínicos necessários (infarto transmural extenso prévio, disfunção ventricular progressiva) reapresentados diretamente, e os distratores substituídos por erros fisiopatológicos específicos e plausíveis (hipertrofia concêntrica, hipertrofia septal isolada, 'regeneração' miocárdica) em vez de negações genéricas.",
+      "referencias": [
+        "caso4-cardiologia",
+        "braunwald2022-heart-disease"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-004"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado dependia implicitamente do 'paciente do caso' sem reapresentar os achados semiológicos. Reescrito com o achado ausculatório reproduzido diretamente no enunciado, e o distrator de estenose mitral corrigido (a versão anterior descrevia turbulência sistólica em valva estenótica, tecnicamente inconsistente, já que a estenose mitral gera sopro diastólico).",
+      "referencias": [
+        "caso4-cardiologia",
+        "braunwald2022-heart-disease"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-005"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado embutia a resposta ao mencionar explicitamente 'achado compatível com o antecedente de infarto do miocárdio do paciente', tornando a alternativa correta óbvia. Reescrito como pergunta epidemiológica direta e autocontida, sem a pista embutida.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-006"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: os distratores usavam padrão de linguagem ('apenas', 'somente', 'nenhum') facilmente identificável por eliminação lógica sem conhecimento do conteúdo, e o enunciado dependia do 'paciente descrito no caso'. Reescrito para reapresentar os antecedentes diretamente no enunciado e reorientado para testar o mecanismo fisiopatológico específico da cardiomiopatia diabética, com distratores descrevendo mecanismos alternativos plausíveis (não apenas negações).",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-007"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado dependia implicitamente do 'paciente do caso'. Reescrito reapresentando a evolução clínica diretamente no enunciado, e um distrator foi trocado (a antiga opção de 'melhora da complacência ventricular mascarada por ansiedade' era pouco plausível) por um distrator de limitação ventilatória obstrutiva, mais específico e coerente com a mesma categoria lógica.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-008"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa e detalhada que os distratores. Enunciado e alternativas reequilibrados em extensão, mantendo o mesmo conteúdo clínico e gabarito.",
+      "referencias": [
+        "caso4-cardiologia",
+        "heidenreich2022-aha-acc-hfsa-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-012"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa e detalhada que os distratores. Enunciado e alternativas reequilibrados em extensão, mantendo o mesmo conteúdo clínico e gabarito.",
+      "referencias": [
+        "caso4-cardiologia",
+        "heidenreich2022-aha-acc-hfsa-heart-failure",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-013"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado dependia implicitamente do 'paciente do caso'. Reescrito reapresentando os achados de exame físico e ecocardiograma diretamente no enunciado.",
+      "referencias": [
+        "caso4-cardiologia",
+        "braunwald2022-heart-disease"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-014"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa que os distratores. Enunciado e alternativa correta reequilibrados em extensão, mantendo o mesmo conteúdo clínico e gabarito.",
+      "referencias": [
+        "caso4-cardiologia",
+        "joglar2023-acc-aha-accp-hrs-fibrilacao-atrial",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-015"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado dependia implicitamente do 'paciente do caso'. Reescrito reapresentando o achado eletrocardiográfico diretamente no enunciado.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-016"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado dependia implicitamente do 'paciente do caso' sem reapresentar os achados de exame físico. Reescrito reproduzindo os achados diretamente no enunciado.",
+      "referencias": [
+        "caso4-cardiologia",
+        "braunwald2022-heart-disease"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-017"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado dependia implicitamente do 'paciente do caso'. Reescrito reapresentando o quadro clínico diretamente no enunciado.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-018"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa que os distratores. Enunciado e alternativa correta reequilibrados em extensão, mantendo o mesmo conteúdo clínico e gabarito.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-020"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa que os distratores. Enunciado e alternativa correta reequilibrados em extensão, mantendo o mesmo conteúdo clínico e gabarito.",
+      "referencias": [
+        "caso4-cardiologia",
+        "delacey2008-chest-xray-survival-guide"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-021"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado dependia implicitamente de contexto externo ao referir 'o paciente' sem apresentação prévia. Reescrito para introduzir o paciente e o achado eletrocardiográfico diretamente no enunciado.",
+      "referencias": [
+        "caso4-cardiologia",
+        "joglar2023-acc-aha-accp-hrs-fibrilacao-atrial"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-022"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia (distratores com padrão 'apenas/somente' fáceis de excluir por eliminação) e o enunciado dependia do 'paciente do caso'. Reescrito com os quatro distratores descrevendo investigações laboratoriais plausíveis, porém não prioritárias nesse contexto específico, em vez de negações genéricas.",
+      "referencias": [
+        "caso4-cardiologia",
+        "heidenreich2022-aha-acc-hfsa-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-023"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: enunciado com referência implícita ao exame físico do 'paciente do caso' sem os achados restabelecidos. Reescrito reapresentando o achado auscultatório diretamente no enunciado (mantido o restante do conteúdo por já ser clinicamente adequado).",
+      "referencias": [
+        "caso4-cardiologia",
+        "braunwald2022-heart-disease"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-024"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser a única redação ressalvada e mais longa entre opções curtas e categóricas. Enunciado e alternativa correta reequilibrados em extensão, mantendo o mesmo conteúdo clínico e gabarito.",
+      "referencias": [
+        "caso4-cardiologia",
+        "braunwald2022-heart-disease"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-025"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado dependia implicitamente do 'paciente do caso'. Reescrito reapresentando o achado de exame físico diretamente no enunciado.",
+      "referencias": [
+        "caso4-cardiologia",
+        "delacey2008-chest-xray-survival-guide"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-026"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: o enunciado dependia implicitamente do 'paciente do caso'. Reescrito reapresentando o uso irregular de enalapril diretamente no enunciado, e a explicação passou a citar diretrizes reconhecidas (ESC 2021 e AHA/ACC/HFSA 2022) além do material de aula.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure",
+        "heidenreich2022-aha-acc-hfsa-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-027"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa que os distratores. Enunciado e alternativa correta reequilibrados em extensão, e a explicação passou a citar as diretrizes ESC 2021 e AHA/ACC/HFSA 2022 além do material de aula.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure",
+        "heidenreich2022-aha-acc-hfsa-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-028"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback explícito do usuário: a explicação continha o trecho 'especialmente relevante no paciente do caso, que já usa enalapril de forma irregular', denunciando dependência implícita do tutorial. Reescrita a explicação para remover a referência ao 'caso' e generalizar o raciocínio, mantendo a relevância clínica sem depender de contexto externo. Referências ampliadas com ESC 2021 e AHA/ACC/HFSA 2022.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure",
+        "heidenreich2022-aha-acc-hfsa-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-029"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa e o enunciado dependia do 'paciente do caso'. Enunciado e alternativa correta reequilibrados em extensão, mantendo o mesmo gabarito.",
+      "referencias": [
+        "caso4-cardiologia",
+        "heidenreich2022-aha-acc-hfsa-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-031"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa que os distratores. Enunciado e alternativa correta reequilibrados em extensão, e a referência passou a incluir explicitamente a diretriz de fibrilação atrial ACC/AHA/ACCP/HRS 2023.",
+      "referencias": [
+        "caso4-cardiologia",
+        "joglar2023-acc-aha-accp-hrs-fibrilacao-atrial"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-032"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa, e o enunciado dependia do 'paciente do caso'. Enunciado e alternativa correta reequilibrados em extensão.",
+      "referencias": [
+        "caso4-cardiologia",
+        "heidenreich2022-aha-acc-hfsa-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-033"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia e o enunciado dependia do 'paciente do caso'. Enunciado reescrito com os dados eletrocardiográficos necessários reapresentados diretamente, e alternativas reequilibradas em extensão.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-034"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia por ser desproporcionalmente mais longa, e o enunciado dependia do 'paciente do caso'. Enunciado e alternativa correta reequilibrados em extensão.",
+      "referencias": [
+        "caso4-cardiologia",
+        "heidenreich2022-aha-acc-hfsa-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-035"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia e o enunciado dependia do 'paciente do caso'. Enunciado reescrito reapresentando os antecedentes diretamente.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-036"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback explícito do usuário: a alternativa correta estava extremamente óbvia porque os quatro distratores eram condutas flagrantemente absurdas (por exemplo, 'indicação cirúrgica imediata independentemente de qualquer exame'). Reescritos os quatro distratores como erros clínicos plausíveis e específicos (cirurgia antes de otimizar GDMT, etiologia orgânica apesar do achado ecocardiográfico de folhetos normais, falsa tranquilização, etiologia reumática mal fundamentada), mantendo o gabarito clinicamente correto.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-037"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia e o enunciado dependia do 'paciente do caso'. Reescrito o enunciado de forma autocontida e um distrator implausível ('ignorar o achado de BRE') substituído por um erro conceitual mais específico e plausível.",
+      "referencias": [
+        "caso4-cardiologia",
+        "joglar2023-acc-aha-accp-hrs-fibrilacao-atrial",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-038"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia e o enunciado dependia do 'paciente do caso'. Os distratores anteriores (endoscopia digestiva, tomografia de crânio, colonoscopia) eram claramente desconectados do quadro cardiovascular; substituídos por investigações clinicamente mais próximas, porém insuficientes ou mal direcionadas, elevando a dificuldade real do item.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-039"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Feedback do usuário: a alternativa correta estava óbvia e o enunciado dependia do 'paciente do caso'. Enunciado reescrito reapresentando o quadro clínico integrado diretamente, e alternativa correta ligeiramente reequilibrada em extensão.",
+      "referencias": [
+        "caso4-cardiologia",
+        "mcdonagh2021-esc-heart-failure",
+        "heidenreich2022-aha-acc-hfsa-heart-failure"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "revisao_e_reescrita_de_item_com_validacao_humana_pendente",
+      "questaoId": "insuficiencia-cardiaca-caso-4-040"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria do lote de espirometria: a explicação original citava um único corte de 150 mL sem mencionar a gradação A/B/C de qualidade descrita no Quadro 5 da SBPT 2024 (graus A ≤100 mL, B >100-≤150 mL, C >150-<200 mL). Reescrita para refletir a gradação exata da diretriz, sem alterar gabarito, alternativas ou os valores numéricos do enunciado.",
+      "referencias": [
+        "albuquerque2024-sbpt-espirometria"
+      ],
+      "usoDeIA": "auditoria_de_conteudo_e_referencias_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "espirometria-05"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Auditoria do lote de espirometria: o item usava apenas o material de aula como referência para um conceito (hiperinsuflação/aprisionamento por pletismografia) que a própria SBPT 2024 explicitamente deixou fora de seu escopo (volumes pulmonares ficaram para documento subsequente). Adicionada a referência primária internacional (ATS/ERS 2005, padronização da medida de volumes pulmonares) que sustenta a definição de CPT/VR/VR-CPT usada no item. Gabarito e conteúdo inalterados.",
+      "referencias": [
+        "wanger2005-ats-ers-volumes-pulmonares"
+      ],
+      "usoDeIA": "auditoria_de_conteudo_e_referencias_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "espirometria-11"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Auditoria do lote de espirometria: o item usava apenas o material de aula para um conceito de DLCO (comprometimento do leito alvéolo-capilar no enfisema vs. preservação na asma), tema que a SBPT 2024 também deixou para documento subsequente. Adicionada a referência primária internacional (ATS/ERS 2017, padronização da DLCO) que sustenta a fisiopatologia usada no item. Gabarito e conteúdo inalterados.",
+      "referencias": [
+        "graham2017-ats-ers-dlco"
+      ],
+      "usoDeIA": "auditoria_de_conteudo_e_referencias_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "espirometria-12"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Auditoria do lote de espirometria: o item sobre o formato da curva volume-tempo na obstrução usava apenas o material de aula. Adicionada a referência técnica internacional já cadastrada no banco (ATS/ERS 2019, padronização da espirometria) que também sustenta a técnica e a interpretação das curvas espirométricas. Gabarito e conteúdo inalterados.",
+      "referencias": [
+        "graham2019-ats-ers-espirometria"
+      ],
+      "usoDeIA": "auditoria_de_conteudo_e_referencias_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "espirometria-13"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Auditoria do lote de espirometria: o laudo integrado combina CPT, VR (volumes pulmonares) e DLCO, dois temas que a SBPT 2024 deixou para documentos subsequentes e que só estavam sustentados pelo material de aula. Adicionadas as referências primárias internacionais correspondentes (ATS/ERS 2005 para volumes pulmonares e ATS/ERS 2017 para DLCO). Gabarito e conteúdo inalterados.",
+      "referencias": [
+        "wanger2005-ats-ers-volumes-pulmonares",
+        "graham2017-ats-ers-dlco"
+      ],
+      "usoDeIA": "auditoria_de_conteudo_e_referencias_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "espirometria-14"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "auditoria_bibliografica_e_editorial",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Auditoria bibliográfica: a referência rex2015-quality-indicators-colonoscopy não pôde ser confirmada em texto integral (paywall em giejournal.org e journals.lww.com). O parâmetro de intubação cecal (>95%) citado no item é confirmado em texto integral no documento do US Multi-Society Task Force (Gupta et al. 2020), que cita o mesmo dado por referência cruzada. Referência trocada para a fonte efetivamente verificada em texto integral; conteúdo clínico e gabarito não mudaram.",
+      "referencias": [
+        "gupta2020-ustf-vigilancia-polipectomia"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_bibliografica_com_leitura_de_texto_integral_e_revisao_de_item",
+      "questaoId": "endoscopia-03"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "auditoria_bibliografica_e_editorial",
+      "camposAlterados": [
+        "alternativas[3]"
+      ],
+      "motivo": "Revisão do sinal automático de linguagem absoluta ('apenas'): o termo, nesta alternativa, funcionava apenas como intensificador estilístico ('apenas 1 cm'), sem carregar a limitação clínica que o distrator testa. Removido sem perda técnica, conforme critério de que um termo absoluto só deve ser mantido quando indispensável ao conteúdo. Gabarito e demais alternativas não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_bibliografica_com_leitura_de_texto_integral_e_revisao_de_item",
+      "questaoId": "endoscopia-08"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "auditoria_bibliografica_e_editorial",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Redução de referência redundante: barkun2019-consenso-hda-nao-varicosa não foi verificada em texto integral nesta auditoria (não localizado acesso aberto) e sua função de sustentação já é integralmente coberta pela diretriz ACG 2021 (acg2021-ugib), esta sim confirmada em texto integral. Mantida apenas a referência efetivamente verificada, conforme princípio de qualidade sobre quantidade de referências. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "acg2021-ugib"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_bibliografica_com_leitura_de_texto_integral_e_revisao_de_item",
+      "questaoId": "endoscopia-11"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "auditoria_bibliografica_e_editorial",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Redução de referência redundante: barkun2019-consenso-hda-nao-varicosa não foi verificada em texto integral nesta auditoria (não localizado acesso aberto) e sua função de sustentação já é integralmente coberta pela diretriz ACG 2021 (acg2021-ugib), esta sim confirmada em texto integral. Mantida apenas a referência efetivamente verificada, conforme princípio de qualidade sobre quantidade de referências. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "acg2021-ugib"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_bibliografica_com_leitura_de_texto_integral_e_revisao_de_item",
+      "questaoId": "endoscopia-13"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "auditoria_bibliografica_e_editorial",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Redução de referência redundante: barkun2019-consenso-hda-nao-varicosa não foi verificada em texto integral nesta auditoria (não localizado acesso aberto) e sua função de sustentação já é integralmente coberta pela diretriz ACG 2021 (acg2021-ugib), esta sim confirmada em texto integral. Mantida apenas a referência efetivamente verificada, conforme princípio de qualidade sobre quantidade de referências. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "acg2021-ugib"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_bibliografica_com_leitura_de_texto_integral_e_revisao_de_item",
+      "questaoId": "endoscopia-14"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "auditoria_bibliografica_e_editorial",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Correção de correspondência bibliográfica: a leitura integral do ACG Clinical Guideline: Upper Gastrointestinal and Ulcer Bleeding (2021) confirmou que esse documento não trata da indicação diferencial de biópsia entre úlcera gástrica e duodenal (é uma diretriz sobre hemorragia digestiva ativa, não sobre investigação eletiva de dispepsia). A referência acg2021-ugib foi removida por não sustentar a afirmação central do item. Permanece cotton2014-practical-gi-endoscopy (livro-texto de referência para essa prática, ainda não verificável em texto integral por não ter acesso web); pendência de verificação registrada. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_bibliografica_com_leitura_de_texto_integral_e_revisao_de_item",
+      "questaoId": "endoscopia-12"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "auditoria_bibliografica_e_editorial",
+      "camposAlterados": [
+        "alternativas[1]"
+      ],
+      "motivo": "Revisão do sinal automático de linguagem absoluta ('apenas'): o termo funcionava como intensificador estilístico ('apenas discretamente'), sem carregar limitação clínica essencial ao distrator. Removido sem perda técnica. Gabarito e demais alternativas não mudaram.",
+      "referencias": [],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_bibliografica_com_leitura_de_texto_integral_e_revisao_de_item",
+      "questaoId": "endoscopia-16"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "auditoria_bibliografica_e_editorial",
+      "camposAlterados": [
+        "referencias"
+      ],
+      "motivo": "Mesma correção aplicada a endoscopia-03: rex2015-quality-indicators-colonoscopy não pôde ser verificada em texto integral (paywall); os mesmos parâmetros de qualidade (intubação cecal, ADR, preparo) constam, com fonte primária citada, no texto integral confirmado do documento do US Multi-Society Task Force (Gupta et al. 2020). Referência trocada para a fonte efetivamente verificada. Gabarito e conteúdo clínico não mudaram.",
+      "referencias": [
+        "gupta2020-ustf-vigilancia-polipectomia"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "auditoria_bibliografica_com_leitura_de_texto_integral_e_revisao_de_item",
+      "questaoId": "endoscopia-19"
+    }
+  ],
+  "updatedAt": "2026-08-31",
+  "corrections": [
+    {
+      "id": "questoes-sodio-agua-05-v2",
+      "material": {
+        "id": "sodio-agua-05",
+        "path": "banco-questoes.json#questao:sodio-agua-05",
+        "kind": "questao"
+      },
+      "previousVersion": "1",
+      "newVersion": "2",
+      "date": "2026-08-29",
+      "type": "erro_factual",
+      "changedFields": [
+        "alternativas[0..4]",
+        "explicacao"
+      ],
+      "reason": "A pergunta mede osmolalidade, mas a versão anterior usava unidade de osmolaridade; mOsm/L foi corrigido para mOsm/kg.",
+      "impact": {
+        "level": "moderado",
+        "summary": "Corrige a grandeza ensinada sem alterar valores numéricos nem gabarito. Derivados antigos exibem unidade cientificamente incorreta."
+      },
+      "sources": [
+        "fontes.json#soares2026-sodio-agua"
+      ],
+      "responsible": "Vinicius Kato",
+      "regenerateDerived": true,
+      "derivatives": [
+        {
+          "path": "../medicina/disturbios-sodio-agua.html",
+          "basedOnVersion": "2",
+          "versionPattern": "\\\"id\\\": \\\"sodio-agua-05\\\"[\\s\\S]{0,2500}\\\"itemVersion\\\": 2"
+        },
+        {
+          "path": "../medicina/disturbios-sodio-agua-feitas.html",
+          "basedOnVersion": "2",
+          "versionPattern": "\\\"id\\\": \\\"sodio-agua-05\\\"[\\s\\S]{0,2500}\\\"itemVersion\\\": 2"
+        }
+      ]
+    },
+    {
+      "data": "2026-08-28",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Revisão de qualidade (registro em _dados/melhorias de questões) apontou que a explicação de tratamento dirigido para Streptococcus gallolyticus deveria mencionar a associação bem estabelecida desse agente com neoplasia colorretal, já que questões sobre conduta por agente etiológico devem cobrir as implicações clínicas relevantes do achado, não só o ajuste antimicrobiano. Explicação passou a orientar investigação de neoplasia colorretal com colonoscopia como conduta associada, independente do esquema antibiótico. Gabarito e alternativas não mudaram. Correção aplicada anteriormente ao banco sem registro formal nesta lista; documentada agora por transparência.",
+      "referencias": [
+        "delgado2023-esc-endocardite"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "edicao_de_conteudo_com_validacao_humana",
+      "questaoId": "endocardite-44"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Revisão de qualidade apontou que a explicação sobre duração de antibioticoterapia em endocardite de valva protética (EVP) não comentava o esquema empírico inicial (antes da identificação do agente), tratando apenas da terapia dirigida. Explicação ampliada para cobrir a cobertura empírica usual (vancomicina + gentamicina + rifampicina diferida) até a definição do agente e sensibilidade. Gabarito e alternativas não mudaram.",
+      "referencias": [
+        "delgado2023-esc-endocardite"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "edicao_de_conteudo_com_validacao_humana",
+      "questaoId": "endocardite-48"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "pergunta",
+        "alternativas[0]",
+        "alternativas[1]",
+        "alternativas[3]",
+        "alternativas[4]",
+        "explicacao",
+        "referencias"
+      ],
+      "motivo": "Revisão de qualidade apontou que o item era respondível por exclusão: os quatro distratores descreviam mecanismos de resistência de famílias totalmente diferentes (PBP alterada, bomba de efluxo, proteção ribossomal), reconhecíveis como 'errados' sem qualquer conhecimento específico sobre ESBL. Distratores reescritos para pertencerem à mesma categoria lógica do gabarito (outras betalactamases — AmpC, carbapenemase de classe A/KPC, penicilinase de espectro estreito, metalo-betalactamase), exigindo reconhecer o traço que de fato distingue ESBL: hidrólise de cefalosporinas de espectro estendido combinada à inibição por clavulanato. Gabarito clínico não mudou. Referência de literatura (Paterson & Bonomo 2005) adicionada, já que o material de aula original delimita o escopo pedagógico mas não basta isoladamente para sustentar a definição técnica do item.",
+      "referencias": [
+        "paterson2005-esbl-clinical-update"
+      ],
+      "responsavel": "Vinicius Kato",
+      "usoDeIA": "edicao_de_conteudo_e_distratores_com_validacao_humana",
+      "questaoId": "antimicrobianos-073"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-01"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-03"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-05"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-06"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-09"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-10"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-11"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-15"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-16"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-21"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-24"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-25"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-28"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-30"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-32"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-33"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-34"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-35"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-37"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-39"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-40"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-41"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-43"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-44"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-45"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-47"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-51"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-52"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-55"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-56"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-57"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-58"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta",
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-59"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-60"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-61"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-63"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-65"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-66"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "explicacao"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-67"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-68"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas",
+        "correta"
+      ],
+      "motivo": "Auditoria heurística (auditar-qualidade-itens.js) e checklist de LICOES-QUALIDADE-ITENS.md detectaram, neste lote recem-adicionado (LANCCILO/Tumores do SNC), padrões já catalogados: explicacao referenciando alternativas por posicao/numero (secao 4 — quebra com o embaralhamento de alternativas em sessao), alternativa correta desproporcionalmente mais longa que os distratores (secao 5), e/ou distratores com linguagem absolutista facilitando eliminacao sem conhecimento do conteudo (secao 2). Explicacao reescrita para descrever cada alternativa por conteudo, nunca por posicao; alternativas rebalanceadas em extensao mantendo a mesma informacao clinica (nenhum fato foi alterado); gabarito clinico nao mudou. Correcao estrutural/psicometrica automatizada — ainda sem validacao humana do conteudo clinico.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-69"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas"
+      ],
+      "motivo": "Segunda passada da mesma auditoria (auditar-qualidade-itens.js): item havia ficado de fora da primeira rodada de rebalanceamento de comprimento (secao 5 de LICOES-QUALIDADE-ITENS.md) ou a primeira reescrita introduziu linguagem absolutista nos distratores (secao 2). Alternativas reequilibradas em extensao e linguagem, mesma informacao clinica, gabarito inalterado.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-30"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas"
+      ],
+      "motivo": "Segunda passada da mesma auditoria (auditar-qualidade-itens.js): item havia ficado de fora da primeira rodada de rebalanceamento de comprimento (secao 5 de LICOES-QUALIDADE-ITENS.md) ou a primeira reescrita introduziu linguagem absolutista nos distratores (secao 2). Alternativas reequilibradas em extensao e linguagem, mesma informacao clinica, gabarito inalterado.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-52"
+    },
+    {
+      "data": "2026-08-31",
+      "tipo": "melhoria_item",
+      "camposAlterados": [
+        "alternativas"
+      ],
+      "motivo": "Segunda passada da mesma auditoria (auditar-qualidade-itens.js): item havia ficado de fora da primeira rodada de rebalanceamento de comprimento (secao 5 de LICOES-QUALIDADE-ITENS.md) ou a primeira reescrita introduziu linguagem absolutista nos distratores (secao 2). Alternativas reequilibradas em extensao e linguagem, mesma informacao clinica, gabarito inalterado.",
+      "referencias": [],
+      "usoDeIA": "correcao_estrutural_por_ia_sem_validacao_humana_do_conteudo",
+      "questaoId": "tumores-snc-68"
+    }
+  ]
+}
