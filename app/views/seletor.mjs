@@ -401,13 +401,16 @@ function wireCapsuleBuilder(root, banco) {
     errorEl.textContent = "";
     const payload = validatedPayload();
     if (!payload) return;
-    const url = buildShareUrl(payload);
+    let url;
     try {
+      url = await buildShareUrl(payload);
       if (!navigator.clipboard?.writeText) throw new Error("Clipboard indisponível.");
       await navigator.clipboard.writeText(url);
       copyStatus.textContent = "✓ Link copiado para a área de transferência.";
     } catch (_) {
-      copyStatus.textContent = `✗ Não foi possível copiar automaticamente. Copie manualmente: ${url}`;
+      copyStatus.textContent = url
+        ? `✗ Não foi possível copiar automaticamente. Copie manualmente: ${url}`
+        : "✗ Não foi possível gerar o link desta cápsula.";
     }
   });
   downloadButton.addEventListener("click", () => {

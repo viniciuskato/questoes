@@ -48,11 +48,19 @@ URL — nunca é gravado em `_banco/specs/` nem no banco canônico, o mesmo
 princípio das sessões dinâmicas.
 
 - `d` é um único parâmetro: JSON compacto (`{v, title, description,
-  questionIds, mode, order, answerReveal}`) codificado em base64url
-  (`encodeCapsulePayload`/`decodeCapsulePayload`). `v` é a versão do formato
-  (hoje sempre `1`); `mode` é `"study"` ou `"exam"`; `order` é `"original"`
-  (ordem de `questionIds`) ou `"shuffle"`; `answerReveal` é `"immediate"` ou
-  `"end"`.
+  questionIds, mode, order, answerReveal}`) comprimido em gzip
+  (`CompressionStream`, nativo do navegador) e codificado em base64url
+  (`encodeCapsulePayload`/`decodeCapsulePayload`, ambas assíncronas por causa
+  da compressão). `v` é a versão do formato (hoje sempre `1`); `mode` é
+  `"study"` ou `"exam"`; `order` é `"original"` (ordem de `questionIds`) ou
+  `"shuffle"`; `answerReveal` é `"immediate"` ou `"end"`. A compressão existe
+  porque links sem ela passam de 2000 caracteres em listas grandes (~70
+  questões), e apps de mensagem no iOS truncam ou recusam autodetectar links
+  tão longos — cortando o parâmetro `d` inteiro e produzindo "link sem
+  dados" mesmo com o payload correto; o decode reconhece a assinatura gzip
+  (`0x1f 0x8b`) e cai automaticamente para o formato antigo sem compressão
+  quando ausente, então links já compartilhados antes desta mudança
+  continuam válidos.
 - `app/views/lista.mjs` decodifica o payload, resolve `questionIds` contra o
   banco atual (`resolveCapsuleQuestions`) e monta `quizData` com
   `toQuizData()` — mesmo caminho de `#/quiz/:specId` e `#/sessao`. Nenhuma

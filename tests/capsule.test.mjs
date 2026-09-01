@@ -39,48 +39,62 @@ test("normalizeCapsulePayload: rejeita modo/ordem/revelação fora do enum",()=>
   assert.throws(()=>normalizeCapsulePayload({ ...basePayload, answerReveal: "invalido" }), /Revelação de respostas inválida/);
 });
 
-test("encodeCapsulePayload + decodeCapsulePayload: round-trip preserva o payload",()=>{
-  const encoded = encodeCapsulePayload(basePayload);
-  const decoded = decodeCapsulePayload(encoded);
+test("encodeCapsulePayload + decodeCapsulePayload: round-trip preserva o payload",async()=>{
+  const encoded = await encodeCapsulePayload(basePayload);
+  const decoded = await decodeCapsulePayload(encoded);
   assert.deepEqual(decoded, basePayload);
 });
 
-test("encodeCapsulePayload: preserva acentos e caracteres especiais no título/descrição",()=>{
+test("encodeCapsulePayload: preserva acentos e caracteres especiais no título/descrição",async()=>{
   const payload = { ...basePayload, title: "Endocardite — critérios de Duke", description: "Foco em áreas cinzentas & exceções" };
-  const decoded = decodeCapsulePayload(encodeCapsulePayload(payload));
+  const decoded = await decodeCapsulePayload(await encodeCapsulePayload(payload));
   assert.equal(decoded.title, payload.title);
   assert.equal(decoded.description, payload.description);
 });
 
-test("decodeCapsulePayload: link vazio lança erro compreensível",()=>{
-  assert.throws(()=>decodeCapsulePayload(""), /link sem dados/);
-  assert.throws(()=>decodeCapsulePayload(null), /link sem dados/);
+test("encodeCapsulePayload: comprime o payload (link fica bem menor que o JSON bruto em base64)",async()=>{
+  const questionIds = Array.from({ length: 70 }, (_, i) => `endocardite-${String(i + 1).padStart(2, "0")}`);
+  const payload = { ...basePayload, questionIds };
+  const encoded = await encodeCapsulePayload(payload);
+  const uncompressedLength = Buffer.from(JSON.stringify(normalizeCapsulePayload(payload))).toString("base64").length;
+  assert.ok(encoded.length < uncompressedLength * 0.6, `esperado link comprimido bem menor: ${encoded.length} vs ${uncompressedLength}`);
 });
 
-test("decodeCapsulePayload: link malformado (não é base64url válido de JSON) lança erro",()=>{
-  assert.throws(()=>decodeCapsulePayload("!!!nao-e-base64!!!"), /link malformado/);
+test("decodeCapsulePayload: aceita o formato legado sem compressão (links compartilhados antes desta mudança)",async()=>{
+  const legacyEncoded = Buffer.from(JSON.stringify(basePayload), "utf8").toString("base64").replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  const decoded = await decodeCapsulePayload(legacyEncoded);
+  assert.deepEqual(decoded, basePayload);
+});
+
+test("decodeCapsulePayload: link vazio lança erro compreensível",async()=>{
+  await assert.rejects(()=>decodeCapsulePayload(""), /link sem dados/);
+  await assert.rejects(()=>decodeCapsulePayload(null), /link sem dados/);
+});
+
+test("decodeCapsulePayload: link malformado (não é base64url válido de JSON) lança erro",async()=>{
+  await assert.rejects(()=>decodeCapsulePayload("!!!nao-e-base64!!!"), /link malformado/);
 });
 
 test("getPublicAppBaseUrl: usa PUBLIC_APP_URL configurada, sem barra final",()=>{
   assert.equal(getPublicAppBaseUrl(), PUBLIC_APP_URL.replace(/\/+$/, ""));
 });
 
-test("buildShareUrl: nunca contém localhost quando PUBLIC_APP_URL está configurada",()=>{
-  const url = buildShareUrl(basePayload);
+test("buildShareUrl: nunca contém localhost quando PUBLIC_APP_URL está configurada",async()=>{
+  const url = await buildShareUrl(basePayload);
   assert.ok(!/localhost/.test(url), `link não deveria conter localhost: ${url}`);
   assert.ok(url.startsWith(`${PUBLIC_APP_URL}/index.html#/lista?d=`), url);
 });
 
-test("buildShareUrl: rota embutida é idêntica à de buildCapsuleRoute",()=>{
-  const url = buildShareUrl(basePayload);
-  assert.ok(url.endsWith(buildCapsuleRoute(basePayload)), url);
+test("buildShareUrl: rota embutida é idêntica à de buildCapsuleRoute",async()=>{
+  const url = await buildShareUrl(basePayload);
+  assert.ok(url.endsWith(await buildCapsuleRoute(basePayload)), url);
 });
 
-test("buildCapsuleRoute: produz uma rota #/lista?d=...",()=>{
-  const route = buildCapsuleRoute(basePayload);
+test("buildCapsuleRoute: produz uma rota #/lista?d=...",async()=>{
+  const route = await buildCapsuleRoute(basePayload);
   assert.match(route, /^#\/lista\?d=/);
   const encoded = route.replace("#/lista?d=", "");
-  assert.deepEqual(decodeCapsulePayload(encoded), basePayload);
+  assert.deepEqual(await decodeCapsulePayload(encoded), basePayload);
 });
 
 test("capsuleSlug: normaliza título em slug estável e com prefixo",()=>{

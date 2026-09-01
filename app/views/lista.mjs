@@ -19,7 +19,7 @@ export function buildCapsuleInfoHtml(payload, summary) {
 }
 
 export async function renderListaView(root, { route, signal }) {
-  const payload = decodeCapsulePayload(route.query.get("d"));
+  const payload = await decodeCapsulePayload(route.query.get("d"));
   const banco = await loadBanco({ signal });
   const { questions, missingIds } = resolveCapsuleQuestions(banco.questoes, payload);
   const fontes = await loadFontes({ signal });

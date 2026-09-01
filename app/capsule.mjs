@@ -14,20 +14,50 @@ export const CAPSULE_MODE_LABEL = { study: "Estudo", exam: "Simulado" };
 export const CAPSULE_ORDER_LABEL = { original: "Original", shuffle: "Embaralhada" };
 export const CAPSULE_REVEAL_LABEL = { immediate: "Imediata, ao responder", end: "Somente ao final" };
 
-function utf8ToBase64Url(str) {
-  const bytes = new TextEncoder().encode(str);
+function bytesToBase64Url(bytes) {
   let binary = "";
   bytes.forEach(b => { binary += String.fromCharCode(b); });
-  const base64 = typeof btoa === "function" ? btoa(binary) : Buffer.from(binary, "binary").toString("base64");
+  const base64 = typeof btoa === "function" ? btoa(binary) : Buffer.from(bytes).toString("base64");
   return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-function base64UrlToUtf8(b64url) {
+function base64UrlToBytes(b64url) {
   let base64 = String(b64url).replace(/-/g, "+").replace(/_/g, "/");
   while (base64.length % 4) base64 += "=";
   const binary = typeof atob === "function" ? atob(base64) : Buffer.from(base64, "base64").toString("binary");
-  const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
+  return Uint8Array.from(binary, ch => ch.charCodeAt(0));
+}
+
+// Links de cápsula podem ultrapassar 2000 caracteres (listas grandes de
+// questões), e apps de mensagem no iOS (WhatsApp incluído) truncam ou
+// recusam a autodetecção de links muito longos, cortando o parâmetro `d`
+// inteiro — é isso que produz "link sem dados" mesmo com o payload correto.
+// Por isso o JSON é comprimido (gzip via CompressionStream, nativo do
+// navegador, sem dependência externa) antes do base64url: para uma lista de
+// ids repetitivos como as do banco, o link cai a uma fração do tamanho
+// original. O decode detecta a assinatura gzip (0x1f 0x8b) nos bytes
+// decodificados; se não estiver presente, trata como o formato antigo sem
+// compressão (links já compartilhados antes desta mudança continuam
+// funcionando).
+const GZIP_MAGIC_0 = 0x1f;
+const GZIP_MAGIC_1 = 0x8b;
+
+async function gzipCompress(text) {
+  const cs = new CompressionStream("gzip");
+  const writer = cs.writable.getWriter();
+  writer.write(new TextEncoder().encode(text));
+  writer.close();
+  const buffer = await new Response(cs.readable).arrayBuffer();
+  return new Uint8Array(buffer);
+}
+
+async function gzipDecompress(bytes) {
+  const ds = new DecompressionStream("gzip");
+  const writer = ds.writable.getWriter();
+  writer.write(bytes);
+  writer.close();
+  const buffer = await new Response(ds.readable).arrayBuffer();
+  return new TextDecoder().decode(buffer);
 }
 
 // `source` é aditivo e só informativo/diagnóstico (de onde a cápsula veio:
@@ -64,24 +94,36 @@ export function normalizeCapsulePayload(input) {
   return { v: CAPSULE_VERSION, title, description, questionIds, mode, order, answerReveal, ...(source !== undefined ? { source } : {}) };
 }
 
-export function encodeCapsulePayload(payload) {
+export async function encodeCapsulePayload(payload) {
   const normalized = normalizeCapsulePayload(payload);
-  return utf8ToBase64Url(JSON.stringify(normalized));
+  const json = JSON.stringify(normalized);
+  // Sem CompressionStream (navegador muito antigo) cai para o formato
+  // legado sem compressão — pior para links longos, mas nunca quebra.
+  const bytes = typeof CompressionStream === "function"
+    ? await gzipCompress(json)
+    : new TextEncoder().encode(json);
+  return bytesToBase64Url(bytes);
 }
 
-export function decodeCapsulePayload(raw) {
+export async function decodeCapsulePayload(raw) {
   if (!raw) throw new Error("Cápsula inválida: link sem dados.");
-  let json;
-  try { json = base64UrlToUtf8(raw); }
+  let bytes;
+  try { bytes = base64UrlToBytes(raw); }
   catch (_) { throw new Error("Cápsula inválida: link malformado."); }
+  let json;
+  try {
+    json = bytes[0] === GZIP_MAGIC_0 && bytes[1] === GZIP_MAGIC_1
+      ? await gzipDecompress(bytes)
+      : new TextDecoder().decode(bytes);
+  } catch (_) { throw new Error("Cápsula inválida: link malformado."); }
   let parsed;
   try { parsed = JSON.parse(json); }
   catch (_) { throw new Error("Cápsula inválida: link malformado."); }
   return normalizeCapsulePayload(parsed);
 }
 
-export function buildCapsuleRoute(payload) {
-  return `#/lista?d=${encodeCapsulePayload(payload)}`;
+export async function buildCapsuleRoute(payload) {
+  return `#/lista?d=${await encodeCapsulePayload(payload)}`;
 }
 
 // Base pública para links compartilháveis. Usa PUBLIC_APP_URL quando
@@ -101,8 +143,8 @@ export function getPublicAppBaseUrl() {
 // — sempre passa por aqui, nunca por concatenação manual de location.* nos
 // componentes de UI (isso é o que fazia o link copiado carregar "localhost"
 // para quem abria em outro dispositivo).
-export function buildShareUrl(payload) {
-  return `${getPublicAppBaseUrl()}/index.html${buildCapsuleRoute(payload)}`;
+export async function buildShareUrl(payload) {
+  return `${getPublicAppBaseUrl()}/index.html${await buildCapsuleRoute(payload)}`;
 }
 
 // Slug estável só para dar um `quizId` legível (usado no cabeçalho e no
